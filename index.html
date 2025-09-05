@@ -1,81 +1,116 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Quiz Divisibilité</title>
+  <title>Quiz Divisibilité - Style Suisse</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700&family=Roboto:wght@400;700&display=swap');
+
+    /* Reset et base */
+    * {
+      box-sizing: border-box;
+    }
     body {
-      font-family: Arial, sans-serif;
-      max-width: 500px;
-      margin: 50px auto;
-      background: #f9fafb;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      text-align: center;
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background-color: #fff;
+      color: #000;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 40px 20px;
     }
-    h1 {
-      margin-bottom: 20px;
-      color: #1f2937;
-    }
-    .question {
-      font-size: 20px;
-      margin-bottom: 20px;
-      color: #111827;
-    }
-    .answers button {
-      display: block;
+    #quiz {
+      max-width: 480px;
       width: 100%;
-      margin: 10px 0;
-      padding: 12px;
-      font-size: 18px;
-      border: 2px solid #3b82f6;
-      background-color: white;
-      color: #3b82f6;
-      border-radius: 8px;
+      border-left: 8px solid #E60000; /* rouge suisse */
+      padding-left: 30px;
+    }
+
+    h1 {
+      font-family: 'Roboto Slab', serif;
+      font-weight: 700;
+      font-size: 2.5rem;
+      margin-bottom: 2rem;
+      line-height: 1.1;
+    }
+
+    .question {
+      font-weight: 700;
+      font-size: 1.5rem;
+      margin-bottom: 2rem;
+      letter-spacing: 0.02em;
+    }
+
+    .answers {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+      margin-bottom: 3rem;
+    }
+
+    button.answer-btn {
+      font-weight: 400;
+      font-size: 1.15rem;
+      text-align: left;
+      padding: 14px 20px;
+      border: 2px solid #000;
+      background: transparent;
       cursor: pointer;
       transition: background-color 0.3s ease, color 0.3s ease;
+      border-radius: 4px;
+      letter-spacing: 0.03em;
+      line-height: 1.3;
     }
-    .answers button:hover {
-      background-color: #3b82f6;
+
+    button.answer-btn:hover,
+    button.answer-btn.selected {
+      background-color: #E60000;
       color: white;
+      border-color: #E60000;
     }
-    .answers button.selected {
-      background-color: #2563eb;
-      color: white;
-      border-color: #2563eb;
-    }
+
     #nextBtn {
-      margin-top: 20px;
-      padding: 12px 25px;
-      font-size: 18px;
-      background-color: #10b981;
-      color: white;
+      font-weight: 700;
+      font-size: 1.2rem;
+      padding: 14px 32px;
       border: none;
-      border-radius: 8px;
+      background-color: #E60000;
+      color: white;
       cursor: pointer;
+      border-radius: 4px;
+      letter-spacing: 0.04em;
+      transition: background-color 0.3s ease;
       display: none;
+      align-self: flex-start;
     }
+    #nextBtn:hover {
+      background-color: #b30000;
+    }
+
     #result {
-      font-size: 22px;
-      font-weight: bold;
-      margin-top: 30px;
-      color: #047857;
+      font-weight: 700;
+      font-size: 1.6rem;
+      color: #000;
+      margin-top: 2rem;
+      letter-spacing: 0.03em;
     }
   </style>
 </head>
 <body>
-  <h1>Quiz : Divisibilité</h1>
-  <div id="quiz">
-    <div class="question" id="question"></div>
-    <div class="answers">
-      <button id="answerA"></button>
-      <button id="answerB"></button>
-    </div>
-    <button id="nextBtn">Suivant</button>
-    <div id="result"></div>
-  </div>
+  <main id="quiz" role="main" aria-label="Quiz sur la divisibilité">
+    <h1>Quiz : Divisibilité</h1>
+    <section aria-live="polite">
+      <div class="question" id="question"></div>
+      <div class="answers">
+        <button class="answer-btn" id="answerA" aria-pressed="false"></button>
+        <button class="answer-btn" id="answerB" aria-pressed="false"></button>
+      </div>
+      <button id="nextBtn" aria-disabled="true">Suivant</button>
+      <div id="result" role="alert" aria-live="assertive"></div>
+    </section>
+  </main>
 
   <script>
     const quizData = [
@@ -130,13 +165,22 @@
     function loadQuestion() {
       selectedAnswer = null;
       nextBtn.style.display = "none";
+      nextBtn.setAttribute('aria-disabled', 'true');
       resultEl.textContent = "";
+      questionEl.style.display = 'block';
+      answerA.style.display = 'block';
+      answerB.style.display = 'block';
+
       const q = quizData[currentQuestion];
       questionEl.textContent = q.question;
       answerA.textContent = "a) " + q.a;
       answerB.textContent = "b) " + q.b;
+
       answerA.classList.remove("selected");
       answerB.classList.remove("selected");
+      answerA.setAttribute('aria-pressed', 'false');
+      answerB.setAttribute('aria-pressed', 'false');
+
       answerA.disabled = false;
       answerB.disabled = false;
     }
@@ -145,28 +189,41 @@
       selectedAnswer = answer;
       answerA.classList.remove("selected");
       answerB.classList.remove("selected");
-      if (answer === "a") answerA.classList.add("selected");
-      if (answer === "b") answerB.classList.add("selected");
+      if (answer === "a") {
+        answerA.classList.add("selected");
+        answerA.setAttribute('aria-pressed', 'true');
+        answerB.setAttribute('aria-pressed', 'false');
+      }
+      if (answer === "b") {
+        answerB.classList.add("selected");
+        answerB.setAttribute('aria-pressed', 'true');
+        answerA.setAttribute('aria-pressed', 'false');
+      }
       nextBtn.style.display = "inline-block";
+      nextBtn.setAttribute('aria-disabled', 'false');
     }
 
     function showResult() {
+      questionEl.style.display = 'none';
+      answerA.style.display = 'none';
+      answerB.style.display = 'none';
+      nextBtn.style.display = 'none';
+
       resultEl.textContent = `Ton score est ${score} / ${quizData.length}`;
-      nextBtn.style.display = "none";
-      answerA.style.display = "none";
-      answerB.style.display = "none";
-      questionEl.style.display = "none";
     }
 
     answerA.addEventListener("click", () => selectAnswer("a"));
     answerB.addEventListener("click", () => selectAnswer("b"));
 
     nextBtn.addEventListener("click", () => {
-      if (!selectedAnswer) return; // Sécurité
+      if (!selectedAnswer) return;
+
       if (selectedAnswer === quizData[currentQuestion].correct) {
         score++;
       }
+
       currentQuestion++;
+
       if (currentQuestion < quizData.length) {
         loadQuestion();
       } else {
