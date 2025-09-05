@@ -1,62 +1,180 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Quiz Divisibilité par 2</title>
+  <title>Quiz Divisibilité</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      max-width: 400px;
+      max-width: 500px;
       margin: 50px auto;
-      background: #f0f4f8;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+      background: #f9fafb;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       text-align: center;
     }
     h1 {
-      color: #333;
+      margin-bottom: 20px;
+      color: #1f2937;
     }
-    button {
-      margin: 10px;
-      padding: 10px 20px;
-      border: none;
+    .question {
+      font-size: 20px;
+      margin-bottom: 20px;
+      color: #111827;
+    }
+    .answers button {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+      padding: 12px;
+      font-size: 18px;
+      border: 2px solid #3b82f6;
+      background-color: white;
+      color: #3b82f6;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    .answers button:hover {
       background-color: #3b82f6;
       color: white;
-      font-size: 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
     }
-    button:hover {
+    .answers button.selected {
       background-color: #2563eb;
+      color: white;
+      border-color: #2563eb;
+    }
+    #nextBtn {
+      margin-top: 20px;
+      padding: 12px 25px;
+      font-size: 18px;
+      background-color: #10b981;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      display: none;
     }
     #result {
-      margin-top: 20px;
+      font-size: 22px;
       font-weight: bold;
-      font-size: 18px;
+      margin-top: 30px;
+      color: #047857;
     }
   </style>
 </head>
 <body>
-  <h1>Quiz : Divisibilité par 2</h1>
-  <p>Un nombre est divisible par 2 :</p>
-  <button onclick="checkAnswer('a')">a) si son chiffre des unités est pair (0, 2, 4, 6 ou 8)</button><br />
-  <button onclick="checkAnswer('b')">b) si son chiffre des unités est impair (1, 3, 5, 7, 9)</button>
-
-  <div id="result"></div>
+  <h1>Quiz : Divisibilité</h1>
+  <div id="quiz">
+    <div class="question" id="question"></div>
+    <div class="answers">
+      <button id="answerA"></button>
+      <button id="answerB"></button>
+    </div>
+    <button id="nextBtn">Suivant</button>
+    <div id="result"></div>
+  </div>
 
   <script>
-    function checkAnswer(choice) {
-      const result = document.getElementById('result');
-      if (choice === 'a') {
-        result.textContent = '✅ Correct ! Un nombre est divisible par 2 si son chiffre des unités est pair.';
-        result.style.color = 'green';
-      } else {
-        result.textContent = '❌ Faux. Essaie encore.';
-        result.style.color = 'red';
+    const quizData = [
+      {
+        question: "Un nombre est divisible par 2",
+        a: "si son chiffre des unités est pair (0, 2, 4, 6 ou 8)",
+        b: "si son chiffre des unités est impair (1, 3, 5, 7, 9)",
+        correct: "a"
+      },
+      {
+        question: "Un nombre entier est divisible par 3",
+        a: "si la somme de ses chiffres est divisible par 3",
+        b: "si la somme de ses chiffres est divisible par 6",
+        correct: "a"
+      },
+      {
+        question: "Un nombre entier est divisible par 4",
+        a: "si le nombre formé par son chiffre des dizaines et son chiffre des unités est divisible par 4",
+        b: "si la somme de ses chiffres est divisible par 4",
+        correct: "a"
+      },
+      {
+        question: "Un nombre entier est divisible par 5",
+        a: "si son chiffre des unités est 0 ou 5",
+        b: "si son chiffre des dizaines est 0 ou 5",
+        correct: "a"
+      },
+      {
+        question: "Un nombre entier est divisible par 9",
+        a: "si la somme de ses chiffres est divisible par 9",
+        b: "si le nombre formé par ses deux derniers chiffres est divisible par 9",
+        correct: "a"
+      },
+      {
+        question: "Un nombre entier est divisible par 10",
+        a: "si son chiffre des unités est 0",
+        b: "si son chiffre des dizaines est 0",
+        correct: "a"
       }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let selectedAnswer = null;
+
+    const questionEl = document.getElementById("question");
+    const answerA = document.getElementById("answerA");
+    const answerB = document.getElementById("answerB");
+    const nextBtn = document.getElementById("nextBtn");
+    const resultEl = document.getElementById("result");
+
+    function loadQuestion() {
+      selectedAnswer = null;
+      nextBtn.style.display = "none";
+      resultEl.textContent = "";
+      const q = quizData[currentQuestion];
+      questionEl.textContent = q.question;
+      answerA.textContent = "a) " + q.a;
+      answerB.textContent = "b) " + q.b;
+      answerA.classList.remove("selected");
+      answerB.classList.remove("selected");
+      answerA.disabled = false;
+      answerB.disabled = false;
     }
+
+    function selectAnswer(answer) {
+      selectedAnswer = answer;
+      answerA.classList.remove("selected");
+      answerB.classList.remove("selected");
+      if (answer === "a") answerA.classList.add("selected");
+      if (answer === "b") answerB.classList.add("selected");
+      nextBtn.style.display = "inline-block";
+    }
+
+    function showResult() {
+      resultEl.textContent = `Ton score est ${score} / ${quizData.length}`;
+      nextBtn.style.display = "none";
+      answerA.style.display = "none";
+      answerB.style.display = "none";
+      questionEl.style.display = "none";
+    }
+
+    answerA.addEventListener("click", () => selectAnswer("a"));
+    answerB.addEventListener("click", () => selectAnswer("b"));
+
+    nextBtn.addEventListener("click", () => {
+      if (!selectedAnswer) return; // Sécurité
+      if (selectedAnswer === quizData[currentQuestion].correct) {
+        score++;
+      }
+      currentQuestion++;
+      if (currentQuestion < quizData.length) {
+        loadQuestion();
+      } else {
+        showResult();
+      }
+    });
+
+    loadQuestion();
   </script>
 </body>
 </html>
