@@ -1,279 +1,216 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Quiz Divisibilité Minimaliste Suisse</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quiz divisibilité</title>
 
-<style>
-  /* Placeholder font-faces - à remplacer avec les vraies polices */
-  @font-face {
-    font-family: 'Androgy Demo';
-    src: url('fonts/AndrogyDemo-Regular.woff2') format('woff2'),
-         url('fonts/AndrogyDemo-Regular.woff') format('woff');
-    font-weight: 400;
-    font-style: normal;
-  }
-  @font-face {
-    font-family: 'Mabry Pro';
-    src: url('fonts/MabryPro-Regular.woff2') format('woff2'),
-         url('fonts/MabryPro-Regular.woff') format('woff');
-    font-weight: 400;
-    font-style: normal;
-  }
+  <!-- Fonts (tu dois avoir les fichiers ou utiliser un service de fonts) -->
+  <style>
+    @font-face {
+      font-family: 'Androgy Demo';
+      src: url('AndrogyDemo-Regular.woff2') format('woff2');
+    }
 
-  /* Reset */
-  *, *::before, *::after {
-    box-sizing: border-box;
-  }
-  body, html {
-    margin: 0; padding: 0; height: 100%;
-    background: #FFF6FB; /* Rose pâle */
-    font-family: 'Mabry Pro', sans-serif;
-    color: #3B3B3B;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+    @font-face {
+      font-family: 'Mabry Pro';
+      src: url('MabryPro-Regular.woff2') format('woff2');
+    }
 
-  main#quiz {
-    background: white;
-    max-width: 480px;
-    width: 100%;
-    padding: 48px 36px;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(213,124,192,0.2); /* Rose vif clair */
-    display: flex;
-    flex-direction: column;
-    gap: 36px;
-    text-align: center;
-  }
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #FFF6FB;
+      font-family: 'Mabry Pro', sans-serif;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
 
-  /* Titre avec Androgy Demo, capitaliser seulement la première lettre */
-  h1 {
-    font-family: 'Androgy Demo', sans-serif;
-    font-weight: 400;
-    font-size: 3rem;
-    margin: 0;
-    line-height: 1.1;
-    color: #D57CC0;
-    text-transform: lowercase;
-  }
-  h1::first-letter {
-    text-transform: uppercase;
-  }
+    main {
+      background-color: #fff;
+      padding: 40px 30px;
+      border-radius: 24px;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 8px 32px rgba(213, 124, 192, 0.2);
+      text-align: center;
+    }
 
-  /* Question style */
-  .question {
-    font-family: 'Androgy Demo', sans-serif;
-    font-weight: 400;
-    font-size: 1.7rem;
-    line-height: 1.3;
-    margin: 0;
-    color: #6A4A77;
-    text-transform: lowercase;
-  }
-  .question::first-letter {
-    text-transform: uppercase;
-  }
+    h1 {
+      font-family: 'Androgy Demo', sans-serif;
+      font-size: 2.5rem;
+      color: #D57CC0;
+      margin-bottom: 30px;
+      text-transform: lowercase;
+    }
 
-  /* Boutons réponses */
-  .answers {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-    margin-top: 12px;
-  }
+    h1::first-letter {
+      text-transform: uppercase;
+    }
 
-  button.answer-btn {
-    font-family: 'Mabry Pro', sans-serif;
-    font-weight: 400;
-    font-size: 1.15rem;
-    padding: 18px 28px;
-    background-color: #F4D7F7; /* rose pastel */
-    border: none;
-    border-radius: 14px;
-    cursor: pointer;
-    text-align: left;
-    color: #3B3B3B;
-    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
-    letter-spacing: 0.02em;
-    line-height: 1.4;
-    user-select: none;
-  }
-  button.answer-btn:hover,
-  button.answer-btn.selected {
-    background-color: #D57CC0;
-    color: white;
-    box-shadow: 0 0 0 2px #AD4FA0;
-  }
+    .question {
+      font-family: 'Androgy Demo', sans-serif;
+      font-size: 1.5rem;
+      color: #6A4A77;
+      margin-bottom: 20px;
+      text-transform: lowercase;
+    }
 
-  /* Bouton suivant */
-  #nextBtn {
-    align-self: center;
-    font-family: 'Androgy Demo', sans-serif;
-    font-weight: 400;
-    font-size: 1.5rem;
-    padding: 14px 48px;
-    background-color: #D57CC0;
-    color: white;
-    border: none;
-    border-radius: 24px;
-    cursor: pointer;
-    letter-spacing: 0.06em;
-    transition: background-color 0.3s ease;
-    display: none;
-    margin-top: 20px;
-  }
-  #nextBtn:hover {
-    background-color: #AD4FA0;
-  }
+    .question::first-letter {
+      text-transform: uppercase;
+    }
 
-  /* Résultat */
-  #result {
-    font-family: 'Androgy Demo', sans-serif;
-    font-weight: 400;
-    font-size: 1.8rem;
-    color: #6A4A77;
-    margin-top: 28px;
-  }
+    .answers {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 30px;
+    }
 
-</style>
+    .answer-btn {
+      background-color: #FADDF5;
+      border: none;
+      padding: 16px 20px;
+      font-size: 1rem;
+      border-radius: 14px;
+      text-align: left;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .answer-btn:hover,
+    .answer-btn.selected {
+      background-color: #D57CC0;
+      color: white;
+    }
+
+    #nextBtn {
+      background-color: #D57CC0;
+      color: white;
+      border: none;
+      padding: 14px 30px;
+      font-size: 1.1rem;
+      border-radius: 24px;
+      cursor: pointer;
+      display: none;
+      font-family: 'Androgy Demo', sans-serif;
+    }
+
+    #result {
+      margin-top: 30px;
+      font-size: 1.4rem;
+      color: #6A4A77;
+      font-family: 'Androgy Demo', sans-serif;
+    }
+  </style>
 </head>
 <body>
-  <main id="quiz" role="main" aria-label="Quiz sur la divisibilité">
-    <h1>Quiz : divisibilite</h1>
-    <section aria-live="polite">
-      <p class="question" id="question"></p>
-      <div class="answers">
-        <button class="answer-btn" id="answerA" aria-pressed="false"></button>
-        <button class="answer-btn" id="answerB" aria-pressed="false"></button>
-      </div>
-      <button id="nextBtn" aria-disabled="true">Suivant</button>
-      <div id="result" role="alert" aria-live="assertive"></div>
-    </section>
+  <main>
+    <h1>Quiz sur la divisibilite</h1>
+    <p class="question" id="question"></p>
+    <div class="answers">
+      <button class="answer-btn" id="btnA"></button>
+      <button class="answer-btn" id="btnB"></button>
+    </div>
+    <button id="nextBtn">Suivant</button>
+    <div id="result"></div>
   </main>
 
-<script>
-  const quizData = [
-    {
-      question: "un nombre est divisible par 2",
-      a: "si son chiffre des unités est pair (0, 2, 4, 6 ou 8)",
-      b: "si son chiffre des unités est impair (1, 3, 5, 7, 9)",
-      correct: "a"
-    },
-    {
-      question: "un nombre entier est divisible par 3",
-      a: "si la somme de ses chiffres est divisible par 3",
-      b: "si la somme de ses chiffres est divisible par 6",
-      correct: "a"
-    },
-    {
-      question: "un nombre entier est divisible par 4",
-      a: "si le nombre formé par son chiffre des dizaines et son chiffre des unités est divisible par 4",
-      b: "si la somme de ses chiffres est divisible par 4",
-      correct: "a"
-    },
-    {
-      question: "un nombre entier est divisible par 5",
-      a: "si son chiffre des unités est 0 ou 5",
-      b: "si son chiffre des dizaines est 0 ou 5",
-      correct: "a"
-    },
-    {
-      question: "un nombre entier est divisible par 9",
-      a: "si la somme de ses chiffres est divisible par 9",
-      b: "si le nombre formé par ses deux derniers chiffres est divisible par 9",
-      correct: "a"
-    },
-    {
-      question: "un nombre entier est divisible par 10",
-      a: "si son chiffre des unités est 0",
-      b: "si son chiffre des dizaines est 0",
-      correct: "a"
-    }
-  ];
+  <script>
+    const quiz = [
+      {
+        question: "Un nombre est divisible par 2",
+        a: "si son chiffre des unités est pair (0, 2, 4, 6 ou 8)",
+        b: "si son chiffre des unités est impair (1, 3, 5, 7, 9)",
+        correct: "a"
+      },
+      {
+        question: "Un nombre entier est divisible par 3",
+        a: "si la somme de ses chiffres est divisible par 3",
+        b: "si la somme de ses chiffres est divisible par 6",
+        correct: "a"
+      },
+      {
+        question: "Un nombre entier est divisible par 4",
+        a: "si le nombre formé par son chiffre des dizaines et des unités est divisible par 4",
+        b: "si la somme de ses chiffres est divisible par 4",
+        correct: "a"
+      },
+      {
+        question: "Un nombre entier est divisible par 5",
+        a: "si son chiffre des unités est 0 ou 5",
+        b: "si son chiffre des dizaines est 0 ou 5",
+        correct: "a"
+      },
+      {
+        question: "Un nombre entier est divisible par 9",
+        a: "si la somme de ses chiffres est divisible par 9",
+        b: "si le nombre formé par ses deux derniers chiffres est divisible par 9",
+        correct: "a"
+      },
+      {
+        question: "Un nombre entier est divisible par 10",
+        a: "si son chiffre des unités est 0",
+        b: "si son chiffre des dizaines est 0",
+        correct: "a"
+      }
+    ];
 
-  let currentQuestion = 0;
-  let score = 0;
-  let selectedAnswer = null;
+    let current = 0;
+    let score = 0;
+    let selected = null;
 
-  const questionEl = document.getElementById("question");
-  const answerA = document.getElementById("answerA");
-  const answerB = document.getElementById("answerB");
-  const nextBtn = document.getElementById("nextBtn");
-  const resultEl = document.getElementById("result");
+    const questionEl = document.getElementById("question");
+    const btnA = document.getElementById("btnA");
+    const btnB = document.getElementById("btnB");
+    const nextBtn = document.getElementById("nextBtn");
+    const resultEl = document.getElementById("result");
 
-  function loadQuestion() {
-    selectedAnswer = null;
-    nextBtn.style.display = "none";
-    nextBtn.setAttribute('aria-disabled', 'true');
-    resultEl.textContent = "";
-    questionEl.style.display = 'block';
-    answerA.style.display = 'block';
-    answerB.style.display = 'block';
-
-    const q = quizData[currentQuestion];
-    questionEl.textContent = q.question;
-    answerA.textContent = "a) " + q.a;
-    answerB.textContent = "b) " + q.b;
-
-    answerA.classList.remove("selected");
-    answerB.classList.remove("selected");
-    answerA.setAttribute('aria-pressed', 'false');
-    answerB.setAttribute('aria-pressed', 'false');
-
-    answerA.disabled = false;
-    answerB.disabled = false;
-  }
-
-  function selectAnswer(answer) {
-    selectedAnswer = answer;
-    answerA.classList.remove("selected");
-    answerB.classList.remove("selected");
-    if (answer === "a") {
-      answerA.classList.add("selected");
-      answerA.setAttribute('aria-pressed', 'true');
-      answerB.setAttribute('aria-pressed', 'false');
-    }
-    if (answer === "b") {
-      answerB.classList.add("selected");
-      answerB.setAttribute('aria-pressed', 'true');
-      answerA.setAttribute('aria-pressed', 'false');
-    }
-    nextBtn.style.display = "inline-block";
-    nextBtn.setAttribute('aria-disabled', 'false');
-  }
-
-  function showResult() {
-    questionEl.style.display = 'none';
-    answerA.style.display = 'none';
-    answerB.style.display = 'none';
-    nextBtn.style.display = 'none';
-
-    resultEl.textContent = `Ton score est ${score} / ${quizData.length}`;
-  }
-
-  answerA.addEventListener("click", () => selectAnswer("a"));
-  answerB.addEventListener("click", () => selectAnswer("b"));
-
-  nextBtn.addEventListener("click", () => {
-    if (!selectedAnswer) return;
-
-    if (selectedAnswer === quizData[currentQuestion].correct) {
-      score++;
+    function showQuestion() {
+      const q = quiz[current];
+      questionEl.textContent = q.question;
+      btnA.textContent = "a) " + q.a;
+      btnB.textContent = "b) " + q.b;
+      btnA.classList.remove("selected");
+      btnB.classList.remove("selected");
+      nextBtn.style.display = "none";
+      selected = null;
     }
 
-    currentQuestion++;
-
-    if (currentQuestion < quizData.length) {
-      loadQuestion();
-    } else {
-      showResult();
+    function selectAnswer(choice) {
+      selected = choice;
+      btnA.classList.remove("selected");
+      btnB.classList.remove("selected");
+      if (choice === "a") btnA.classList.add("selected");
+      if (choice === "b") btnB.classList.add("selected");
+      nextBtn.style.display = "inline-block";
     }
-  });
 
-  loadQuestion();
-</script>
+    function showResult() {
+      questionEl.style.display = "none";
+      btnA.style.display = "none";
+      btnB.style.display = "none";
+      nextBtn.style.display = "none";
+      resultEl.textContent = `Ton score est ${score} / ${quiz.length}`;
+    }
+
+    btnA.addEventListener("click", () => selectAnswer("a"));
+    btnB.addEventListener("click", () => selectAnswer("b"));
+
+    nextBtn.addEventListener("click", () => {
+      if (selected === quiz[current].correct) score++;
+      current++;
+      if (current < quiz.length) {
+        showQuestion();
+      } else {
+        showResult();
+      }
+    });
+
+    showQuestion();
+  </script>
 </body>
 </html>
