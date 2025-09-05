@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quiz divisibilité</title>
+  <title>Quiz Divisibilité</title>
 
-  <!-- Fonts (tu dois avoir les fichiers ou utiliser un service de fonts) -->
+  <!-- Fonts (remplacer par tes fichiers si besoin) -->
   <style>
     @font-face {
       font-family: 'Androgy Demo';
@@ -17,46 +17,63 @@
       src: url('MabryPro-Regular.woff2') format('woff2');
     }
 
-    body {
+    /* Reset + base */
+    * {
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
       background-color: #FFF6FB;
       font-family: 'Mabry Pro', sans-serif;
-      color: #333;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      color: #3B3B3B;
       height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
     }
 
     main {
-      background-color: #fff;
-      padding: 40px 30px;
+      background-color: #ffffff;
       border-radius: 24px;
       max-width: 500px;
       width: 100%;
-      box-shadow: 0 8px 32px rgba(213, 124, 192, 0.2);
+      height: 600px;
+      box-shadow: 0 12px 40px rgba(213, 124, 192, 0.2);
+      padding: 40px 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
       text-align: center;
     }
 
     h1 {
       font-family: 'Androgy Demo', sans-serif;
-      font-size: 2.5rem;
+      font-size: 2.6rem;
       color: #D57CC0;
-      margin-bottom: 30px;
       text-transform: lowercase;
+      margin-bottom: 20px;
     }
 
     h1::first-letter {
       text-transform: uppercase;
     }
 
+    .content {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
     .question {
       font-family: 'Androgy Demo', sans-serif;
       font-size: 1.5rem;
       color: #6A4A77;
-      margin-bottom: 20px;
       text-transform: lowercase;
+      margin-bottom: 20px;
     }
 
     .question::first-letter {
@@ -67,7 +84,6 @@
       display: flex;
       flex-direction: column;
       gap: 16px;
-      margin-bottom: 30px;
     }
 
     .answer-btn {
@@ -78,7 +94,7 @@
       border-radius: 14px;
       text-align: left;
       cursor: pointer;
-      transition: 0.3s;
+      transition: all 0.3s ease;
     }
 
     .answer-btn:hover,
@@ -95,26 +111,38 @@
       font-size: 1.1rem;
       border-radius: 24px;
       cursor: pointer;
-      display: none;
       font-family: 'Androgy Demo', sans-serif;
+      display: none;
+      margin: 0 auto;
     }
 
     #result {
-      margin-top: 30px;
+      font-family: 'Androgy Demo', sans-serif;
       font-size: 1.4rem;
       color: #6A4A77;
-      font-family: 'Androgy Demo', sans-serif;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 540px) {
+      main {
+        height: auto;
+        padding: 30px 20px;
+      }
     }
   </style>
 </head>
 <body>
   <main>
     <h1>Quiz sur la divisibilite</h1>
-    <p class="question" id="question"></p>
-    <div class="answers">
-      <button class="answer-btn" id="btnA"></button>
-      <button class="answer-btn" id="btnB"></button>
+
+    <div class="content">
+      <p class="question" id="question"></p>
+      <div class="answers">
+        <button class="answer-btn" id="btnA"></button>
+        <button class="answer-btn" id="btnB"></button>
+      </div>
     </div>
+
     <button id="nextBtn">Suivant</button>
     <div id="result"></div>
   </main>
@@ -136,7 +164,7 @@
       {
         question: "Un nombre entier est divisible par 4",
         a: "si le nombre formé par son chiffre des dizaines et des unités est divisible par 4",
-        b: "si la somme de ses chiffres est divisible par 4",
+        b: "si la somme de ses chiffre est divisible par 4",
         correct: "a"
       },
       {
@@ -148,13 +176,13 @@
       {
         question: "Un nombre entier est divisible par 9",
         a: "si la somme de ses chiffres est divisible par 9",
-        b: "si le nombre formé par ses deux derniers chiffres est divisible par 9",
+        b: "si le nombre formé par ses deux dernier chiffre est divisible par 9",
         correct: "a"
       },
       {
         question: "Un nombre entier est divisible par 10",
         a: "si son chiffre des unités est 0",
-        b: "si son chiffre des dizaines est 0",
+        b: "si son chiffre des dizaine est 0",
         correct: "a"
       }
     ];
@@ -176,6 +204,10 @@
       btnB.textContent = "b) " + q.b;
       btnA.classList.remove("selected");
       btnB.classList.remove("selected");
+      btnA.style.display = "block";
+      btnB.style.display = "block";
+      questionEl.style.display = "block";
+      resultEl.textContent = "";
       nextBtn.style.display = "none";
       selected = null;
     }
