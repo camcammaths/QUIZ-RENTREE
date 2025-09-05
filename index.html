@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Transformations géométriques</title>
+<title>Associer figures 3D et formules</title>
 
 <style>
   @font-face {
@@ -15,11 +15,9 @@
     src: url('MabryPro-Regular.woff2') format('woff2');
   }
 
-  * {
-    box-sizing: border-box;
-  }
   body {
-    margin:0; padding:40px 20px;
+    margin: 0;
+    padding: 40px 20px;
     font-family: 'Mabry Pro', sans-serif;
     background-color: #FFF6FB;
     color: #4A3F55;
@@ -28,220 +26,183 @@
     align-items: center;
     min-height: 100vh;
   }
+
   h1 {
     font-family: 'Androgy Demo', sans-serif;
     font-size: 2.8rem;
     color: #D57CC0;
     text-transform: lowercase;
-    margin-bottom: 8px;
+    margin-bottom: 40px;
+    user-select: none;
   }
   h1::first-letter {
     text-transform: uppercase;
   }
-  p.enonce {
-    max-width: 700px;
-    font-size: 1.15rem;
-    margin-bottom: 30px;
-    color: #7B6589;
-    text-align: center;
-    line-height: 1.4;
-  }
-  #canvas {
-    border: 2px solid #D57CC0;
-    border-radius: 12px;
-    background: white;
-    cursor: crosshair;
-    user-select: none;
-    box-shadow: 0 0 15px rgba(213,124,192,0.3);
-  }
-  .buttons {
-    margin-top: 25px;
+
+  .container {
     display: flex;
     flex-wrap: wrap;
-    gap: 16px;
+    max-width: 1200px;
+    gap: 40px;
     justify-content: center;
   }
-  button {
-    font-family: 'Mabry Pro', sans-serif;
-    background: #FADDF5;
-    border: none;
-    border-radius: 16px;
-    padding: 12px 22px;
-    font-size: 1rem;
-    color: #7B6589;
-    cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
-  }
-  button:hover {
-    background: #D57CC0;
-    color: white;
-  }
-  /* Tooltip for instructions */
-  .tooltip {
-    font-size: 0.9rem;
-    color: #A289B5;
-    margin-top: 10px;
+
+  .card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(213,124,192,0.3);
+    width: 200px;
+    min-height: 250px;
+    padding: 20px;
+    cursor: grab;
+    user-select: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     text-align: center;
-    max-width: 700px;
+    transition: box-shadow 0.3s ease;
+  }
+
+  .card.dragging {
+    opacity: 0.6;
+    cursor: grabbing;
+    box-shadow: 0 8px 24px rgba(213,124,192,0.6);
+  }
+
+  .card.correct {
+    box-shadow: 0 0 25px 4px #87d37c;
+    cursor: default;
+  }
+
+  .title {
+    font-family: 'Androgy Demo', sans-serif;
+    font-size: 1.3rem;
+    color: #D57CC0;
+    margin-bottom: 12px;
+    text-transform: lowercase;
+  }
+  .title::first-letter {
+    text-transform: uppercase;
+  }
+
+  .svg-icon {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 18px;
+    fill: #D57CC0;
+  }
+
+  .formula-text {
+    font-size: 1.1rem;
+    color: #7B6589;
+    line-height: 1.3;
+  }
+
+  /* Dropzone effect */
+  .dropzone {
+    border: 2px dashed #D57CC0;
+    border-radius: 20px;
+    padding: 8px;
+    margin-top: auto;
+    width: 100%;
+    height: 40px;
+    transition: background-color 0.3s ease;
+  }
+  .dropzone.over {
+    background-color: #FADDF5;
+  }
+
+  /* Responsive */
+  @media (max-width: 700px) {
+    .container {
+      gap: 25px;
+    }
+    .card {
+      width: 150px;
+      min-height: 220px;
+    }
+    .svg-icon {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 14px;
+    }
   }
 </style>
 </head>
 <body>
 
-<h1>Transformations du triangle</h1>
-<p class="enonce">
-  Dans la même direction artistique.<br>
-  Dessiner un triangle ABC sur un quadrillage avec un point O.<br><br>
-  <strong>Instructions :</strong> Clique sur le quadrillage pour placer des points et tracer le triangle.<br>
-  Le point O est fixe (centre des transformations).<br><br>
-  <strong>Questions :</strong><br>
-  1) Tracer l’image du triangle par la rotation de centre O d’angle 90°.<br>
-  2) Tracer l’image du triangle par la rotation de centre O d’angle 180°.<br>
-  3) Construire l’image du triangle par l’homothétie de centre O et de rapport 2.<br>
-  4) Construire l’image du triangle par l’homothétie de centre O et de rapport 4.
-</p>
+<h1>Associer figures 3D et formules</h1>
 
-<canvas id="canvas" width="600" height="600" aria-label="Quadrillage et triangle ABC"></canvas>
-
-<div class="buttons">
-  <button onclick="resetCanvas()">Réinitialiser</button>
-  <button onclick="rotateTriangle(90)">Rotation 90°</button>
-  <button onclick="rotateTriangle(180)">Rotation 180°</button>
-  <button onclick="homothety(2)">Homothétie rapport 2</button>
-  <button onclick="homothety(4)">Homothétie rapport 4</button>
+<div class="container" id="figures">
+  <!-- Cartes Figures 3D -->
 </div>
 
-<p class="tooltip">Cliquez sur le canevas pour placer 3 points (A, B, C). Après avoir placé le triangle, utilisez les boutons pour appliquer les transformations.</p>
+<div class="container" id="formulas" style="margin-top: 60px;">
+  <!-- Cartes Formules -->
+</div>
 
 <script>
-  const canvas = document.getElementById('canvas');
-  const ctx = canvas.getContext('2d');
+  // Données
+  const figuresData = [
+    { id: 'sphere', name: 'Sphère', svg: `<svg class="svg-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="28" stroke="#D57CC0" stroke-width="3" fill="none"/><circle cx="20" cy="20" r="4" fill="#D57CC0" opacity="0.4"/></svg>` },
+    { id: 'cube', name: 'Cube', svg: `<svg class="svg-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><rect x="14" y="14" width="36" height="36" stroke="#D57CC0" stroke-width="3" fill="none"/><line x1="14" y1="14" x2="32" y2="4" stroke="#D57CC0" stroke-width="3"/><line x1="50" y1="14" x2="68" y2="4" stroke="#D57CC0" stroke-width="3"/><line x1="50" y1="50" x2="68" y2="40" stroke="#D57CC0" stroke-width="3"/><line x1="32" y1="40" x2="50" y2="50" stroke="#D57CC0" stroke-width="3"/></svg>` },
+    { id: 'parallelepipede', name: 'Parallélépipède rectangle', svg: `<svg class="svg-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><rect x="18" y="14" width="30" height="36" stroke="#D57CC0" stroke-width="3" fill="none"/><line x1="18" y1="14" x2="10" y2="6" stroke="#D57CC0" stroke-width="3"/><line x1="48" y1="14" x2="56" y2="6" stroke="#D57CC0" stroke-width="3"/><line x1="48" y1="50" x2="56" y2="42" stroke="#D57CC0" stroke-width="3"/><line x1="10" y1="6" x2="10" y2="42" stroke="#D57CC0" stroke-width="3"/><line x1="56" y1="6" x2="56" y2="42" stroke="#D57CC0" stroke-width="3"/></svg>` },
+    { id: 'cone', name: 'Cône', svg: `<svg class="svg-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><ellipse cx="32" cy="54" rx="20" ry="8" stroke="#D57CC0" stroke-width="3" fill="none"/><path d="M12 54 L32 6 L52 54 Z" stroke="#D57CC0" stroke-width="3" fill="none"/></svg>` },
+    { id: 'cylindre', name: 'Cylindre', svg: `<svg class="svg-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><ellipse cx="32" cy="14" rx="20" ry="8" stroke="#D57CC0" stroke-width="3" fill="none"/><rect x="12" y="14" width="40" height="36" stroke="#D57CC0" stroke-width="3" fill="none"/><ellipse cx="32" cy="50" rx="20" ry="8" stroke="#D57CC0" stroke-width="3" fill="none"/></svg>` },
+    { id: 'pyramide', name: 'Pyramide', svg: `<svg class="svg-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><polygon points="32,8 12,54 52,54" stroke="#D57CC0" stroke-width="3" fill="none"/><line x1="32" y1="8" x2="32" y2="54" stroke="#D57CC0" stroke-width="3"/></svg>` }
+  ];
 
-  const gridSize = 30;
-  const width = canvas.width;
-  const height = canvas.height;
+  const formulasData = [
+    { id: 'sphere', formula: 'V = (4/3)πr³' },
+    { id: 'cube', formula: 'V = a³' },
+    { id: 'parallelepipede', formula: 'V = L × l × h' },
+    { id: 'cone', formula: 'V = (1/3)πr²h' },
+    { id: 'cylindre', formula: 'V = πr²h' },
+    { id: 'pyramide', formula: 'V = (1/3)Base × Hauteur' }
+  ];
 
-  // Point O fixe au centre
-  const O = {x: width / 2, y: height / 2};
+  const figuresContainer = document.getElementById('figures');
+  const formulasContainer = document.getElementById('formulas');
 
-  let points = []; // Stockera A, B, C
-
-  // Dessine le quadrillage
-  function drawGrid() {
-    ctx.clearRect(0, 0, width, height);
-    ctx.strokeStyle = '#EEE';
-    ctx.lineWidth = 1;
-
-    // Vertical lines
-    for(let x=0; x<=width; x+=gridSize) {
-      ctx.beginPath();
-      ctx.moveTo(x, 0);
-      ctx.lineTo(x, height);
-      ctx.stroke();
+  // Mélanger un tableau (Fisher-Yates)
+  function shuffle(array) {
+    let currentIndex = array.length, randomIndex;
+    while(currentIndex !== 0) {
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+      [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
     }
-    // Horizontal lines
-    for(let y=0; y<=height; y+=gridSize) {
-      ctx.beginPath();
-      ctx.moveTo(0, y);
-      ctx.lineTo(width, y);
-      ctx.stroke();
-    }
+    return array;
   }
 
-  // Dessine le point O
-  function drawPointO() {
-    ctx.fillStyle = '#D57CC0';
-    ctx.beginPath();
-    ctx.arc(O.x, O.y, 6, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = '#7B6589';
-    ctx.font = '16px "Mabry Pro", sans-serif';
-    ctx.fillText('O', O.x + 8, O.y - 8);
-  }
-
-  // Dessine les points A, B, C
-  function drawPoints() {
-    const labels = ['A', 'B', 'C'];
-    points.forEach((p,i) => {
-      ctx.fillStyle = '#D57CC0';
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, 7, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#7B6589';
-      ctx.font = '18px "Mabry Pro", sans-serif';
-      ctx.fillText(labels[i], p.x + 10, p.y - 10);
+  // Créer carte figure
+  function createFigureCard(fig) {
+    const card = document.createElement('div');
+    card.className = 'card dropzone';
+    card.dataset.id = fig.id;
+    card.innerHTML = `
+      ${fig.svg}
+      <div class="title">${fig.name}</div>
+      <div class="drop-text">Déposez la formule ici</div>
+    `;
+    // Autoriser drop
+    card.addEventListener('dragover', e => {
+      e.preventDefault();
+      card.classList.add('over');
     });
-  }
-
-  // Dessine le triangle
-  function drawTriangle(pts, color='rgba(213, 124, 192, 0.3)') {
-    if(pts.length !== 3) return;
-    ctx.fillStyle = color;
-    ctx.strokeStyle = '#D57CC0';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(pts[0].x, pts[0].y);
-    ctx.lineTo(pts[1].x, pts[1].y);
-    ctx.lineTo(pts[2].x, pts[2].y);
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
-  }
-
-  // Rendu complet
-  function render() {
-    drawGrid();
-    drawPointO();
-    drawTriangle(points);
-    drawPoints();
-  }
-
-  // Gère les clics pour ajouter points A,B,C
-  canvas.addEventListener('click', e => {
-    if(points.length >= 3) return;
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    points.push({x, y});
-    render();
-  });
-
-  // Réinitialiser le canvas et les points
-  function resetCanvas() {
-    points = [];
-    render();
-  }
-
-  // Transformations
-
-  // Rotation autour de O d'angle degrés
-  function rotateTriangle(angleDeg) {
-    if(points.length !== 3) return alert('Placez les 3 points du triangle avant la transformation.');
-    const angleRad = angleDeg * Math.PI / 180;
-    points = points.map(p => {
-      const dx = p.x - O.x;
-      const dy = p.y - O.y;
-      return {
-        x: O.x + dx * Math.cos(angleRad) - dy * Math.sin(angleRad),
-        y: O.y + dx * Math.sin(angleRad) + dy * Math.cos(angleRad)
-      };
+    card.addEventListener('dragleave', e => {
+      card.classList.remove('over');
     });
-    render();
-  }
-
-  // Homothétie autour de O avec un rapport
-  function homothety(k) {
-    if(points.length !== 3) return alert('Placez les 3 points du triangle avant la transformation.');
-    points = points.map(p => ({
-      x: O.x + (p.x - O.x) * k,
-      y: O.y + (p.y - O.y) * k
-    }));
-    render();
-  }
-
-  render();
-</script>
-
-</body>
-</html>
+    card.addEventListener('drop', e => {
+      e.preventDefault();
+      card.classList.remove('over');
+      const formulaId = e.dataTransfer.getData('text/plain');
+      if(formulaId === card.dataset.id) {
+        // Trouvé la bonne association
+        const formulaCard = document.querySelector(`.formula-card[data-id="${formulaId}"]`);
+        formulaCard.setAttribute('draggable', 'false');
+        formulaCard.classList.add('correct');
+        card.classList.add('correct');
+        // Colle la formule dans la carte figure
+        card.querySelector('.drop-text').textContent = formulaCard
+  
