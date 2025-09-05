@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Association Divisibilité</title>
+
+  <style>
+    @font-face {
+      font-family: 'Androgy Demo';
+      src: url('AndrogyDemo-Regular.woff2') format('woff2');
+    }
+
+    @font-face {
+      font-family: 'Mabry Pro';
+      src: url('MabryPro-Regular.woff2') format('woff2');
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #FFF6FB;
+      font-family: 'Mabry Pro', sans-serif;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    h1 {
+      font-family: 'Androgy Demo', sans-serif;
+      font-size: 2.5rem;
+      color: #D57CC0;
+      text-transform: lowercase;
+      margin-bottom: 40px;
+    }
+
+    h1::first-letter {
+      text-transform: uppercase;
+    }
+
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 40px;
+      max-width: 1000px;
+      width: 100%;
+    }
+
+    .column {
+      flex: 1 1 300px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .card {
+      background-color: #FADDF5;
+      border-radius: 16px;
+      padding: 20px;
+      cursor: grab;
+      font-size: 1rem;
+      transition: background-color 0.3s ease;
+      border: 2px solid transparent;
+      user-select: none;
+    }
+
+    .card.dragging {
+      opacity: 0.5;
+    }
+
+    .dropzone {
+      background-color: #ffffff;
+      border: 2px dashed #D57CC0;
+      border-radius: 16px;
+      padding: 20px;
+      min-height: 60px;
+      transition: border-color 0.3s;
+    }
+
+    .dropzone.hovered {
+      border-color: #A94CA5;
+    }
+
+    .correct {
+      border: 2px solid #62C370;
+      background-color: #e4fce9;
+    }
+
+    .incorrect {
+      border: 2px solid #E55454;
+      background-color: #fde8e8;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Associer les cartes</h1>
+
+  <div class="container">
+    <!-- Cartes à glisser -->
+    <div class="column" id="cards">
+      <div class="card" draggable="true" id="1">1) Un nombre est divisible par 2</div>
+      <div class="card" draggable="true" id="2">2) Un nombre entier est divisible par 3</div>
+      <div class="card" draggable="true" id="3">3) Un nombre entier est divisible par 4</div>
+      <div class="card" draggable="true" id="4">4) Un nombre entier est divisible par 5</div>
+      <div class="card" draggable="true" id="5">5) Un nombre entier est divisible par 9</div>
+      <div class="card" draggable="true" id="6">6) Un nombre entier est divisible par 10</div>
+    </div>
+
+    <!-- Zones où déposer -->
+    <div class="column" id="dropzones">
+      <div class="dropzone" data-match="1">A) Si son chiffre des unités est pair (0, 2, 4, 6 ou 8)</div>
+      <div class="dropzone" data-match="2">B) Si la somme de ses chiffres est divisible par 3</div>
+      <div class="dropzone" data-match="3">C) Si le nombre formé par son chiffre des dizaines et son chiffre des unités est divisible par 4</div>
+      <div class="dropzone" data-match="4">D) Si son chiffre des unités est 0 ou 5</div>
+      <div class="dropzone" data-match="5">E) Si la somme de ses chiffres est divisible par 9</div>
+      <div class="dropzone" data-match="6">F) Si son chiffre des unités est 0</div>
+    </div>
+  </div>
+
+  <script>
+    const cards = document.querySelectorAll('.card');
+    const dropzones = document.querySelectorAll('.dropzone');
+
+    let draggedCard = null;
+
+    cards.forEach(card => {
+      card.addEventListener('dragstart', () => {
+        draggedCard = card;
+        card.classList.add('dragging');
+      });
+
+      card.addEventListener('dragend', () => {
+        draggedCard = null;
+        card.classList.remove('dragging');
+      });
+    });
+
+    dropzones.forEach(zone => {
+      zone.addEventListener('dragover', e => {
+        e.preventDefault();
+        zone.classList.add('hovered');
+      });
+
+      zone.addEventListener('dragleave', () => {
+        zone.classList.remove('hovered');
+      });
+
+      zone.addEventListener('drop', () => {
+        zone.classList.remove('hovered');
+
+        if (!draggedCard) return;
+
+        const correctMatch = zone.getAttribute('data-match') === draggedCard.id;
+
+        if (correctMatch) {
+          zone.appendChild(draggedCard);
+          zone.classList.add('correct');
+          zone.classList.remove('incorrect');
+          draggedCard.setAttribute('draggable', 'false');
+          draggedCard.style.cursor = 'default';
+        } else {
+          zone.classList.add('incorrect');
+          setTimeout(() => {
+            zone.classList.remove('incorrect');
+          }, 1000);
+        }
+      });
+    });
+  </script>
+</body>
+</html>
