@@ -1,203 +1,247 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Transformations géométriques</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Transformations géométriques</title>
 
-  <!-- Fonts (remplacer les URL par les tiennes si besoin) -->
-  <style>
-    @font-face {
-      font-family: 'Androgy Demo';
-      src: url('AndrogyDemo-Regular.woff2') format('woff2');
-    }
+<style>
+  @font-face {
+    font-family: 'Androgy Demo';
+    src: url('AndrogyDemo-Regular.woff2') format('woff2');
+  }
+  @font-face {
+    font-family: 'Mabry Pro';
+    src: url('MabryPro-Regular.woff2') format('woff2');
+  }
 
-    @font-face {
-      font-family: 'Mabry Pro';
-      src: url('MabryPro-Regular.woff2') format('woff2');
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      background-color: #FFF6FB;
-      font-family: 'Mabry Pro', sans-serif;
-      color: #333;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      padding: 40px 20px;
-      min-height: 100vh;
-    }
-
-    h1 {
-      font-family: 'Androgy Demo', sans-serif;
-      font-size: 2.5rem;
-      color: #D57CC0;
-      text-transform: lowercase;
-      margin-bottom: 20px;
-    }
-
-    h1::first-letter {
-      text-transform: uppercase;
-    }
-
-    p {
-      font-size: 1.1rem;
-      margin-bottom: 20px;
-      color: #6A4A77;
-    }
-
-    canvas {
-      border: 2px solid #D57CC0;
-      border-radius: 12px;
-      background-color: white;
-      margin-bottom: 30px;
-    }
-
-    .buttons {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 16px;
-      justify-content: center;
-    }
-
-    button {
-      background-color: #FADDF5;
-      border: none;
-      border-radius: 16px;
-      padding: 14px 20px;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: 0.3s;
-      font-family: 'Mabry Pro', sans-serif;
-    }
-
-    button:hover {
-      background-color: #D57CC0;
-      color: white;
-    }
-
-    @media (max-width: 600px) {
-      canvas {
-        width: 100%;
-        height: auto;
-      }
-    }
-  </style>
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin:0; padding:40px 20px;
+    font-family: 'Mabry Pro', sans-serif;
+    background-color: #FFF6FB;
+    color: #4A3F55;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+  h1 {
+    font-family: 'Androgy Demo', sans-serif;
+    font-size: 2.8rem;
+    color: #D57CC0;
+    text-transform: lowercase;
+    margin-bottom: 8px;
+  }
+  h1::first-letter {
+    text-transform: uppercase;
+  }
+  p.enonce {
+    max-width: 700px;
+    font-size: 1.15rem;
+    margin-bottom: 30px;
+    color: #7B6589;
+    text-align: center;
+    line-height: 1.4;
+  }
+  #canvas {
+    border: 2px solid #D57CC0;
+    border-radius: 12px;
+    background: white;
+    cursor: crosshair;
+    user-select: none;
+    box-shadow: 0 0 15px rgba(213,124,192,0.3);
+  }
+  .buttons {
+    margin-top: 25px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: center;
+  }
+  button {
+    font-family: 'Mabry Pro', sans-serif;
+    background: #FADDF5;
+    border: none;
+    border-radius: 16px;
+    padding: 12px 22px;
+    font-size: 1rem;
+    color: #7B6589;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  button:hover {
+    background: #D57CC0;
+    color: white;
+  }
+  /* Tooltip for instructions */
+  .tooltip {
+    font-size: 0.9rem;
+    color: #A289B5;
+    margin-top: 10px;
+    text-align: center;
+    max-width: 700px;
+  }
+</style>
 </head>
 <body>
 
-  <h1>Transformations du triangle</h1>
-  <p>Trace et transforme le triangle ABC à partir du point O</p>
+<h1>Transformations du triangle</h1>
+<p class="enonce">
+  Dans la même direction artistique.<br>
+  Dessiner un triangle ABC sur un quadrillage avec un point O.<br><br>
+  <strong>Instructions :</strong> Clique sur le quadrillage pour placer des points et tracer le triangle.<br>
+  Le point O est fixe (centre des transformations).<br><br>
+  <strong>Questions :</strong><br>
+  1) Tracer l’image du triangle par la rotation de centre O d’angle 90°.<br>
+  2) Tracer l’image du triangle par la rotation de centre O d’angle 180°.<br>
+  3) Construire l’image du triangle par l’homothétie de centre O et de rapport 2.<br>
+  4) Construire l’image du triangle par l’homothétie de centre O et de rapport 4.
+</p>
 
-  <canvas id="canvas" width="500" height="500"></canvas>
+<canvas id="canvas" width="600" height="600" aria-label="Quadrillage et triangle ABC"></canvas>
 
-  <div class="buttons">
-    <button onclick="rotateTriangle(90)">Rotation 90°</button>
-    <button onclick="rotateTriangle(180)">Rotation 180°</button>
-    <button onclick="homothety(2)">Homothétie rapport 2</button>
-    <button onclick="homothety(4)">Homothétie rapport 4</button>
-    <button onclick="resetCanvas()">Réinitialiser</button>
-  </div>
+<div class="buttons">
+  <button onclick="resetCanvas()">Réinitialiser</button>
+  <button onclick="rotateTriangle(90)">Rotation 90°</button>
+  <button onclick="rotateTriangle(180)">Rotation 180°</button>
+  <button onclick="homothety(2)">Homothétie rapport 2</button>
+  <button onclick="homothety(4)">Homothétie rapport 4</button>
+</div>
 
-  <script>
-    const canvas = document.getElementById("canvas");
-    const ctx = canvas.getContext("2d");
-    const center = { x: 250, y: 250 }; // Point O
+<p class="tooltip">Cliquez sur le canevas pour placer 3 points (A, B, C). Après avoir placé le triangle, utilisez les boutons pour appliquer les transformations.</p>
 
-    const originalTriangle = [
-      { x: 200, y: 150 }, // A
-      { x: 300, y: 150 }, // B
-      { x: 250, y: 250 }  // C
-    ];
+<script>
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
 
-    let currentTriangle = [...originalTriangle];
+  const gridSize = 30;
+  const width = canvas.width;
+  const height = canvas.height;
 
-    function drawGrid() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.strokeStyle = "#eee";
-      for (let i = 0; i < canvas.width; i += 25) {
-        ctx.beginPath();
-        ctx.moveTo(i, 0);
-        ctx.lineTo(i, canvas.height);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(0, i);
-        ctx.lineTo(canvas.width, i);
-        ctx.stroke();
-      }
-    }
+  // Point O fixe au centre
+  const O = {x: width / 2, y: height / 2};
 
-    function drawPoint(x, y, label) {
-      ctx.fillStyle = "#D57CC0";
+  let points = []; // Stockera A, B, C
+
+  // Dessine le quadrillage
+  function drawGrid() {
+    ctx.clearRect(0, 0, width, height);
+    ctx.strokeStyle = '#EEE';
+    ctx.lineWidth = 1;
+
+    // Vertical lines
+    for(let x=0; x<=width; x+=gridSize) {
       ctx.beginPath();
-      ctx.arc(x, y, 4, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = "#6A4A77";
-      ctx.font = "14px Mabry Pro";
-      ctx.fillText(label, x + 6, y - 6);
-    }
-
-    function drawTriangle(triangle, color = "#D57CC0") {
-      ctx.strokeStyle = color;
-      ctx.fillStyle = "rgba(213, 124, 192, 0.1)";
-      ctx.beginPath();
-      ctx.moveTo(triangle[0].x, triangle[0].y);
-      ctx.lineTo(triangle[1].x, triangle[1].y);
-      ctx.lineTo(triangle[2].x, triangle[2].y);
-      ctx.closePath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, height);
       ctx.stroke();
+    }
+    // Horizontal lines
+    for(let y=0; y<=height; y+=gridSize) {
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(width, y);
+      ctx.stroke();
+    }
+  }
+
+  // Dessine le point O
+  function drawPointO() {
+    ctx.fillStyle = '#D57CC0';
+    ctx.beginPath();
+    ctx.arc(O.x, O.y, 6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#7B6589';
+    ctx.font = '16px "Mabry Pro", sans-serif';
+    ctx.fillText('O', O.x + 8, O.y - 8);
+  }
+
+  // Dessine les points A, B, C
+  function drawPoints() {
+    const labels = ['A', 'B', 'C'];
+    points.forEach((p,i) => {
+      ctx.fillStyle = '#D57CC0';
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 7, 0, Math.PI * 2);
       ctx.fill();
+      ctx.fillStyle = '#7B6589';
+      ctx.font = '18px "Mabry Pro", sans-serif';
+      ctx.fillText(labels[i], p.x + 10, p.y - 10);
+    });
+  }
 
-      drawPoint(triangle[0].x, triangle[0].y, "A");
-      drawPoint(triangle[1].x, triangle[1].y, "B");
-      drawPoint(triangle[2].x, triangle[2].y, "C");
-    }
+  // Dessine le triangle
+  function drawTriangle(pts, color='rgba(213, 124, 192, 0.3)') {
+    if(pts.length !== 3) return;
+    ctx.fillStyle = color;
+    ctx.strokeStyle = '#D57CC0';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x, pts[0].y);
+    ctx.lineTo(pts[1].x, pts[1].y);
+    ctx.lineTo(pts[2].x, pts[2].y);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+  }
 
-    function drawCenter() {
-      drawPoint(center.x, center.y, "O");
-    }
+  // Rendu complet
+  function render() {
+    drawGrid();
+    drawPointO();
+    drawTriangle(points);
+    drawPoints();
+  }
 
-    function resetCanvas() {
-      currentTriangle = [...originalTriangle];
-      render();
-    }
+  // Gère les clics pour ajouter points A,B,C
+  canvas.addEventListener('click', e => {
+    if(points.length >= 3) return;
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
 
-    function rotateTriangle(angle) {
-      const rad = angle * Math.PI / 180;
-      currentTriangle = currentTriangle.map(p => {
-        const dx = p.x - center.x;
-        const dy = p.y - center.y;
-        return {
-          x: center.x + dx * Math.cos(rad) - dy * Math.sin(rad),
-          y: center.y + dx * Math.sin(rad) + dy * Math.cos(rad)
-        };
-      });
-      render();
-    }
-
-    function homothety(ratio) {
-      currentTriangle = currentTriangle.map(p => ({
-        x: center.x + (p.x - center.x) * ratio,
-        y: center.y + (p.y - center.y) * ratio
-      }));
-      render();
-    }
-
-    function render() {
-      drawGrid();
-      drawTriangle(currentTriangle);
-      drawCenter();
-    }
-
+    points.push({x, y});
     render();
-  </script>
+  });
+
+  // Réinitialiser le canvas et les points
+  function resetCanvas() {
+    points = [];
+    render();
+  }
+
+  // Transformations
+
+  // Rotation autour de O d'angle degrés
+  function rotateTriangle(angleDeg) {
+    if(points.length !== 3) return alert('Placez les 3 points du triangle avant la transformation.');
+    const angleRad = angleDeg * Math.PI / 180;
+    points = points.map(p => {
+      const dx = p.x - O.x;
+      const dy = p.y - O.y;
+      return {
+        x: O.x + dx * Math.cos(angleRad) - dy * Math.sin(angleRad),
+        y: O.y + dx * Math.sin(angleRad) + dy * Math.cos(angleRad)
+      };
+    });
+    render();
+  }
+
+  // Homothétie autour de O avec un rapport
+  function homothety(k) {
+    if(points.length !== 3) return alert('Placez les 3 points du triangle avant la transformation.');
+    points = points.map(p => ({
+      x: O.x + (p.x - O.x) * k,
+      y: O.y + (p.y - O.y) * k
+    }));
+    render();
+  }
+
+  render();
+</script>
 
 </body>
 </html>
