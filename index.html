@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Quiz Divisibilité - Minimaliste Suisse Girly</title>
+<title>Quiz Divisibilité Minimaliste Suisse</title>
 
 <style>
-  /* Fonts placeholders */
+  /* Placeholder font-faces - à remplacer avec les vraies polices */
   @font-face {
     font-family: 'Androgy Demo';
     src: url('fonts/AndrogyDemo-Regular.woff2') format('woff2'),
@@ -14,7 +14,6 @@
     font-weight: 400;
     font-style: normal;
   }
-
   @font-face {
     font-family: 'Mabry Pro';
     src: url('fonts/MabryPro-Regular.woff2') format('woff2'),
@@ -28,12 +27,9 @@
     box-sizing: border-box;
   }
   body, html {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    background: #FFF7FA; /* Rose très pâle */
-    font-family: 'Mabry Pro', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-      Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    margin: 0; padding: 0; height: 100%;
+    background: #FFF6FB; /* Rose pâle */
+    font-family: 'Mabry Pro', sans-serif;
     color: #3B3B3B;
     display: flex;
     justify-content: center;
@@ -41,39 +37,47 @@
   }
 
   main#quiz {
-    background: #FFFFFF;
-    padding: 48px 36px;
+    background: white;
     max-width: 480px;
     width: 100%;
+    padding: 48px 36px;
     border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(219, 174, 214, 0.2); /* Lavande très clair */
+    box-shadow: 0 10px 30px rgba(213,124,192,0.2); /* Rose vif clair */
     display: flex;
     flex-direction: column;
-    gap: 32px;
+    gap: 36px;
     text-align: center;
   }
 
+  /* Titre avec Androgy Demo, capitaliser seulement la première lettre */
   h1 {
     font-family: 'Androgy Demo', sans-serif;
     font-weight: 400;
     font-size: 3rem;
     margin: 0;
     line-height: 1.1;
-    letter-spacing: 0.05em;
+    color: #D57CC0;
+    text-transform: lowercase;
+  }
+  h1::first-letter {
     text-transform: uppercase;
-    color: #D57CC0; /* Rose vif */
   }
 
+  /* Question style */
   .question {
     font-family: 'Androgy Demo', sans-serif;
     font-weight: 400;
     font-size: 1.7rem;
     line-height: 1.3;
     margin: 0;
-    letter-spacing: 0.03em;
-    color: #6A4A77; /* Lavande foncé */
+    color: #6A4A77;
+    text-transform: lowercase;
+  }
+  .question::first-letter {
+    text-transform: uppercase;
   }
 
+  /* Boutons réponses */
   .answers {
     display: flex;
     flex-direction: column;
@@ -85,37 +89,37 @@
     font-family: 'Mabry Pro', sans-serif;
     font-weight: 400;
     font-size: 1.15rem;
-    text-align: left;
     padding: 18px 28px;
+    background-color: #F4D7F7; /* rose pastel */
     border: none;
-    background: #F4D7F7; /* Rose pastel */
-    cursor: pointer;
     border-radius: 14px;
+    cursor: pointer;
+    text-align: left;
+    color: #3B3B3B;
+    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
     letter-spacing: 0.02em;
     line-height: 1.4;
-    color: #3B3B3B;
-    box-shadow: 0 0 0 2px transparent;
-    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+    user-select: none;
   }
-
   button.answer-btn:hover,
   button.answer-btn.selected {
-    background-color: #D57CC0; /* Rose vif */
+    background-color: #D57CC0;
     color: white;
     box-shadow: 0 0 0 2px #AD4FA0;
   }
 
+  /* Bouton suivant */
   #nextBtn {
     align-self: center;
     font-family: 'Androgy Demo', sans-serif;
     font-weight: 400;
     font-size: 1.5rem;
     padding: 14px 48px;
-    border: none;
     background-color: #D57CC0;
     color: white;
-    cursor: pointer;
+    border: none;
     border-radius: 24px;
+    cursor: pointer;
     letter-spacing: 0.06em;
     transition: background-color 0.3s ease;
     display: none;
@@ -125,18 +129,19 @@
     background-color: #AD4FA0;
   }
 
+  /* Résultat */
   #result {
     font-family: 'Androgy Demo', sans-serif;
     font-weight: 400;
     font-size: 1.8rem;
-    letter-spacing: 0.04em;
     color: #6A4A77;
     margin-top: 28px;
   }
+
 </style>
 </head>
 <body>
-  <main id="quiz" role="main" aria-label="Quiz sur la divisibilite">
+  <main id="quiz" role="main" aria-label="Quiz sur la divisibilité">
     <h1>Quiz : divisibilite</h1>
     <section aria-live="polite">
       <p class="question" id="question"></p>
@@ -152,37 +157,37 @@
 <script>
   const quizData = [
     {
-      question: "Un nombre est divisible par 2",
+      question: "un nombre est divisible par 2",
       a: "si son chiffre des unités est pair (0, 2, 4, 6 ou 8)",
       b: "si son chiffre des unités est impair (1, 3, 5, 7, 9)",
       correct: "a"
     },
     {
-      question: "Un nombre entier est divisible par 3",
+      question: "un nombre entier est divisible par 3",
       a: "si la somme de ses chiffres est divisible par 3",
       b: "si la somme de ses chiffres est divisible par 6",
       correct: "a"
     },
     {
-      question: "Un nombre entier est divisible par 4",
+      question: "un nombre entier est divisible par 4",
       a: "si le nombre formé par son chiffre des dizaines et son chiffre des unités est divisible par 4",
       b: "si la somme de ses chiffres est divisible par 4",
       correct: "a"
     },
     {
-      question: "Un nombre entier est divisible par 5",
+      question: "un nombre entier est divisible par 5",
       a: "si son chiffre des unités est 0 ou 5",
       b: "si son chiffre des dizaines est 0 ou 5",
       correct: "a"
     },
     {
-      question: "Un nombre entier est divisible par 9",
+      question: "un nombre entier est divisible par 9",
       a: "si la somme de ses chiffres est divisible par 9",
       b: "si le nombre formé par ses deux derniers chiffres est divisible par 9",
       correct: "a"
     },
     {
-      question: "Un nombre entier est divisible par 10",
+      question: "un nombre entier est divisible par 10",
       a: "si son chiffre des unités est 0",
       b: "si son chiffre des dizaines est 0",
       correct: "a"
@@ -264,15 +269,11 @@
     if (currentQuestion < quizData.length) {
       loadQuestion();
     } else {
-     
+      showResult();
+    }
+  });
 
-
-
-Demander à ChatGPT
-
-Continuer à générer
-
-
-Joindre
-
-Reche
+  loadQuestion();
+</script>
+</body>
+</html>
