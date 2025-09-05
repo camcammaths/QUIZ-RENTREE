@@ -2,10 +2,9 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quiz Divisibilité</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Association Divisibilité</title>
 
-  <!-- Fonts (remplacer par tes fichiers si besoin) -->
   <style>
     @font-face {
       font-family: 'Androgy Demo';
@@ -17,232 +16,162 @@
       src: url('MabryPro-Regular.woff2') format('woff2');
     }
 
-    /* Reset + base */
-    * {
+    body {
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
       background-color: #FFF6FB;
       font-family: 'Mabry Pro', sans-serif;
-      color: #3B3B3B;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    main {
-      background-color: #ffffff;
-      border-radius: 24px;
-      max-width: 500px;
-      width: 100%;
-      height: 600px;
-      box-shadow: 0 12px 40px rgba(213, 124, 192, 0.2);
-      padding: 40px 30px;
+      color: #333;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      text-align: center;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      padding: 40px 20px;
     }
 
     h1 {
       font-family: 'Androgy Demo', sans-serif;
-      font-size: 2.6rem;
+      font-size: 2.5rem;
       color: #D57CC0;
       text-transform: lowercase;
-      margin-bottom: 20px;
+      margin-bottom: 40px;
     }
 
     h1::first-letter {
       text-transform: uppercase;
     }
 
-    .content {
-      flex-grow: 1;
+    .container {
       display: flex;
-      flex-direction: column;
+      flex-wrap: wrap;
       justify-content: center;
+      gap: 40px;
+      max-width: 1000px;
+      width: 100%;
     }
 
-    .question {
-      font-family: 'Androgy Demo', sans-serif;
-      font-size: 1.5rem;
-      color: #6A4A77;
-      text-transform: lowercase;
-      margin-bottom: 20px;
-    }
-
-    .question::first-letter {
-      text-transform: uppercase;
-    }
-
-    .answers {
+    .column {
+      flex: 1 1 300px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 20px;
     }
 
-    .answer-btn {
+    .card {
       background-color: #FADDF5;
-      border: none;
-      padding: 16px 20px;
+      border-radius: 16px;
+      padding: 20px;
+      cursor: grab;
       font-size: 1rem;
-      border-radius: 14px;
-      text-align: left;
-      cursor: pointer;
-      transition: all 0.3s ease;
+      transition: background-color 0.3s ease;
+      border: 2px solid transparent;
+      user-select: none;
     }
 
-    .answer-btn:hover,
-    .answer-btn.selected {
-      background-color: #D57CC0;
-      color: white;
+    .card.dragging {
+      opacity: 0.5;
     }
 
-    #nextBtn {
-      background-color: #D57CC0;
-      color: white;
-      border: none;
-      padding: 14px 30px;
-      font-size: 1.1rem;
-      border-radius: 24px;
-      cursor: pointer;
-      font-family: 'Androgy Demo', sans-serif;
-      display: none;
-      margin: 0 auto;
+    .dropzone {
+      background-color: #ffffff;
+      border: 2px dashed #D57CC0;
+      border-radius: 16px;
+      padding: 20px;
+      min-height: 60px;
+      transition: border-color 0.3s;
     }
 
-    #result {
-      font-family: 'Androgy Demo', sans-serif;
-      font-size: 1.4rem;
-      color: #6A4A77;
-      margin-top: 10px;
+    .dropzone.hovered {
+      border-color: #A94CA5;
     }
 
-    @media (max-width: 540px) {
-      main {
-        height: auto;
-        padding: 30px 20px;
-      }
+    .correct {
+      border: 2px solid #62C370;
+      background-color: #e4fce9;
+    }
+
+    .incorrect {
+      border: 2px solid #E55454;
+      background-color: #fde8e8;
     }
   </style>
 </head>
 <body>
-  <main>
-    <h1>Quiz sur la divisibilite</h1>
 
-    <div class="content">
-      <p class="question" id="question"></p>
-      <div class="answers">
-        <button class="answer-btn" id="btnA"></button>
-        <button class="answer-btn" id="btnB"></button>
-      </div>
+  <h1>Associer les cartes</h1>
+
+  <div class="container">
+    <!-- Cartes à glisser -->
+    <div class="column" id="cards">
+      <div class="card" draggable="true" id="1">1) Un nombre est divisible par 2</div>
+      <div class="card" draggable="true" id="2">2) Un nombre entier est divisible par 3</div>
+      <div class="card" draggable="true" id="3">3) Un nombre entier est divisible par 4</div>
+      <div class="card" draggable="true" id="4">4) Un nombre entier est divisible par 5</div>
+      <div class="card" draggable="true" id="5">5) Un nombre entier est divisible par 9</div>
+      <div class="card" draggable="true" id="6">6) Un nombre entier est divisible par 10</div>
     </div>
 
-    <button id="nextBtn">Suivant</button>
-    <div id="result"></div>
-  </main>
+    <!-- Zones où déposer -->
+    <div class="column" id="dropzones">
+      <div class="dropzone" data-match="1">A) Si son chiffre des unités est pair (0, 2, 4, 6 ou 8)</div>
+      <div class="dropzone" data-match="2">B) Si la somme de ses chiffres est divisible par 3</div>
+      <div class="dropzone" data-match="3">C) Si le nombre formé par son chiffre des dizaines et son chiffre des unités est divisible par 4</div>
+      <div class="dropzone" data-match="4">D) Si son chiffre des unités est 0 ou 5</div>
+      <div class="dropzone" data-match="5">E) Si la somme de ses chiffres est divisible par 9</div>
+      <div class="dropzone" data-match="6">F) Si son chiffre des unités est 0</div>
+    </div>
+  </div>
 
   <script>
-    const quiz = [
-      {
-        question: "Un nombre est divisible par 2",
-        a: "si son chiffre des unités est pair (0, 2, 4, 6 ou 8)",
-        b: "si son chiffre des unités est impair (1, 3, 5, 7, 9)",
-        correct: "a"
-      },
-      {
-        question: "Un nombre entier est divisible par 3",
-        a: "si la somme de ses chiffres est divisible par 3",
-        b: "si la somme de ses chiffres est divisible par 6",
-        correct: "a"
-      },
-      {
-        question: "Un nombre entier est divisible par 4",
-        a: "si le nombre formé par son chiffre des dizaines et des unités est divisible par 4",
-        b: "si la somme de ses chiffre est divisible par 4",
-        correct: "a"
-      },
-      {
-        question: "Un nombre entier est divisible par 5",
-        a: "si son chiffre des unités est 0 ou 5",
-        b: "si son chiffre des dizaines est 0 ou 5",
-        correct: "a"
-      },
-      {
-        question: "Un nombre entier est divisible par 9",
-        a: "si la somme de ses chiffres est divisible par 9",
-        b: "si le nombre formé par ses deux dernier chiffre est divisible par 9",
-        correct: "a"
-      },
-      {
-        question: "Un nombre entier est divisible par 10",
-        a: "si son chiffre des unités est 0",
-        b: "si son chiffre des dizaine est 0",
-        correct: "a"
-      }
-    ];
+    const cards = document.querySelectorAll('.card');
+    const dropzones = document.querySelectorAll('.dropzone');
 
-    let current = 0;
-    let score = 0;
-    let selected = null;
+    let draggedCard = null;
 
-    const questionEl = document.getElementById("question");
-    const btnA = document.getElementById("btnA");
-    const btnB = document.getElementById("btnB");
-    const nextBtn = document.getElementById("nextBtn");
-    const resultEl = document.getElementById("result");
+    cards.forEach(card => {
+      card.addEventListener('dragstart', () => {
+        draggedCard = card;
+        card.classList.add('dragging');
+      });
 
-    function showQuestion() {
-      const q = quiz[current];
-      questionEl.textContent = q.question;
-      btnA.textContent = "a) " + q.a;
-      btnB.textContent = "b) " + q.b;
-      btnA.classList.remove("selected");
-      btnB.classList.remove("selected");
-      btnA.style.display = "block";
-      btnB.style.display = "block";
-      questionEl.style.display = "block";
-      resultEl.textContent = "";
-      nextBtn.style.display = "none";
-      selected = null;
-    }
-
-    function selectAnswer(choice) {
-      selected = choice;
-      btnA.classList.remove("selected");
-      btnB.classList.remove("selected");
-      if (choice === "a") btnA.classList.add("selected");
-      if (choice === "b") btnB.classList.add("selected");
-      nextBtn.style.display = "inline-block";
-    }
-
-    function showResult() {
-      questionEl.style.display = "none";
-      btnA.style.display = "none";
-      btnB.style.display = "none";
-      nextBtn.style.display = "none";
-      resultEl.textContent = `Ton score est ${score} / ${quiz.length}`;
-    }
-
-    btnA.addEventListener("click", () => selectAnswer("a"));
-    btnB.addEventListener("click", () => selectAnswer("b"));
-
-    nextBtn.addEventListener("click", () => {
-      if (selected === quiz[current].correct) score++;
-      current++;
-      if (current < quiz.length) {
-        showQuestion();
-      } else {
-        showResult();
-      }
+      card.addEventListener('dragend', () => {
+        draggedCard = null;
+        card.classList.remove('dragging');
+      });
     });
 
-    showQuestion();
+    dropzones.forEach(zone => {
+      zone.addEventListener('dragover', e => {
+        e.preventDefault();
+        zone.classList.add('hovered');
+      });
+
+      zone.addEventListener('dragleave', () => {
+        zone.classList.remove('hovered');
+      });
+
+      zone.addEventListener('drop', () => {
+        zone.classList.remove('hovered');
+
+        if (!draggedCard) return;
+
+        const correctMatch = zone.getAttribute('data-match') === draggedCard.id;
+
+        if (correctMatch) {
+          zone.appendChild(draggedCard);
+          zone.classList.add('correct');
+          zone.classList.remove('incorrect');
+          draggedCard.setAttribute('draggable', 'false');
+          draggedCard.style.cursor = 'default';
+        } else {
+          zone.classList.add('incorrect');
+          setTimeout(() => {
+            zone.classList.remove('incorrect');
+          }, 1000);
+        }
+      });
+    });
   </script>
 </body>
 </html>
