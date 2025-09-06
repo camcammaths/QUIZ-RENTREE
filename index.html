@@ -1,63 +1,142 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <title>Sphère qui tourne avec Three.js</title>
-  <style>
-    body { margin: 0; overflow: hidden; }
-    canvas { display: block; }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sphère transparente minimaliste</title>
+
+<!-- Google Fonts substituts -->
+<link href="https://fonts.googleapis.com/css2?family=Andada+Pro:ital,wght@0,700&family=Merriweather:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
+
+<style>
+  /* Reset minimal */
+  * {
+    margin: 0; padding: 0; box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Merriweather', serif;
+    background-color: #f7f7f7;
+    color: #333333;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  header {
+    padding: 3rem 2rem 1.5rem;
+    text-align: center;
+  }
+
+  /* Titre - Andada Pro, 1ère lettre majuscule, reste minuscule */
+  h1 {
+    font-family: 'Andada Pro', serif;
+    font-weight: 700;
+    font-size: 3rem;
+    color: #3a84f7;
+    text-transform: lowercase; /* tout minuscule */
+  }
+  h1::first-letter {
+    text-transform: uppercase; /* première lettre majuscule */
+  }
+
+  main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem 2rem 3rem;
+  }
+
+  /* Container pour canvas Three.js */
+  #canvas-container {
+    width: 320px;
+    height: 320px;
+    border-radius: 1rem;
+    box-shadow: 0 8px 20px rgba(58, 132, 247, 0.3);
+    background-color: #fff;
+  }
+
+  /* Texte descriptif */
+  p {
+    font-family: 'Merriweather', serif;
+    font-size: 1rem;
+    max-width: 360px;
+    margin: 1.5rem auto 0 auto;
+    color: #59c2af;
+    line-height: 1.5;
+    text-align: center;
+  }
+</style>
+
 </head>
 <body>
 
+<header>
+  <h1>exemple de sphère</h1>
+  <p>Interface épurée et minimaliste inspirée du design graphique suisse et de la palette Typeform.</p>
+</header>
+
+<main>
+  <div id="canvas-container"></div>
+</main>
+
 <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
 <script>
-  // Création de la scène
+  // Setup basique Three.js
+  const container = document.getElementById('canvas-container');
   const scene = new THREE.Scene();
 
-  // Création de la caméra (PerspectiveCamera)
-  const camera = new THREE.PerspectiveCamera(
-    75, // angle de vue
-    window.innerWidth / window.innerHeight, // ratio largeur/hauteur
-    0.1, // plan proche
-    1000 // plan lointain
-  );
-  camera.position.z = 5; // éloignement caméra pour voir la sphère
+  const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
+  camera.position.z = 3;
 
-  // Création du renderer
-  const renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  document.body.appendChild(renderer.domElement);
+  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+  renderer.setSize(container.clientWidth, container.clientHeight);
+  container.appendChild(renderer.domElement);
 
-  // Création de la sphère
-  const geometry = new THREE.SphereGeometry(1, 32, 32); // rayon=1, segments
-  const material = new THREE.MeshStandardMaterial({ color: 0x2194ce });
+  // Lumières
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+  scene.add(ambientLight);
+
+  const directionalLight = new THREE.DirectionalLight(0x3a84f7, 1);
+  directionalLight.position.set(5, 5, 5);
+  scene.add(directionalLight);
+
+  // Géométrie sphère
+  const geometry = new THREE.SphereGeometry(1, 64, 64);
+
+  // Matériau transparent et brillant inspiré du design épuré
+  const material = new THREE.MeshPhysicalMaterial({
+    color: 0x3a84f7,
+    metalness: 0.25,
+    roughness: 0.1,
+    transparent: true,
+    opacity: 0.25,
+    clearcoat: 1,
+    clearcoatRoughness: 0.1,
+    reflectivity: 0.5,
+    transmission: 0.9, // donne l’effet verre transparent
+    thickness: 0.5,
+  });
+
   const sphere = new THREE.Mesh(geometry, material);
   scene.add(sphere);
 
-  // Ajout d'une lumière pour voir la sphère en relief
-  const light = new THREE.DirectionalLight(0xffffff, 1);
-  light.position.set(5, 5, 5);
-  scene.add(light);
-
-  // Animation : faire tourner la sphère sur elle-même
+  // Animation : rotation sphère
   function animate() {
     requestAnimationFrame(animate);
-
-    // Rotation autour de l'axe Y
-    sphere.rotation.y += 0.01;
-
+    sphere.rotation.y += 0.007;
     renderer.render(scene, camera);
   }
-
   animate();
 
-  // Gérer le redimensionnement de la fenêtre
+  // Gestion du resize responsive
   window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
+    const w = container.clientWidth;
+    const h = container.clientHeight;
+    renderer.setSize(w, h);
+    camera.aspect = w / h;
     camera.updateProjectionMatrix();
-
-    renderer.setSize(window.innerWidth, window.innerHeight);
   });
 </script>
 
