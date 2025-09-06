@@ -1,56 +1,65 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Sphère en rotation</title>
+  <meta charset="UTF-8" />
+  <title>Sphère qui tourne avec Three.js</title>
   <style>
-    body {
-      margin: 0;
-      background-color: #FFF9FC;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-
-    .sphere-container {
-      width: 200px;
-      height: 200px;
-      animation: spin 6s linear infinite;
-      transform-origin: center center;
-    }
-
-    @keyframes spin {
-      from { transform: rotateY(0deg); }
-      to   { transform: rotateY(360deg); }
-    }
-
-    svg {
-      width: 100%;
-      height: 100%;
-    }
+    body { margin: 0; overflow: hidden; }
+    canvas { display: block; }
   </style>
 </head>
 <body>
 
-  <div class="sphere-container">
-    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-      <!-- Dégradé radial rose/violet -->
-      <defs>
-        <radialGradient id="sphereGradient" cx="30%" cy="30%" r="60%">
-          <stop offset="0%" stop-color="#F4C9E2" />
-          <stop offset="100%" stop-color="#D57CC0" />
-        </radialGradient>
-      </defs>
+<script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+<script>
+  // Création de la scène
+  const scene = new THREE.Scene();
 
-      <!-- Sphère principale -->
-      <circle cx="50" cy="50" r="30" fill="url(#sphereGradient)" stroke="#C97EC8" stroke-width="0.8" />
+  // Création de la caméra (PerspectiveCamera)
+  const camera = new THREE.PerspectiveCamera(
+    75, // angle de vue
+    window.innerWidth / window.innerHeight, // ratio largeur/hauteur
+    0.1, // plan proche
+    1000 // plan lointain
+  );
+  camera.position.z = 5; // éloignement caméra pour voir la sphère
 
-      <!-- Ligne équatoriale -->
-      <ellipse cx="50" cy="50" rx="30" ry="10" fill="none" stroke="#C97EC8" stroke-width="0.5" opacity="0.4" />
-    </svg>
-  </div>
+  // Création du renderer
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.appendChild(renderer.domElement);
+
+  // Création de la sphère
+  const geometry = new THREE.SphereGeometry(1, 32, 32); // rayon=1, segments
+  const material = new THREE.MeshStandardMaterial({ color: 0x2194ce });
+  const sphere = new THREE.Mesh(geometry, material);
+  scene.add(sphere);
+
+  // Ajout d'une lumière pour voir la sphère en relief
+  const light = new THREE.DirectionalLight(0xffffff, 1);
+  light.position.set(5, 5, 5);
+  scene.add(light);
+
+  // Animation : faire tourner la sphère sur elle-même
+  function animate() {
+    requestAnimationFrame(animate);
+
+    // Rotation autour de l'axe Y
+    sphere.rotation.y += 0.01;
+
+    renderer.render(scene, camera);
+  }
+
+  animate();
+
+  // Gérer le redimensionnement de la fenêtre
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+</script>
 
 </body>
 </html>
-
