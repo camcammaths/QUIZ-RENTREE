@@ -1,27 +1,25 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Sphère transparente bleutée tournante</title>
-
-<style>
-  body {
-    margin: 0; 
-    background: #f7f7f7;
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
-    height: 100vh;
-  }
-  #container {
-    width: 400px; 
-    height: 400px; 
-    border-radius: 1rem;
-    box-shadow: 0 8px 20px rgba(58, 132, 247, 0.3);
-    background: white;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <title>Sphère 3D transparente qui tourne</title>
+  <style>
+    body {
+      margin: 0;
+      background: #f7f7f7;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    #container {
+      width: 400px;
+      height: 400px;
+      border-radius: 1rem;
+      box-shadow: 0 8px 20px rgba(58, 132, 247, 0.3);
+      background: white;
+    }
+  </style>
 </head>
 <body>
 
@@ -44,17 +42,19 @@
   container.appendChild(renderer.domElement);
 
   // Lumières
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
   scene.add(ambientLight);
 
   const directionalLight = new THREE.DirectionalLight(0x3a84f7, 1);
   directionalLight.position.set(5, 5, 5);
   scene.add(directionalLight);
 
-  // Géométrie sphère
-  const geometry = new THREE.SphereGeometry(1, 64, 64);
+  // Groupe contenant la sphère et son repère
+  const sphereGroup = new THREE.Group();
+  scene.add(sphereGroup);
 
-  // Matériau transparent bleuté
+  // Sphère transparente bleutée
+  const geometry = new THREE.SphereGeometry(1, 64, 64);
   const material = new THREE.MeshPhysicalMaterial({
     color: 0x3a84f7,
     metalness: 0.3,
@@ -64,19 +64,23 @@
     clearcoat: 1,
     clearcoatRoughness: 0.1,
     reflectivity: 0.5,
-    transmission: 0.9,  // Effet verre transparent
+    transmission: 0.9,
     thickness: 0.5,
   });
-
   const sphere = new THREE.Mesh(geometry, material);
-  scene.add(sphere);
+  sphereGroup.add(sphere);
 
-  // Animation : rotation sur l'axe Y (vertical)
+  // Repère : petit point bleu en surface
+  const dotGeometry = new THREE.SphereGeometry(0.05, 16, 16);
+  const dotMaterial = new THREE.MeshStandardMaterial({ color: 0x003399 });
+  const dot = new THREE.Mesh(dotGeometry, dotMaterial);
+  dot.position.set(0, 0.9, 0); // proche du "haut" de la sphère
+  sphereGroup.add(dot);
+
+  // Animation : rotation autour de l'axe Y
   function animate() {
     requestAnimationFrame(animate);
-
-    sphere.rotation.y += 0.01;
-
+    sphereGroup.rotation.y += 0.01;
     renderer.render(scene, camera);
   }
 
