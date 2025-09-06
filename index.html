@@ -3,88 +3,48 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Sphère 3D transparente avec contours bleus</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Andada+Pro:ital,wght@0,700&family=Merriweather:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
+<title>Sphère transparente bleutée tournante</title>
 
 <style>
-  * {
-    margin: 0; padding: 0; box-sizing: border-box;
-  }
   body {
-    font-family: 'Merriweather', serif;
-    background-color: #f7f7f7;
-    color: #333;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
+    margin: 0; 
+    background: #f7f7f7;
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    height: 100vh;
   }
-  header {
-    padding: 3rem 2rem 1.5rem;
-    text-align: center;
-  }
-  h1 {
-    font-family: 'Andada Pro', serif;
-    font-weight: 700;
-    font-size: 3rem;
-    color: #3a84f7;
-    text-transform: lowercase;
-  }
-  h1::first-letter {
-    text-transform: uppercase;
-  }
-  main {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 1rem 2rem 3rem;
-  }
-  #canvas-container {
-    width: 320px;
-    height: 320px;
+  #container {
+    width: 400px; 
+    height: 400px; 
     border-radius: 1rem;
     box-shadow: 0 8px 20px rgba(58, 132, 247, 0.3);
-    background-color: #fff;
-    position: relative;
-  }
-  p {
-    font-family: 'Merriweather', serif;
-    font-size: 1rem;
-    max-width: 360px;
-    margin: 1.5rem auto 0 auto;
-    color: #59c2af;
-    line-height: 1.5;
-    text-align: center;
+    background: white;
   }
 </style>
-
 </head>
 <body>
 
-<header>
-  <h1>exemple de sphère</h1>
-  <p>Interface épurée avec sphère 3D transparente et contours bleus.</p>
-</header>
-
-<main>
-  <div id="canvas-container"></div>
-</main>
+<div id="container"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
 <script>
-  const container = document.getElementById('canvas-container');
+  const container = document.getElementById('container');
+
+  // Scène
   const scene = new THREE.Scene();
 
+  // Caméra
   const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
   camera.position.z = 3;
 
+  // Renderer
   const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
   renderer.setSize(container.clientWidth, container.clientHeight);
   container.appendChild(renderer.domElement);
 
   // Lumières
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
   scene.add(ambientLight);
 
   const directionalLight = new THREE.DirectionalLight(0x3a84f7, 1);
@@ -94,7 +54,7 @@
   // Géométrie sphère
   const geometry = new THREE.SphereGeometry(1, 64, 64);
 
-  // Matériau sphère transparent
+  // Matériau transparent bleuté
   const material = new THREE.MeshPhysicalMaterial({
     color: 0x3a84f7,
     metalness: 0.3,
@@ -104,36 +64,22 @@
     clearcoat: 1,
     clearcoatRoughness: 0.1,
     reflectivity: 0.5,
-    transmission: 0.9,
+    transmission: 0.9,  // Effet verre transparent
     thickness: 0.5,
   });
 
   const sphere = new THREE.Mesh(geometry, material);
   scene.add(sphere);
 
-  // **Contours bleus** — on crée un second mesh légèrement plus grand avec un matériau de type LineSegments
-  // Méthode : Outline avec Wireframe bleu
-
-  // Wireframe geometry
-  const wireframeGeometry = new THREE.WireframeGeometry(geometry);
-
-  // Wireframe material bleu vif
-  const wireframeMaterial = new THREE.LineBasicMaterial({ color: 0x3a84f7, linewidth: 2 });
-
-  // Wireframe mesh
-  const wireframe = new THREE.LineSegments(wireframeGeometry, wireframeMaterial);
-  wireframe.scale.multiplyScalar(1.01); // légèrement plus grand pour ne pas z-fighter
-  scene.add(wireframe);
-
-  // Animation
+  // Animation : rotation sur l'axe Y (vertical)
   function animate() {
     requestAnimationFrame(animate);
 
-    sphere.rotation.y += 0.007;
-    wireframe.rotation.y += 0.007;
+    sphere.rotation.y += 0.01;
 
     renderer.render(scene, camera);
   }
+
   animate();
 
   // Resize responsive
