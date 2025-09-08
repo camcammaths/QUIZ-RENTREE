@@ -14,10 +14,13 @@
       --primary-color: #5b6dfa;
       --secondary-color: #00bfa6;
       --accent-color: #ff6b6b;
-      --background-color: #f9f9f9;
-      --grid-color: #dcdcdc;
+      --grid-color: #e0e0e0;
+      --background-color: #f8f9fa;
+      --point-color: #fa5252;
+      --triangle-color: #4dabf7;
+      --image-color: #69db7c;
       --text-color: #222;
-      --border-radius: 10px;
+      --border-radius: 8px;
       --transition: 0.3s ease;
     }
 
@@ -58,6 +61,7 @@
       border-radius: var(--border-radius);
       width: 600px;
       height: 600px;
+      position: relative;
     }
 
     svg {
@@ -83,10 +87,28 @@
     }
 
     .point {
+      fill: var(--point-color);
+      stroke: black;
+      stroke-width: 1;
+    }
+
+    .point-o {
       fill: var(--accent-color);
       stroke: black;
       stroke-width: 1;
-      cursor: pointer;
+    }
+
+    .triangle {
+      fill: none;
+      stroke: var(--triangle-color);
+      stroke-width: 2;
+    }
+
+    .triangle-image {
+      fill: none;
+      stroke: var(--image-color);
+      stroke-width: 2;
+      stroke-dasharray: 5, 5;
     }
 
     a.back {
@@ -132,22 +154,18 @@
     ];
     let currentQuestion = 0;
 
-    function nextQuestion() {
-      if (currentQuestion < questions.length - 1) {
-        currentQuestion++;
-        document.getElementById('question').textContent = questions[currentQuestion];
-        clearPoints();
-      } else {
-        alert("Toutes les questions sont terminées !");
-      }
-    }
-
     const svg = document.getElementById('svgGrid');
     const gridSize = 20;
     const cols = 30;
     const rows = 30;
 
-    // Draw grid
+    const origin = { x: 15, y: 15 }; // Point O (en coordonnées grille)
+    const triangle = [
+      { x: 10, y: 10 }, // A
+      { x: 20, y: 10 }, // B
+      { x: 15, y: 20 }  // C
+    ];
+
     function drawGrid() {
       for (let i = 0; i <= cols; i++) {
         const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
@@ -170,30 +188,60 @@
       }
     }
 
-    // Draw point on click
+    function gridToPx(point) {
+      return {
+        x: point.x * gridSize,
+        y: point.y * gridSize
+      };
+    }
+
+    function drawPoint(point, className = 'point') {
+      const px = gridToPx(point);
+      const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      circle.setAttribute("cx", px.x);
+      circle.setAttribute("cy", px.y);
+      circle.setAttribute("r", 5);
+      circle.setAttribute("class", className);
+      svg.appendChild(circle);
+    }
+
+    function drawTriangle(points, className = 'triangle') {
+      const [A, B, C] = points.map(gridToPx);
+      const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      path.setAttribute("d", `M ${A.x} ${A.y} L ${B.x} ${B.y} L ${C.x} ${C.y} Z`);
+      path.setAttribute("class", className);
+      svg.appendChild(path);
+    }
+
+    function drawInitialObjects() {
+      drawTriangle(triangle);
+      triangle.forEach(p => drawPoint(p));
+      drawPoint(origin, 'point-o');
+    }
+
+    function nextQuestion() {
+      if (currentQuestion < questions.length - 1) {
+        currentQuestion++;
+        document.getElementById('question').textContent = questions[currentQuestion];
+      } else {
+        alert("Toutes les questions sont terminées !");
+      }
+    }
+
+    // Interaction utilisateur : clic pour poser des points
     svg.addEventListener('click', function (e) {
       const rect = svg.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
 
-      const snappedX = Math.round(x / gridSize) * gridSize;
-      const snappedY = Math.round(y / gridSize) * gridSize;
+      const snappedX = Math.round(x / gridSize);
+      const snappedY = Math.round(y / gridSize);
 
-      const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-      circle.setAttribute("cx", snappedX);
-      circle.setAttribute("cy", snappedY);
-      circle.setAttribute("r", 5);
-      circle.setAttribute("class", "point");
-
-      svg.appendChild(circle);
+      drawPoint({ x: snappedX, y: snappedY }, 'point');
     });
 
-    function clearPoints() {
-      const points = svg.querySelectorAll('.point');
-      points.forEach(p => p.remove());
-    }
-
     drawGrid();
+    drawInitialObjects();
   </script>
 
 </body>
