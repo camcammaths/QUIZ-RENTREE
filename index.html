@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Trouve les multiples</title>
+  <title>Géométrie</title>
 
   <!-- Polices -->
   <link href="https://fonts.googleapis.com/css2?family=Androgy+Demo&display=swap" rel="stylesheet" />
@@ -11,94 +11,82 @@
 
   <style>
     :root {
-      --primary-color: #3a86ff;
-      --secondary-color: #8338ec;
-      --background-color: #f0f4f8;
-      --button-bg: #a8d0ff;
-      --button-bg-hover: #7ab3ff;
-      --correct: #4CAF50;
-      --incorrect: #e74c3c;
-      --text-color: #212529;
-      --border-radius: 8px;
+      --primary-color: #5b6dfa;
+      --secondary-color: #00bfa6;
+      --accent-color: #ff6b6b;
+      --background-color: #f9f9f9;
+      --grid-color: #dcdcdc;
+      --text-color: #222;
+      --border-radius: 10px;
       --transition: 0.3s ease;
     }
 
     body {
+      margin: 0;
       font-family: 'Mabry Pro', sans-serif;
       background: var(--background-color);
-      margin: 0;
-      padding: 2rem;
-      text-align: center;
       color: var(--text-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+      min-height: 100vh;
     }
 
     h1 {
       font-family: 'Androgy Demo', sans-serif;
       font-size: 2.5rem;
+      text-transform: lowercase;
       color: var(--primary-color);
-      margin-bottom: 1.5rem;
     }
 
-    #question {
-      font-size: 1.25rem;
-      margin-bottom: 2rem;
-      font-weight: bold;
+    h1::first-letter {
+      text-transform: uppercase;
+    }
+
+    .question-box {
+      font-size: 1.2rem;
+      text-align: center;
+      margin: 1.5rem 0;
+      max-width: 600px;
     }
 
     #grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
-      gap: 0.75rem;
-      max-width: 800px;
-      margin: 0 auto 2rem;
-    }
-
-    .card {
-      background: white;
-      border: 2px solid var(--primary-color);
+      margin-top: 2rem;
+      background-color: white;
+      border: 2px solid var(--grid-color);
       border-radius: var(--border-radius);
-      padding: 0.75rem 0;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background-color var(--transition), color var(--transition), transform var(--transition);
-      user-select: none;
+      width: 600px;
+      height: 600px;
     }
 
-    .card:hover {
-      transform: scale(1.05);
-    }
-
-    .card.correct {
-      background-color: var(--correct);
-      color: white;
-      border-color: var(--correct);
-    }
-
-    .card.incorrect {
-      background-color: var(--incorrect);
-      color: white;
-      border-color: var(--incorrect);
-    }
-
-    .btn-group {
-      margin-bottom: 2rem;
+    svg {
+      width: 100%;
+      height: 100%;
     }
 
     .btn {
-      font-family: 'Mabry Pro', sans-serif;
+      margin-top: 2rem;
+      padding: 0.7rem 1.4rem;
       font-size: 1rem;
-      padding: 0.6rem 1.2rem;
-      margin: 0.3rem;
-      background-color: var(--button-bg);
+      background-color: var(--primary-color);
+      color: white;
       border: none;
       border-radius: var(--border-radius);
       cursor: pointer;
+      font-family: 'Mabry Pro', sans-serif;
       transition: background-color var(--transition);
     }
 
     .btn:hover {
-      background-color: var(--button-bg-hover);
-      color: white;
+      background-color: var(--secondary-color);
+    }
+
+    .point {
+      fill: var(--accent-color);
+      stroke: black;
+      stroke-width: 1;
+      cursor: pointer;
     }
 
     a.back {
@@ -121,67 +109,91 @@
 </head>
 <body>
 
-  <h1>Trouve les multiples</h1>
+  <h1>Géométrie</h1>
 
-  <div class="btn-group">
-    <button class="btn" onclick="setTarget(2)">Multiples de 2</button>
-    <button class="btn" onclick="setTarget(3)">Multiples de 3</button>
-    <button class="btn" onclick="setTarget(4)">Multiples de 4</button>
-    <button class="btn" onclick="setTarget(5)">Multiples de 5</button>
-    <button class="btn" onclick="setTarget(9)">Multiples de 9</button>
-    <button class="btn" onclick="setTarget(10)">Multiples de 10</button>
-    <button class="btn" onclick="generateGrid()">Nouveaux nombres</button>
+  <div class="question-box" id="question">
+    Tracer l’image du triangle par la rotation de centre O d’angle 90°
   </div>
 
-  <div id="question">Clique sur tous les multiples de 2</div>
+  <div id="grid">
+    <svg id="svgGrid"></svg>
+  </div>
 
-  <div id="grid"></div>
+  <button class="btn" onclick="nextQuestion()">Question suivante</button>
 
   <a href="index.html" class="back">← Retour à l'accueil</a>
 
   <script>
-    const grid = document.getElementById('grid');
-    const questionEl = document.getElementById('question');
-    let targetMultiple = 2;
-    let numbers = [];
+    const questions = [
+      "Tracer l’image du triangle par la rotation de centre O d’angle 90°",
+      "Tracer l’image du triangle par la rotation de centre O d’angle 180°",
+      "Construire l’image du triangle par l’homothétie de centre O et de rapport 2",
+      "Construire l’image du triangle par l’homothétie de centre O et de rapport 4"
+    ];
+    let currentQuestion = 0;
 
-    function generateNumbers() {
-      numbers = [];
-      const set = new Set();
-      while (set.size < 100) {
-        set.add(Math.floor(Math.random() * 5000) + 1);
+    function nextQuestion() {
+      if (currentQuestion < questions.length - 1) {
+        currentQuestion++;
+        document.getElementById('question').textContent = questions[currentQuestion];
+        clearPoints();
+      } else {
+        alert("Toutes les questions sont terminées !");
       }
-      numbers = Array.from(set);
     }
 
-    function generateGrid() {
-      generateNumbers();
-      grid.innerHTML = '';
-      numbers.forEach(num => {
-        const card = document.createElement('div');
-        card.classList.add('card');
-        card.textContent = num;
-        card.addEventListener('click', () => {
-          if (card.classList.contains('correct') || card.classList.contains('incorrect')) return;
+    const svg = document.getElementById('svgGrid');
+    const gridSize = 20;
+    const cols = 30;
+    const rows = 30;
 
-          if (num % targetMultiple === 0) {
-            card.classList.add('correct');
-          } else {
-            card.classList.add('incorrect');
-          }
-        });
-        grid.appendChild(card);
-      });
+    // Draw grid
+    function drawGrid() {
+      for (let i = 0; i <= cols; i++) {
+        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line.setAttribute("x1", i * gridSize);
+        line.setAttribute("y1", 0);
+        line.setAttribute("x2", i * gridSize);
+        line.setAttribute("y2", rows * gridSize);
+        line.setAttribute("stroke", "#e0e0e0");
+        svg.appendChild(line);
+      }
+
+      for (let j = 0; j <= rows; j++) {
+        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line.setAttribute("x1", 0);
+        line.setAttribute("y1", j * gridSize);
+        line.setAttribute("x2", cols * gridSize);
+        line.setAttribute("y2", j * gridSize);
+        line.setAttribute("stroke", "#e0e0e0");
+        svg.appendChild(line);
+      }
     }
 
-    function setTarget(multiple) {
-      targetMultiple = multiple;
-      questionEl.textContent = `Clique sur tous les multiples de ${multiple}`;
-      generateGrid();
+    // Draw point on click
+    svg.addEventListener('click', function (e) {
+      const rect = svg.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      const snappedX = Math.round(x / gridSize) * gridSize;
+      const snappedY = Math.round(y / gridSize) * gridSize;
+
+      const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      circle.setAttribute("cx", snappedX);
+      circle.setAttribute("cy", snappedY);
+      circle.setAttribute("r", 5);
+      circle.setAttribute("class", "point");
+
+      svg.appendChild(circle);
+    });
+
+    function clearPoints() {
+      const points = svg.querySelectorAll('.point');
+      points.forEach(p => p.remove());
     }
 
-    // Initial grid
-    generateGrid();
+    drawGrid();
   </script>
 
 </body>
