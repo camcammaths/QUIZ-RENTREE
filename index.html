@@ -11,238 +11,245 @@
 
   <style>
     :root {
-      --primary-color: #5b6dfa;
-      --secondary-color: #00bfa6;
-      --accent-color: #ff6b6b;
-      --grid-color: #e0e0e0;
-      --background-color: #f8f9fa;
-      --point-color: #fa5252;
-      --triangle-color: #4dabf7;
-      --image-color: #69db7c;
-      --text-color: #222;
-      --border-radius: 8px;
+      --primary-color: #5e60ce;
+      --accent-color: #48bfe3;
+      --bg-color: #f7f9fc;
+      --success-color: #38b000;
+      --grid-color: #dee2e6;
+      --text-color: #212529;
+      --point-color: #3a0ca3;
+      --user-point-color: #f72585;
       --transition: 0.3s ease;
+      --border-radius: 6px;
     }
 
     body {
-      margin: 0;
       font-family: 'Mabry Pro', sans-serif;
-      background: var(--background-color);
+      background-color: var(--bg-color);
+      margin: 0;
+      padding: 2rem;
       color: var(--text-color);
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 2rem;
-      min-height: 100vh;
     }
 
     h1 {
       font-family: 'Androgy Demo', sans-serif;
-      font-size: 2.5rem;
-      text-transform: lowercase;
+      font-size: 2rem;
       color: var(--primary-color);
+      text-transform: lowercase;
     }
 
     h1::first-letter {
       text-transform: uppercase;
     }
 
-    .question-box {
-      font-size: 1.2rem;
+    #question {
+      margin: 1rem 0;
+      font-size: 1.25rem;
+      font-weight: bold;
       text-align: center;
-      margin: 1.5rem 0;
-      max-width: 600px;
     }
 
-    #grid {
-      margin-top: 2rem;
+    canvas {
       background-color: white;
-      border: 2px solid var(--grid-color);
-      border-radius: var(--border-radius);
-      width: 600px;
-      height: 600px;
-      position: relative;
+      border: 1px solid var(--grid-color);
+      cursor: crosshair;
     }
 
-    svg {
-      width: 100%;
-      height: 100%;
-    }
-
-    .btn {
-      margin-top: 2rem;
-      padding: 0.7rem 1.4rem;
-      font-size: 1rem;
-      background-color: var(--primary-color);
+    .button {
+      margin-top: 1rem;
+      background-color: var(--accent-color);
       color: white;
       border: none;
+      padding: 0.6rem 1.2rem;
+      font-size: 1rem;
+      font-family: 'Mabry Pro', sans-serif;
       border-radius: var(--border-radius);
       cursor: pointer;
-      font-family: 'Mabry Pro', sans-serif;
       transition: background-color var(--transition);
     }
 
-    .btn:hover {
-      background-color: var(--secondary-color);
+    .button:hover {
+      background-color: #3a86ff;
     }
 
-    .point {
-      fill: var(--point-color);
-      stroke: black;
-      stroke-width: 1;
+    #feedback {
+      margin-top: 1rem;
+      font-weight: bold;
     }
 
-    .point-o {
-      fill: var(--accent-color);
-      stroke: black;
-      stroke-width: 1;
+    .success {
+      color: var(--success-color);
     }
 
-    .triangle {
-      fill: none;
-      stroke: var(--triangle-color);
-      stroke-width: 2;
-    }
-
-    .triangle-image {
-      fill: none;
-      stroke: var(--image-color);
-      stroke-width: 2;
-      stroke-dasharray: 5, 5;
-    }
-
-    a.back {
-      display: inline-block;
-      margin-top: 2rem;
-      text-decoration: none;
-      font-weight: 600;
-      color: var(--primary-color);
-      border: 2px solid var(--primary-color);
-      padding: 0.5rem 1rem;
-      border-radius: var(--border-radius);
-      transition: background-color var(--transition), color var(--transition);
-    }
-
-    a.back:hover {
-      background-color: var(--primary-color);
-      color: white;
+    .error {
+      color: var(--point-color);
     }
   </style>
 </head>
 <body>
 
-  <h1>Géométrie</h1>
+  <h1>Géométrie interactive</h1>
+  <div id="question">Construire l’image du triangle par l’homothétie de centre O et de rapport 2</div>
 
-  <div class="question-box" id="question">
-    Tracer l’image du triangle par la rotation de centre O d’angle 90°
-  </div>
-
-  <div id="grid">
-    <svg id="svgGrid"></svg>
-  </div>
-
-  <button class="btn" onclick="nextQuestion()">Question suivante</button>
-
-  <a href="index.html" class="back">← Retour à l'accueil</a>
+  <canvas id="canvas" width="600" height="600"></canvas>
+  <div id="feedback"></div>
 
   <script>
-    const questions = [
-      "Tracer l’image du triangle par la rotation de centre O d’angle 90°",
-      "Tracer l’image du triangle par la rotation de centre O d’angle 180°",
-      "Construire l’image du triangle par l’homothétie de centre O et de rapport 2",
-      "Construire l’image du triangle par l’homothétie de centre O et de rapport 4"
-    ];
-    let currentQuestion = 0;
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    const gridSize = 30;
+    const pointRadius = 5;
 
-    const svg = document.getElementById('svgGrid');
-    const gridSize = 20;
-    const cols = 30;
-    const rows = 30;
-
-    const origin = { x: 15, y: 15 }; // Point O (en coordonnées grille)
+    const pointO = { x: 10, y: 10 };
     const triangle = [
-      { x: 10, y: 10 }, // A
-      { x: 20, y: 10 }, // B
-      { x: 15, y: 20 }  // C
+      { x: 6, y: 8 },
+      { x: 12, y: 8 },
+      { x: 9, y: 14 }
+    ];
+
+    let userPoints = [];
+    let questionIndex = 0;
+
+    const questions = [
+      {
+        text: "Construire l’image du triangle par l’homothétie de centre O et de rapport 2",
+        check: (user) => compareTriangles(transformHomothety(triangle, pointO, 2), user)
+      },
+      {
+        text: "Construire l’image du triangle par l’homothétie de centre O et de rapport 4",
+        check: (user) => compareTriangles(transformHomothety(triangle, pointO, 4), user)
+      },
+      {
+        text: "Tracer l’image du triangle par la rotation de centre O d’angle 90°",
+        check: (user) => compareTriangles(transformRotation(triangle, pointO, 90), user)
+      },
+      {
+        text: "Tracer l’image du triangle par la rotation de centre O d’angle 180°",
+        check: (user) => compareTriangles(transformRotation(triangle, pointO, 180), user)
+      }
     ];
 
     function drawGrid() {
-      for (let i = 0; i <= cols; i++) {
-        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-        line.setAttribute("x1", i * gridSize);
-        line.setAttribute("y1", 0);
-        line.setAttribute("x2", i * gridSize);
-        line.setAttribute("y2", rows * gridSize);
-        line.setAttribute("stroke", "#e0e0e0");
-        svg.appendChild(line);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.strokeStyle = "#dee2e6";
+      ctx.lineWidth = 1;
+      for (let x = 0; x <= canvas.width; x += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
       }
-
-      for (let j = 0; j <= rows; j++) {
-        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-        line.setAttribute("x1", 0);
-        line.setAttribute("y1", j * gridSize);
-        line.setAttribute("x2", cols * gridSize);
-        line.setAttribute("y2", j * gridSize);
-        line.setAttribute("stroke", "#e0e0e0");
-        svg.appendChild(line);
+      for (let y = 0; y <= canvas.height; y += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
       }
     }
 
-    function gridToPx(point) {
-      return {
-        x: point.x * gridSize,
-        y: point.y * gridSize
-      };
+    function drawPoint({ x, y }, color = var('--point-color')) {
+      ctx.beginPath();
+      ctx.arc(x * gridSize, y * gridSize, pointRadius, 0, 2 * Math.PI);
+      ctx.fillStyle = color;
+      ctx.fill();
     }
 
-    function drawPoint(point, className = 'point') {
-      const px = gridToPx(point);
-      const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-      circle.setAttribute("cx", px.x);
-      circle.setAttribute("cy", px.y);
-      circle.setAttribute("r", 5);
-      circle.setAttribute("class", className);
-      svg.appendChild(circle);
+    function drawTriangle(points, color = var('--point-color')) {
+      ctx.beginPath();
+      ctx.moveTo(points[0].x * gridSize, points[0].y * gridSize);
+      points.forEach(p => ctx.lineTo(p.x * gridSize, p.y * gridSize));
+      ctx.closePath();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2;
+      ctx.stroke();
     }
 
-    function drawTriangle(points, className = 'triangle') {
-      const [A, B, C] = points.map(gridToPx);
-      const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-      path.setAttribute("d", `M ${A.x} ${A.y} L ${B.x} ${B.y} L ${C.x} ${C.y} Z`);
-      path.setAttribute("class", className);
-      svg.appendChild(path);
+    function transformHomothety(points, center, ratio) {
+      return points.map(p => ({
+        x: center.x + ratio * (p.x - center.x),
+        y: center.y + ratio * (p.y - center.y)
+      }));
     }
 
-    function drawInitialObjects() {
-      drawTriangle(triangle);
-      triangle.forEach(p => drawPoint(p));
-      drawPoint(origin, 'point-o');
+    function transformRotation(points, center, angleDeg) {
+      const angleRad = angleDeg * Math.PI / 180;
+      return points.map(p => {
+        const dx = p.x - center.x;
+        const dy = p.y - center.y;
+        return {
+          x: Math.round(center.x + dx * Math.cos(angleRad) - dy * Math.sin(angleRad)),
+          y: Math.round(center.y + dx * Math.sin(angleRad) + dy * Math.cos(angleRad))
+        };
+      });
     }
 
-    function nextQuestion() {
-      if (currentQuestion < questions.length - 1) {
-        currentQuestion++;
-        document.getElementById('question').textContent = questions[currentQuestion];
-      } else {
-        alert("Toutes les questions sont terminées !");
+    function compareTriangles(t1, t2) {
+      if (t1.length !== 3 || t2.length !== 3) return false;
+      const sorted1 = [...t1].sort((a, b) => a.x - b.x || a.y - b.y);
+      const sorted2 = [...t2].sort((a, b) => a.x - b.x || a.y - b.y);
+      for (let i = 0; i < 3; i++) {
+        if (Math.abs(sorted1[i].x - sorted2[i].x) > 0.1 ||
+            Math.abs(sorted1[i].y - sorted2[i].y) > 0.1) return false;
+      }
+      return true;
+    }
+
+    function redraw() {
+      drawGrid();
+      drawTriangle(triangle, "#3a0ca3");
+      drawPoint(pointO, "#48bfe3");
+      userPoints.forEach(p => drawPoint(p, "#f72585"));
+      if (userPoints.length === 3) {
+        drawTriangle(userPoints, "#f72585");
       }
     }
 
-    // Interaction utilisateur : clic pour poser des points
-    svg.addEventListener('click', function (e) {
-      const rect = svg.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
+    canvas.addEventListener("click", (e) => {
+      if (userPoints.length >= 3) return;
 
-      const snappedX = Math.round(x / gridSize);
-      const snappedY = Math.round(y / gridSize);
+      const rect = canvas.getBoundingClientRect();
+      const x = Math.round((e.clientX - rect.left) / gridSize);
+      const y = Math.round((e.clientY - rect.top) / gridSize);
+      userPoints.push({ x, y });
+      redraw();
 
-      drawPoint({ x: snappedX, y: snappedY }, 'point');
+      if (userPoints.length === 3) {
+        setTimeout(() => {
+          const correct = questions[questionIndex].check(userPoints);
+          const feedback = document.getElementById("feedback");
+          if (correct) {
+            feedback.textContent = "Bonne réponse ✅";
+            feedback.className = "success";
+            setTimeout(() => {
+              nextQuestion();
+            }, 1500);
+          } else {
+            feedback.textContent = "Essaie encore ❌";
+            feedback.className = "error";
+            userPoints = [];
+            redraw();
+          }
+        }, 500);
+      }
     });
 
-    drawGrid();
-    drawInitialObjects();
-  </script>
+    function nextQuestion() {
+      questionIndex++;
+      userPoints = [];
+      document.getElementById("feedback").textContent = "";
+      if (questionIndex >= questions.length) {
+        document.getElementById("question").textContent = "🎉 Bravo, tu as terminé toutes les questions !";
+      } else {
+        document.getElementById("question").textContent = questions[questionIndex].text;
+        redraw();
+      }
+    }
 
+    // Initial draw
+    redraw();
+  </script>
 </body>
 </html>
