@@ -2,19 +2,17 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Repertoire des Types d’Angles - Pile Interactive</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cartes d’Angles</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Androgy+Demo&display=swap" rel="stylesheet" />
+  <!-- Polices -->
   <link href="https://fonts.googleapis.com/css2?family=Mabry+Pro&display=swap" rel="stylesheet" />
-
   <style>
     :root {
       --primary-color: #3a86ff;
       --secondary-color: #8338ec;
-      --accent-color-1: #ff006e;
-      --accent-color-2: #fb5607;
-      --accent-color-3: #ffbe0b;
+      --correct-color: #4caf50;
+      --wrong-color: #e63946;
       --background-color: #f0f4f8;
       --card-veil: rgba(58, 134, 255, 0.08);
       --border-radius: 12px;
@@ -26,354 +24,195 @@
       background: var(--background-color);
       margin: 0;
       padding: 2rem;
-      color: #212529;
       display: flex;
       flex-direction: column;
       align-items: center;
-      min-height: 100vh;
-      justify-content: center;
-      text-align: center;
     }
 
     h1 {
-      font-family: 'Androgy Demo', sans-serif;
-      font-size: 2.5rem;
       color: var(--primary-color);
       margin-bottom: 2rem;
     }
 
-    .stack-container {
+    .stack {
       position: relative;
       width: 320px;
-      height: 460px;
-      perspective: 1500px;
+      height: 360px;
     }
 
     .card {
       position: absolute;
-      top: 0; left: 0;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
       background: var(--card-veil);
       border: 2px solid var(--primary-color);
       border-radius: var(--border-radius);
-      backdrop-filter: blur(4px);
-      padding: 1.5rem 1.5rem 3.5rem;
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-      transition: transform var(--transition), opacity var(--transition), background-color var(--transition), border-color var(--transition);
+      padding: 1.5rem;
+      text-align: center;
+      transition: transform 0.5s ease, opacity 0.5s ease;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: start;
-      opacity: 0.5;
-      pointer-events: none;
-      user-select: none;
+      justify-content: space-between;
+      backdrop-filter: blur(6px);
     }
 
-    /* Première carte : pas transparente */
-    .card:first-child.active {
-      opacity: 1;
+    .card.current {
       background: white;
-      pointer-events: auto;
-      user-select: auto;
+      z-index: 10;
     }
 
-    /* Cartes empilées décalées */
-    .card:not(.active) {
-      transform-origin: left center;
-      transform: translateX(calc(-15px * var(--offset))) scale(calc(1 - 0.05 * var(--offset))) rotateY(-5deg);
-      opacity: 0.4;
-      filter: brightness(0.9);
-      pointer-events: none;
-      user-select: none;
-      z-index: calc(10 - var(--offset));
-      background: var(--card-veil);
+    .card:not(.current) {
+      opacity: 0.6;
+      transform: translateY(20px) scale(0.95);
+      z-index: 0;
     }
 
-    /* Carte active */
-    .card.active:not(:first-child) {
-      opacity: 1;
-      pointer-events: auto;
-      user-select: auto;
-      transform: translateX(0) scale(1) rotateY(0);
-      z-index: 20;
-      background: white;
-    }
-
-    .card h2 {
-      font-size: 1.5rem;
+    .question {
+      font-size: 1.2rem;
+      color: var(--secondary-color);
       margin-bottom: 1rem;
-      color: var(--primary-color);
-      user-select: text;
     }
 
     .angle-svg {
-      width: 140px;
-      height: 140px;
-      margin-bottom: 1rem;
-      flex-shrink: 0;
-      user-select: none;
+      width: 100px;
+      height: 100px;
+      margin: 1rem auto;
     }
 
     svg line {
-      stroke: var(--secondary-color);
+      stroke: var(--primary-color);
       stroke-width: 4;
-    }
-
-    svg circle {
-      fill: var(--accent-color-3);
     }
 
     svg path.arc {
       stroke: var(--primary-color);
       stroke-width: 3;
       fill: none;
-      opacity: 0.6;
     }
 
-    .question {
-      color: var(--secondary-color);
-      font-weight: 700;
-      font-size: 1.15rem;
-      margin-bottom: 1rem;
-      min-height: 48px;
-      user-select: text;
-    }
-
-    /* Zone de réponse */
-    .answer-input {
-      position: absolute;
-      bottom: 1.4rem;
-      left: 1.5rem;
-      right: 1.5rem;
-      height: 50px;
-      border-radius: 8px;
-      border: 2px solid var(--secondary-color);
-      font-size: 1rem;
-      padding: 0.4rem 0.8rem;
-      resize: none;
-      font-family: 'Mabry Pro', sans-serif;
-      outline-offset: 2px;
-      user-select: text;
-      box-sizing: border-box;
-      background: white;
-      transition: border-color 0.3s ease, background-color 0.3s ease;
-    }
-
-    .answer-input::placeholder {
-      color: var(--secondary-color);
-      opacity: 0.6;
-      font-style: italic;
-    }
-
-    /* Code couleur */
-    .answer-input.correct {
-      border-color: #28a745;
-      background-color: #d4edda;
-      color: #155724;
-    }
-
-    .answer-input.incorrect {
-      border-color: #dc3545;
-      background-color: #f8d7da;
-      color: #721c24;
-    }
-
-    .buttons {
-      display: flex;
-      justify-content: space-between;
-      gap: 1rem;
-      width: 320px;
+    .response {
       margin-top: 1rem;
     }
 
-    button {
-      flex: 1;
-      padding: 0.6rem 1rem;
+    input[type="text"] {
+      width: 100%;
+      padding: 0.5rem;
       font-size: 1rem;
       border-radius: var(--border-radius);
-      border: none;
-      background: var(--primary-color);
-      color: white;
-      cursor: pointer;
-      transition: background-color var(--transition);
-      user-select: none;
+      border: 2px solid #ccc;
+      outline: none;
+      transition: border-color 0.3s ease;
     }
 
-    button:hover:not(:disabled) {
-      background: var(--secondary-color);
+    input.correct {
+      border-color: var(--correct-color);
+      background-color: #d4edda;
     }
 
-    button:disabled {
-      background: #ccc;
-      cursor: not-allowed;
+    input.wrong {
+      border-color: var(--wrong-color);
+      background-color: #f8d7da;
     }
 
-    @media (max-width: 380px) {
-      .stack-container {
-        width: 280px;
-        height: 420px;
-      }
-      .buttons {
-        width: 280px;
-      }
-    }
   </style>
 </head>
 <body>
 
-  <h1>Répertoire des Types d’Angles</h1>
-
-  <div class="stack-container">
-
-    <!-- Cartes avec --offset pour décalage -->
-    <div class="card active" data-index="0" data-question="Quel est l’intervalle de mesure de cet angle ?" data-answer="entre 0° et 90°" style="--offset:0">
-      <h2>Angle Aigu</h2>
-      <svg class="angle-svg" viewBox="0 0 100 100" aria-hidden="true">
-        <line x1="20" y1="90" x2="50" y2="50" />
-        <line x1="50" y1="50" x2="85" y2="75" />
-        <circle cx="50" cy="50" r="4" />
-        <path class="arc" d="M 55 55 A 10 10 0 0 1 65 60" />
-      </svg>
-      <div class="question"></div>
-      <textarea class="answer-input" placeholder="Écris ta réponse ici..." rows="1"></textarea>
-    </div>
-
-    <div class="card" data-index="1" data-question="Quelle est la mesure exacte de cet angle ?" data-answer="90°" style="--offset:1">
-      <h2>Angle Droit</h2>
-      <svg class="angle-svg" viewBox="0 0 100 100" aria-hidden="true">
-        <line x1="20" y1="90" x2="50" y2="50" />
-        <line x1="50" y1="50" x2="90" y2="50" />
-        <circle cx="50" cy="50" r="4" />
-        <path class="arc" d="M 55 50 A 10 10 0 0 1 50 45" />
-      </svg>
-      <div class="question"></div>
-      <textarea class="answer-input" placeholder="Écris ta réponse ici..." rows="1"></textarea>
-    </div>
-
-    <div class="card" data-index="2" data-question="Cet angle mesure-t-il plus de 90° ?" data-answer="oui" style="--offset:2">
-      <h2>Angle Obtus</h2>
-      <svg class="angle-svg" viewBox="0 0 100 100" aria-hidden="true">
-        <line x1="10" y1="90" x2="50" y2="50" />
-        <line x1="50" y1="50" x2="85" y2="20" />
-        <circle cx="50" cy="50" r="4" />
-        <path class="arc" d="M 60 60 A 20 20 0 0 1 75 40" />
-      </svg>
-      <div class="question"></div>
-      <textarea class="answer-input" placeholder="Écris ta réponse ici..." rows="1"></textarea>
-    </div>
-
-    <!-- Autres cartes similaires, tu peux continuer à ajouter comme avant -->
-
-  </div>
-
-  <div class="buttons">
-    <button id="prevBtn" disabled>Précédent</button>
-    <button id="nextBtn">Suivant</button>
-  </div>
+  <h1>Réviser les Angles</h1>
+  <div class="stack" id="cardStack"></div>
 
   <script>
-    const cards = document.querySelectorAll('.card');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-
-    let currentIndex = 0;
-
-    function updateStack() {
-      cards.forEach((card, i) => {
-        card.style.setProperty('--offset', i - currentIndex);
-        const questionEl = card.querySelector('.question');
-        const answerInput = card.querySelector('.answer-input');
-
-        if(i === currentIndex) {
-          card.classList.add('active');
-          questionEl.textContent = card.dataset.question;
-          answerInput.value = '';
-          answerInput.classList.remove('correct', 'incorrect');
-          answerInput.disabled = false;
-          answerInput.focus();
-        } else {
-          card.classList.remove('active');
-          questionEl.textContent = '';
-          answerInput.value = '';
-          answerInput.classList.remove('correct', 'incorrect');
-          answerInput.disabled = true;
-        }
-      });
-
-      prevBtn.disabled = currentIndex === 0;
-      nextBtn.disabled = currentIndex === cards.length - 1;
-    }
-
-    function validateAnswer(input, correctAnswer) {
-      const val = input.value.trim().toLowerCase();
-      const correct = correctAnswer.trim().toLowerCase();
-
-      if(val === '') return; // Ne rien faire si vide
-
-      if(val === correct) {
-        input.classList.add('correct');
-        input.classList.remove('incorrect');
-        return true;
-      } else {
-        input.classList.add('incorrect');
-        input.classList.remove('correct');
-        return false;
+    const cards = [
+      {
+        question: "Quel type d’angle est représenté ici ?",
+        answer: "aigu",
+        svg: `<svg class="angle-svg" viewBox="0 0 100 100">
+          <line x1="20" y1="90" x2="50" y2="50" />
+          <line x1="50" y1="50" x2="85" y2="75" />
+          <path class="arc" d="M 55 55 A 10 10 0 0 1 65 60" />
+        </svg>`
+      },
+      {
+        question: "Quel type d’angle mesure exactement 90° ?",
+        answer: "droit",
+        svg: `<svg class="angle-svg" viewBox="0 0 100 100">
+          <line x1="20" y1="90" x2="50" y2="50" />
+          <line x1="50" y1="50" x2="90" y2="50" />
+          <path class="arc" d="M 55 50 A 10 10 0 0 1 50 45" />
+        </svg>`
+      },
+      {
+        question: "Quel type d’angle mesure plus de 90° mais moins de 180° ?",
+        answer: "obtus",
+        svg: `<svg class="angle-svg" viewBox="0 0 100 100">
+          <line x1="10" y1="90" x2="50" y2="50" />
+          <line x1="50" y1="50" x2="85" y2="20" />
+          <path class="arc" d="M 60 60 A 20 20 0 0 1 75 40" />
+        </svg>`
+      },
+      {
+        question: "Comment appelle-t-on un angle de 180° ?",
+        answer: "plat",
+        svg: `<svg class="angle-svg" viewBox="0 0 100 100">
+          <line x1="10" y1="50" x2="90" y2="50" />
+          <path class="arc" d="M 60 50 A 10 10 0 0 1 40 50" />
+        </svg>`
       }
-    }
+    ];
 
-    function nextCard() {
-      if(currentIndex < cards.length - 1) {
-        currentIndex++;
-        updateStack();
+    let currentCard = 0;
+
+    const stack = document.getElementById("cardStack");
+
+    function renderCards() {
+      stack.innerHTML = '';
+      for (let i = cards.length - 1; i >= currentCard; i--) {
+        const card = document.createElement("div");
+        card.classList.add("card");
+        if (i === currentCard) card.classList.add("current");
+
+        card.innerHTML = `
+          <div>
+            <div class="question">${cards[i].question}</div>
+            ${cards[i].svg}
+          </div>
+          <div class="response">
+            <input type="text" placeholder="Votre réponse" />
+          </div>
+        `;
+
+        stack.appendChild(card);
       }
-    }
 
-    cards.forEach(card => {
-      const input = card.querySelector('.answer-input');
-      input.addEventListener('keydown', (e) => {
-        if(e.key === 'Enter') {
-          e.preventDefault(); // empêcher saut de ligne
-          const correctAnswer = card.dataset.answer;
-          if(validateAnswer(input, correctAnswer)) {
-            // réponse correcte : passe à la suivante après un court délai
-            setTimeout(() => {
-              nextCard();
-            }, 800);
+      const input = document.querySelector(".card.current input");
+      input.focus();
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          const userInput = input.value.trim().toLowerCase();
+          const correctAnswer = cards[currentCard].answer.toLowerCase();
+
+          if (userInput === correctAnswer) {
+            input.classList.add("correct");
           } else {
-            // réponse fausse : pareil, on passe après délai
-            setTimeout(() => {
-              nextCard();
-            }, 800);
+            input.classList.add("wrong");
           }
-        }
-      });
-      // Aussi validation à la perte de focus (blur)
-      input.addEventListener('blur', () => {
-        const correctAnswer = card.dataset.answer;
-        if(validateAnswer(input, correctAnswer)) {
+
           setTimeout(() => {
-            nextCard();
-          }, 800);
+            currentCard++;
+            if (currentCard < cards.length) {
+              renderCards();
+            } else {
+              stack.innerHTML = `<div class="card current"><h2>🎉 Bravo !</h2><p>Tu as terminé toutes les cartes.</p></div>`;
+            }
+          }, 1000);
         }
       });
-    });
+    }
 
-    prevBtn.addEventListener('click', () => {
-      if(currentIndex > 0) {
-        currentIndex--;
-        updateStack();
-      }
-    });
-
-    nextBtn.addEventListener('click', () => {
-      if(currentIndex < cards.length - 1) {
-        currentIndex++;
-        updateStack();
-      }
-    });
-
-    updateStack();
+    renderCards();
   </script>
 
 </body>
