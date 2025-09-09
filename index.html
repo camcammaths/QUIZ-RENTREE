@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Répertoire des Angles</title>
+
+  <!-- Polices -->
   <link href="https://fonts.googleapis.com/css2?family=Androgy+Demo&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Mabry+Pro&display=swap" rel="stylesheet" />
 
@@ -71,7 +73,6 @@
       margin: 0 auto 1rem;
     }
 
-    /* SVG styles for simplicity */
     svg line {
       stroke: var(--secondary-color);
       stroke-width: 4;
@@ -79,6 +80,13 @@
 
     svg circle {
       fill: var(--accent-color-3);
+    }
+
+    svg path.arc {
+      stroke: var(--primary-color);
+      stroke-width: 3;
+      fill: none;
+      opacity: 0.6;
     }
 
     @media (max-width: 600px) {
@@ -98,9 +106,10 @@
     <div class="card">
       <h2>Angle Aigu</h2>
       <svg class="angle-svg" viewBox="0 0 100 100">
-        <line x1="10" y1="90" x2="50" y2="50" />
-        <line x1="50" y1="50" x2="90" y2="80" />
+        <line x1="20" y1="90" x2="50" y2="50" />
+        <line x1="50" y1="50" x2="85" y2="75" />
         <circle cx="50" cy="50" r="4" />
+        <path class="arc" d="M 55 55 A 10 10 0 0 1 65 60" />
       </svg>
       <p>Mesure entre 0° et 90°</p>
     </div>
@@ -112,6 +121,7 @@
         <line x1="20" y1="90" x2="50" y2="50" />
         <line x1="50" y1="50" x2="90" y2="50" />
         <circle cx="50" cy="50" r="4" />
+        <path class="arc" d="M 55 50 A 10 10 0 0 1 50 45" />
       </svg>
       <p>Mesure exactement 90°</p>
     </div>
@@ -121,8 +131,9 @@
       <h2>Angle Obtus</h2>
       <svg class="angle-svg" viewBox="0 0 100 100">
         <line x1="10" y1="90" x2="50" y2="50" />
-        <line x1="50" y1="50" x2="85" y2="30" />
+        <line x1="50" y1="50" x2="85" y2="20" />
         <circle cx="50" cy="50" r="4" />
+        <path class="arc" d="M 60 60 A 20 20 0 0 1 75 40" />
       </svg>
       <p>Mesure entre 90° et 180°</p>
     </div>
@@ -133,34 +144,37 @@
       <svg class="angle-svg" viewBox="0 0 100 100">
         <line x1="10" y1="50" x2="90" y2="50" />
         <circle cx="50" cy="50" r="4" />
+        <path class="arc" d="M 60 50 A 10 10 0 0 1 40 50" />
       </svg>
       <p>Mesure exactement 180°</p>
     </div>
 
     <!-- Angles alternes-internes -->
     <div class="card">
-      <h2>Angles Alternes-Internes</h2>
+      <h2>Alternes-Internes</h2>
       <svg class="angle-svg" viewBox="0 0 100 100">
         <line x1="10" y1="20" x2="90" y2="20" />
         <line x1="10" y1="80" x2="90" y2="80" />
         <line x1="50" y1="0" x2="50" y2="100" stroke-dasharray="4" />
         <circle cx="50" cy="20" r="4" />
         <circle cx="50" cy="80" r="4" />
+        <path class="arc" d="M 52 22 A 8 8 0 0 1 56 28" />
       </svg>
-      <p>Égaux quand les droites sont parallèles</p>
+      <p>Égaux si les droites sont parallèles</p>
     </div>
 
     <!-- Angles correspondants -->
     <div class="card">
-      <h2>Angles Correspondants</h2>
+      <h2>Correspondants</h2>
       <svg class="angle-svg" viewBox="0 0 100 100">
         <line x1="10" y1="30" x2="90" y2="30" />
         <line x1="10" y1="70" x2="90" y2="70" />
         <line x1="40" y1="0" x2="60" y2="100" stroke-dasharray="4" />
         <circle cx="45" cy="30" r="4" />
         <circle cx="45" cy="70" r="4" />
+        <path class="arc" d="M 47 32 A 8 8 0 0 1 50 38" />
       </svg>
-      <p>Égaux quand les droites sont parallèles</p>
+      <p>Égaux si les droites sont parallèles</p>
     </div>
 
     <!-- Opposés par le sommet -->
@@ -170,30 +184,33 @@
         <line x1="10" y1="90" x2="90" y2="10" />
         <line x1="10" y1="10" x2="90" y2="90" />
         <circle cx="50" cy="50" r="4" />
+        <path class="arc" d="M 55 45 A 10 10 0 0 1 60 50" />
       </svg>
       <p>Deux angles égaux face à face</p>
     </div>
 
     <!-- Complémentaires -->
     <div class="card">
-      <h2>Angles Complémentaires</h2>
+      <h2>Complémentaires</h2>
       <svg class="angle-svg" viewBox="0 0 100 100">
         <line x1="50" y1="90" x2="50" y2="50" />
-        <line x1="50" y1="50" x2="90" y2="50" />
-        <line x1="50" y1="50" x2="30" y2="20" stroke="#fb5607" />
+        <line x1="50" y1="50" x2="85" y2="50" />
+        <line x1="50" y1="50" x2="75" y2="20" stroke="#fb5607" />
         <circle cx="50" cy="50" r="4" />
+        <path class="arc" d="M 60 50 A 10 10 0 0 1 66 42" />
       </svg>
       <p>Somme = 90°</p>
     </div>
 
     <!-- Supplémentaires -->
     <div class="card">
-      <h2>Angles Supplémentaires</h2>
+      <h2>Supplémentaires</h2>
       <svg class="angle-svg" viewBox="0 0 100 100">
         <line x1="50" y1="90" x2="50" y2="50" />
-        <line x1="50" y1="50" x2="90" y2="50" />
-        <line x1="50" y1="50" x2="10" y2="60" stroke="#ff006e" />
+        <line x1="50" y1="50" x2="85" y2="50" />
+        <line x1="50" y1="50" x2="10" y2="70" stroke="#ff006e" />
         <circle cx="50" cy="50" r="4" />
+        <path class="arc" d="M 60 50 A 20 20 0 0 1 20 65" />
       </svg>
       <p>Somme = 180°</p>
     </div>
