@@ -2,8 +2,8 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Répertoire de Figures</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Collection de Vases Géométriques</title>
 
   <!-- Polices -->
   <link href="https://fonts.googleapis.com/css2?family=Androgy+Demo&display=swap" rel="stylesheet" />
@@ -38,12 +38,19 @@
       margin-bottom: 2rem;
     }
 
+    h2 {
+      font-family: 'Androgy Demo', sans-serif;
+      color: var(--primary-color);
+      margin-top: 3rem;
+      margin-bottom: 2rem;
+    }
+
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
       gap: 2rem;
-      max-width: 1200px;
-      margin: 0 auto;
+      max-width: 1100px;
+      margin: 0 auto 4rem;
     }
 
     .figure {
@@ -60,246 +67,156 @@
       color: var(--secondary-color);
     }
 
-    /* SHAPES 2D */
+    /* Formes de base */
 
-    .square, .rectangle, .circle, .triangle {
+    .cube {
+      width: 90px;
+      height: 90px;
+      position: relative;
       background: var(--veil);
       border: 2px solid var(--primary-color);
       box-shadow: 0 0 12px rgba(58, 134, 255, 0.2);
       backdrop-filter: blur(2px);
     }
 
-    .square {
-      width: 100px;
-      height: 100px;
-    }
-
-    .rectangle {
-      width: 140px;
-      height: 80px;
-    }
-
-    .circle {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-    }
-
-    .triangle {
-      width: 0;
-      height: 0;
-      border-left: 60px solid transparent;
-      border-right: 60px solid transparent;
-      border-bottom: 100px solid var(--primary-color);
-      background: none;
-      box-shadow: none;
-    }
-
-    /* CUBE */
-    .cube {
-      width: 100px;
-      height: 100px;
-      position: relative;
-      transform-style: preserve-3d;
-      transform: rotateX(-20deg) rotateY(20deg);
-      animation: rotateCube 10s linear infinite;
-    }
-
-    .cube-face {
-      position: absolute;
-      width: 100px;
-      height: 100px;
+    .parallelepipede {
+      width: 130px;
+      height: 70px;
       background: var(--veil);
-      border: 2px solid var(--primary-color);
-      backdrop-filter: blur(2px);
+      border: 2px solid var(--accent-color-3);
+      box-shadow: 5px 5px 0 rgba(58,134,255,0.2);
+      transform: skewY(-10deg);
+      margin-bottom: -20px;
     }
 
-    .front  { transform: translateZ(50px); }
-    .back   { transform: rotateY(180deg) translateZ(50px); }
-    .right  { transform: rotateY(90deg) translateZ(50px); }
-    .left   { transform: rotateY(-90deg) translateZ(50px); }
-    .top    { transform: rotateX(90deg) translateZ(50px); }
-    .bottom { transform: rotateX(-90deg) translateZ(50px); }
-
-    @keyframes rotateCube {
-      from { transform: rotateX(-20deg) rotateY(0); }
-      to   { transform: rotateX(-20deg) rotateY(360deg); }
-    }
-
-    /* SPHERE */
-    .sphere {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 30% 30%, white, var(--veil));
-      box-shadow: 0 0 0 2px var(--primary-color), inset 0 0 20px rgba(255,255,255,0.3);
-      animation: rotateSphere 10s linear infinite;
-    }
-
-    @keyframes rotateSphere {
-      0% { transform: rotateY(0deg) rotateX(0deg); }
-      100% { transform: rotateY(360deg) rotateX(360deg); }
-    }
-
-    /* PYRAMIDE */
-    .pyramid {
-      width: 0;
-      height: 0;
-      border-left: 60px solid transparent;
-      border-right: 60px solid transparent;
-      border-bottom: 100px solid var(--accent-color-3);
-    }
-
-    /* CÔNE */
     .cone {
       width: 0;
       height: 0;
-      border-left: 60px solid transparent;
-      border-right: 60px solid transparent;
-      border-bottom: 100px solid var(--accent-color-1);
+      border-left: 50px solid transparent;
+      border-right: 50px solid transparent;
+      border-bottom: 90px solid var(--accent-color-1);
       border-radius: 50%;
+      margin-top: -20px;
     }
 
-    /* CYLINDRE DE RÉVOLUTION */
     .cylinder {
-      position: relative;
-      width: 80px;
-      height: 100px;
+      width: 70px;
+      height: 90px;
       background: linear-gradient(90deg, var(--accent-color-2) 20%, #d67f18 50%, var(--accent-color-2) 80%);
       border: 2px solid var(--accent-color-2);
+      box-shadow: inset 0 0 15px rgba(0,0,0,0.15);
       border-radius: 40px / 50px;
-      box-shadow: inset 0 0 15px rgba(0,0,0,0.15), 0 5px 8px rgba(0,0,0,0.1);
-      overflow: visible;
-      animation: rotateCylinder 10s linear infinite;
-      transform-style: preserve-3d;
-      perspective: 500px;
+      margin: 0 auto;
     }
 
-    /* Haut du cylindre */
-    .cylinder::before {
-      content: "";
-      position: absolute;
-      top: -20px;
-      left: 0;
-      width: 80px;
-      height: 40px;
-      background: radial-gradient(ellipse at center, #f7d27a, var(--accent-color-2));
-      border: 2px solid var(--accent-color-2);
-      border-radius: 50% / 100%;
-      box-shadow: inset 0 5px 10px rgba(255, 255, 255, 0.4);
-      transform-origin: center;
-      transform-style: preserve-3d;
-      z-index: 10;
+    .pyramid {
+      width: 0;
+      height: 0;
+      border-left: 50px solid transparent;
+      border-right: 50px solid transparent;
+      border-bottom: 90px solid var(--accent-color-3);
+      margin-top: -40px;
     }
 
-    /* Bas du cylindre */
-    .cylinder::after {
-      content: "";
-      position: absolute;
-      bottom: -20px;
-      left: 0;
-      width: 80px;
-      height: 40px;
-      background: radial-gradient(ellipse at center, var(--accent-color-2), #b36e0b);
-      border: 2px solid var(--accent-color-2);
-      border-radius: 50% / 100%;
-      box-shadow: inset 0 -5px 10px rgba(0, 0, 0, 0.4);
-      transform-origin: center;
-      transform-style: preserve-3d;
-      z-index: 5;
+    .sphere {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, white, var(--veil));
+      box-shadow: 0 0 0 2px var(--primary-color), inset 0 0 15px rgba(255,255,255,0.5);
+      margin-top: -40px;
     }
 
-    @keyframes rotateCylinder {
-      from {
-        transform: rotateY(0deg);
-      }
-      to {
-        transform: rotateY(360deg);
-      }
+    /* Vases : conteneur + effet hover */
+    .vase > div {
+      transition: transform 0.3s ease;
     }
 
-    /* PARALLÉLÉPIPÈDE RECTANGLE */
-    .parallelepipede {
-      width: 140px;
-      height: 80px;
-      background: var(--veil);
-      border: 2px solid var(--accent-color-3);
-      box-shadow: 6px 6px 0 rgba(58,134,255,0.3);
-      transform: skewY(-10deg);
-    }
-
-    footer {
-      margin-top: 4rem;
-      font-size: 0.9rem;
-      color: #999;
+    .vase:hover > div {
+      transform: scale(1.05);
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
     }
   </style>
 </head>
 <body>
 
-  <h1>Répertoire de Figures Géométriques</h1>
+  <h1>Collection de Vases Géométriques</h1>
 
   <div class="grid">
 
-    <!-- 2D SHAPES -->
-    <div class="figure">
-      <div class="square"></div>
-      <div class="label">Carré</div>
-    </div>
-
-    <div class="figure">
-      <div class="rectangle"></div>
-      <div class="label">Rectangle</div>
-    </div>
-
-    <div class="figure">
-      <div class="triangle"></div>
-      <div class="label">Triangle</div>
-    </div>
-
-    <div class="figure">
-      <div class="circle"></div>
-      <div class="label">Cercle</div>
-    </div>
-
-    <!-- 3D SHAPES -->
-    <div class="figure">
-      <div class="cube">
-        <div class="cube-face front"></div>
-        <div class="cube-face back"></div>
-        <div class="cube-face right"></div>
-        <div class="cube-face left"></div>
-        <div class="cube-face top"></div>
-        <div class="cube-face bottom"></div>
-      </div>
-      <div class="label">Cube</div>
-    </div>
-
-    <div class="figure">
-      <div class="pyramid"></div>
-      <div class="label">Pyramide</div>
-    </div>
-
-    <div class="figure">
-      <div class="cone"></div>
-      <div class="label">Cône</div>
-    </div>
-
-    <div class="figure">
-      <div class="cylinder"></div>
-      <div class="label">Cylindre de révolution</div>
-    </div>
-
-    <div class="figure">
+    <!-- Vase 1 : parallélépipède rectangle + sphère -->
+    <div class="figure vase">
       <div class="parallelepipede"></div>
-      <div class="label">Parallélépipède rectangle</div>
+      <div class="sphere"></div>
+      <div class="label">Vase 1</div>
+    </div>
+
+    <!-- Vase 2 : cube + cylindre -->
+    <div class="figure vase">
+      <div class="cube"></div>
+      <div class="cylinder"></div>
+      <div class="label">Vase 2</div>
+    </div>
+
+    <!-- Vase 3 : cône + cylindre + sphère -->
+    <div class="figure vase">
+      <div class="cone"></div>
+      <div class="cylinder"></div>
+      <div class="sphere"></div>
+      <div class="label">Vase 3</div>
+    </div>
+
+    <!-- Vase 4 : pyramide + cube -->
+    <div class="figure vase">
+      <div class="pyramid"></div>
+      <div class="cube"></div>
+      <div class="label">Vase 4</div>
+    </div>
+
+    <!-- Vase 5 : cylindre + sphère -->
+    <div class="figure vase">
+      <div class="cylinder"></div>
+      <div class="sphere"></div>
+      <div class="label">Vase 5</div>
+    </div>
+
+    <!-- Vase 6 : cube + pyramide -->
+    <div class="figure vase">
+      <div class="cube"></div>
+      <div class="pyramid"></div>
+      <div class="label">Vase 6</div>
+    </div>
+
+    <!-- Vase 7 : parallélépipède rectangle + cône -->
+    <div class="figure vase">
+      <div class="parallelepipede"></div>
+      <div class="cone"></div>
+      <div class="label">Vase 7</div>
+    </div>
+
+    <!-- Vase 8 : sphère + cylindre -->
+    <div class="figure vase">
+      <div class="sphere"></div>
+      <div class="cylinder"></div>
+      <div class="label">Vase 8</div>
+    </div>
+
+    <!-- Vase 9 : cône + cube -->
+    <div class="figure vase">
+      <div class="cone"></div>
+      <div class="cube"></div>
+      <div class="label">Vase 9</div>
+    </div>
+
+    <!-- Vase 10 : parallélépipède rectangle + pyramide + sphère -->
+    <div class="figure vase">
+      <div class="parallelepipede"></div>
+      <div class="pyramid"></div>
+      <div class="sphere"></div>
+      <div class="label">Vase 10</div>
     </div>
 
   </div>
-
-  <footer>
-    © 2025 — Répertoire de formes géométriques CSS
-  </footer>
 
 </body>
 </html>
