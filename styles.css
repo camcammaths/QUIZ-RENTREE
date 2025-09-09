@@ -1,1 +1,58 @@
+@font-face {
+  font-family: 'Androgy Demo';
+  src: url('./fonts/AndrogyDemo.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
 
+@font-face {
+  font-family: 'Mabry Pro';
+  src: url('./fonts/MabryPro.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+:root {
+  --bg: #f6f5f2;
+  --primary: #2e2e2e;
+  --accent: #a876f2;
+  --soft-blue: #d0ebff;
+  --soft-pink: #ffdce0;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg);
+  color: var(--primary);
+  font-family: 'Mabry Pro', sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  flex-direction: column;
+}
+
+main {
+  text-align: center;
+}
+
+.title {
+  font-family: 'Androgy Demo', sans-serif;
+  font-size: 4rem;
+  margin-bottom: 0.5rem;
+}
+
+.title span {
+  text-transform: lowercase;
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: var(--accent);
+}
+
+#cube-container {
+  width: 400px;
+  height: 400px;
+  margin: 2rem auto;
+}
