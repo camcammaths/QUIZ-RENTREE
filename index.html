@@ -71,10 +71,14 @@
       z-index: 0;
     }
 
-    .card:not(.active) {
-      transform-origin: left center;
-      transform: translateX(calc(-15px * var(--offset))) scale(calc(1 - 0.05 * var(--offset))) rotateY(-5deg);
-      filter: brightness(0.9);
+  .card:not(.active) {
+  transform-origin: left center;
+  transform: translateX(calc(-25px * var(--offset))) scale(calc(1 - 0.03 * var(--offset))) rotateY(-4deg);
+  opacity: calc(0.15 + 0.2 / (1 + var(--offset))); /* Plus de profondeur */
+  z-index: calc(10 - var(--offset));
+  filter: brightness(0.95);
+  pointer-events: none;
+}
     }
 
     .card.active {
