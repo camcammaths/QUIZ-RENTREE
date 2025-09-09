@@ -3,9 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Répertoire de Figures Géométriques</title>
-
-  <!-- Polices -->
+  <title>Répertoire des Angles</title>
   <link href="https://fonts.googleapis.com/css2?family=Androgy+Demo&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Mabry+Pro&display=swap" rel="stylesheet" />
 
@@ -17,223 +15,190 @@
       --accent-color-2: #fb5607;
       --accent-color-3: #ffbe0b;
       --background-color: #f0f4f8;
-      --veil: rgba(58, 134, 255, 0.08);
-      --border-radius: 8px;
+      --card-veil: rgba(58, 134, 255, 0.08);
+      --border-radius: 12px;
       --transition: 0.3s ease;
     }
 
     body {
-      margin: 0;
       font-family: 'Mabry Pro', sans-serif;
       background: var(--background-color);
-      color: #212529;
+      margin: 0;
       padding: 2rem;
-      text-align: center;
+      color: #212529;
     }
 
     h1 {
       font-family: 'Androgy Demo', sans-serif;
+      font-size: 2.5rem;
       color: var(--primary-color);
-      font-size: 2.8rem;
+      text-align: center;
       margin-bottom: 2rem;
     }
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 2rem;
-      max-width: 1200px;
-      margin: 0 auto;
+      padding: 1rem;
     }
 
-    .figure {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .label {
-      margin-top: 1rem;
-      font-weight: bold;
-      color: var(--secondary-color);
-    }
-
-    /* SHAPES 2D - direction artistique douce */
-
-    .shape-2d {
-      background: var(--veil);
+    .card {
+      background: var(--card-veil);
       border: 2px solid var(--primary-color);
-      box-shadow: 0 0 12px rgba(58, 134, 255, 0.15);
-      backdrop-filter: blur(2px);
+      border-radius: var(--border-radius);
+      backdrop-filter: blur(4px);
+      padding: 1.5rem;
+      text-align: center;
+      transition: transform var(--transition), box-shadow var(--transition);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
     }
 
-    .square {
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    }
+
+    .card h2 {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      color: var(--primary-color);
+    }
+
+    .angle-svg {
       width: 100px;
       height: 100px;
+      margin: 0 auto 1rem;
     }
 
-    .rectangle {
-      width: 140px;
-      height: 80px;
+    /* SVG styles for simplicity */
+    svg line {
+      stroke: var(--secondary-color);
+      stroke-width: 4;
     }
 
-    .circle {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
+    svg circle {
+      fill: var(--accent-color-3);
     }
 
-    .triangle {
-      width: 0;
-      height: 0;
-      border-left: 50px solid transparent;
-      border-right: 50px solid transparent;
-      border-bottom: 100px solid var(--primary-color);
-      background: none;
-      box-shadow: 0 0 12px rgba(58, 134, 255, 0.15);
-    }
-
-    /* 3D Shapes - style du cube statique */
-
-    .shape-3d {
-      transform-style: preserve-3d;
-      perspective: 600px;
-      width: 100px;
-      height: 100px;
-      position: relative;
-    }
-
-    .cube, .parallelepipede, .pyramid, .cone {
-      position: relative;
-      width: 100px;
-      height: 100px;
-    }
-
-    .cube .face,
-    .parallelepipede .face {
-      position: absolute;
-      width: 100px;
-      height: 100px;
-      background: var(--veil);
-      border: 2px solid var(--primary-color);
-      backdrop-filter: blur(2px);
-      box-sizing: border-box;
-    }
-
-    .cube .front   { transform: translateZ(50px); }
-    .cube .back    { transform: rotateY(180deg) translateZ(50px); }
-    .cube .right   { transform: rotateY(90deg) translateZ(50px); }
-    .cube .left    { transform: rotateY(-90deg) translateZ(50px); }
-    .cube .top     { transform: rotateX(90deg) translateZ(50px); }
-    .cube .bottom  { transform: rotateX(-90deg) translateZ(50px); }
-
-    .parallelepipede .face {
-      width: 120px;
-      height: 80px;
-    }
-
-    .parallelepipede .front  { transform: translateZ(40px); }
-    .parallelepipede .back   { transform: rotateY(180deg) translateZ(40px); }
-    .parallelepipede .right  { transform: rotateY(90deg) translateZ(60px); width: 80px; height: 80px; }
-    .parallelepipede .left   { transform: rotateY(-90deg) translateZ(60px); width: 80px; height: 80px; }
-    .parallelepipede .top    { transform: rotateX(90deg) translateZ(40px); height: 120px; }
-    .parallelepipede .bottom { transform: rotateX(-90deg) translateZ(40px); height: 120px; }
-
-    /* Pyramide */
-    .pyramid .triangle-face {
-      position: absolute;
-      width: 0;
-      height: 0;
-      border-left: 50px solid transparent;
-      border-right: 50px solid transparent;
-      border-bottom: 100px solid var(--accent-color-3);
-      opacity: 0.7;
-    }
-
-    /* Cône */
-    .cone .cone-body {
-      width: 0;
-      height: 0;
-      border-left: 50px solid transparent;
-      border-right: 50px solid transparent;
-      border-bottom: 100px solid var(--accent-color-1);
-      border-radius: 50%;
-      opacity: 0.7;
-    }
-
-    footer {
-      margin-top: 4rem;
-      font-size: 0.9rem;
-      color: #999;
+    @media (max-width: 600px) {
+      .card {
+        padding: 1rem;
+      }
     }
   </style>
 </head>
 <body>
 
-  <h1>Répertoire de Figures Géométriques</h1>
+  <h1>Répertoire des Types d’Angles</h1>
 
   <div class="grid">
 
-    <!-- 2D SHAPES -->
-    <div class="figure">
-      <div class="square shape-2d"></div>
-      <div class="label">Carré</div>
+    <!-- Angle aigu -->
+    <div class="card">
+      <h2>Angle Aigu</h2>
+      <svg class="angle-svg" viewBox="0 0 100 100">
+        <line x1="10" y1="90" x2="50" y2="50" />
+        <line x1="50" y1="50" x2="90" y2="80" />
+        <circle cx="50" cy="50" r="4" />
+      </svg>
+      <p>Mesure entre 0° et 90°</p>
     </div>
 
-    <div class="figure">
-      <div class="circle shape-2d"></div>
-      <div class="label">Cercle</div>
+    <!-- Angle droit -->
+    <div class="card">
+      <h2>Angle Droit</h2>
+      <svg class="angle-svg" viewBox="0 0 100 100">
+        <line x1="20" y1="90" x2="50" y2="50" />
+        <line x1="50" y1="50" x2="90" y2="50" />
+        <circle cx="50" cy="50" r="4" />
+      </svg>
+      <p>Mesure exactement 90°</p>
     </div>
 
-    <div class="figure">
-      <div class="triangle"></div>
-      <div class="label">Triangle</div>
+    <!-- Angle obtus -->
+    <div class="card">
+      <h2>Angle Obtus</h2>
+      <svg class="angle-svg" viewBox="0 0 100 100">
+        <line x1="10" y1="90" x2="50" y2="50" />
+        <line x1="50" y1="50" x2="85" y2="30" />
+        <circle cx="50" cy="50" r="4" />
+      </svg>
+      <p>Mesure entre 90° et 180°</p>
     </div>
 
-    <!-- 3D SHAPES -->
-    <div class="figure">
-      <div class="cube shape-3d">
-        <div class="face front"></div>
-        <div class="face back"></div>
-        <div class="face right"></div>
-        <div class="face left"></div>
-        <div class="face top"></div>
-        <div class="face bottom"></div>
-      </div>
-      <div class="label">Cube</div>
+    <!-- Angle plat -->
+    <div class="card">
+      <h2>Angle Plat</h2>
+      <svg class="angle-svg" viewBox="0 0 100 100">
+        <line x1="10" y1="50" x2="90" y2="50" />
+        <circle cx="50" cy="50" r="4" />
+      </svg>
+      <p>Mesure exactement 180°</p>
     </div>
 
-    <div class="figure">
-      <div class="parallelepipede shape-3d">
-        <div class="face front"></div>
-        <div class="face back"></div>
-        <div class="face right"></div>
-        <div class="face left"></div>
-        <div class="face top"></div>
-        <div class="face bottom"></div>
-      </div>
-      <div class="label">Parallélépipède</div>
+    <!-- Angles alternes-internes -->
+    <div class="card">
+      <h2>Angles Alternes-Internes</h2>
+      <svg class="angle-svg" viewBox="0 0 100 100">
+        <line x1="10" y1="20" x2="90" y2="20" />
+        <line x1="10" y1="80" x2="90" y2="80" />
+        <line x1="50" y1="0" x2="50" y2="100" stroke-dasharray="4" />
+        <circle cx="50" cy="20" r="4" />
+        <circle cx="50" cy="80" r="4" />
+      </svg>
+      <p>Égaux quand les droites sont parallèles</p>
     </div>
 
-    <div class="figure">
-      <div class="pyramid shape-3d">
-        <div class="triangle-face"></div>
-      </div>
-      <div class="label">Pyramide</div>
+    <!-- Angles correspondants -->
+    <div class="card">
+      <h2>Angles Correspondants</h2>
+      <svg class="angle-svg" viewBox="0 0 100 100">
+        <line x1="10" y1="30" x2="90" y2="30" />
+        <line x1="10" y1="70" x2="90" y2="70" />
+        <line x1="40" y1="0" x2="60" y2="100" stroke-dasharray="4" />
+        <circle cx="45" cy="30" r="4" />
+        <circle cx="45" cy="70" r="4" />
+      </svg>
+      <p>Égaux quand les droites sont parallèles</p>
     </div>
 
-    <div class="figure">
-      <div class="cone shape-3d">
-        <div class="cone-body"></div>
-      </div>
-      <div class="label">Cône</div>
+    <!-- Opposés par le sommet -->
+    <div class="card">
+      <h2>Opposés par le sommet</h2>
+      <svg class="angle-svg" viewBox="0 0 100 100">
+        <line x1="10" y1="90" x2="90" y2="10" />
+        <line x1="10" y1="10" x2="90" y2="90" />
+        <circle cx="50" cy="50" r="4" />
+      </svg>
+      <p>Deux angles égaux face à face</p>
+    </div>
+
+    <!-- Complémentaires -->
+    <div class="card">
+      <h2>Angles Complémentaires</h2>
+      <svg class="angle-svg" viewBox="0 0 100 100">
+        <line x1="50" y1="90" x2="50" y2="50" />
+        <line x1="50" y1="50" x2="90" y2="50" />
+        <line x1="50" y1="50" x2="30" y2="20" stroke="#fb5607" />
+        <circle cx="50" cy="50" r="4" />
+      </svg>
+      <p>Somme = 90°</p>
+    </div>
+
+    <!-- Supplémentaires -->
+    <div class="card">
+      <h2>Angles Supplémentaires</h2>
+      <svg class="angle-svg" viewBox="0 0 100 100">
+        <line x1="50" y1="90" x2="50" y2="50" />
+        <line x1="50" y1="50" x2="90" y2="50" />
+        <line x1="50" y1="50" x2="10" y2="60" stroke="#ff006e" />
+        <circle cx="50" cy="50" r="4" />
+      </svg>
+      <p>Somme = 180°</p>
     </div>
 
   </div>
-
-  <footer>
-    © 2025 — Répertoire de formes géométriques CSS
-  </footer>
 
 </body>
 </html>
