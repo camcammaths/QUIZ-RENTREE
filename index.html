@@ -38,57 +38,55 @@
       margin-bottom: 2rem;
     }
 
-    h2 {
-      font-family: 'Androgy Demo', sans-serif;
-      color: var(--primary-color);
-      margin-top: 3rem;
-      margin-bottom: 2rem;
-    }
-
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
       gap: 2rem;
       max-width: 1100px;
       margin: 0 auto 4rem;
+      justify-items: center;
     }
 
-    .figure {
+    .vase {
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      padding: 1rem;
+      cursor: default;
     }
 
     .label {
-      margin-top: 0.8rem;
+      margin-top: 1rem;
       font-weight: bold;
       color: var(--secondary-color);
     }
 
-    /* Formes de base */
+    /* Formes */
 
+    /* Cube */
     .cube {
       width: 90px;
       height: 90px;
-      position: relative;
       background: var(--veil);
       border: 2px solid var(--primary-color);
       box-shadow: 0 0 12px rgba(58, 134, 255, 0.2);
       backdrop-filter: blur(2px);
+      border-radius: var(--border-radius);
+      margin-top: -15px;
     }
 
+    /* Parallélépipède rectangle */
     .parallelepipede {
       width: 130px;
       height: 70px;
       background: var(--veil);
       border: 2px solid var(--accent-color-3);
-      box-shadow: 5px 5px 0 rgba(58,134,255,0.2);
+      box-shadow: 6px 6px 0 rgba(58,134,255,0.3);
       transform: skewY(-10deg);
-      margin-bottom: -20px;
+      border-radius: var(--border-radius);
+      margin-top: -15px;
     }
 
+    /* Cône */
     .cone {
       width: 0;
       height: 0;
@@ -96,9 +94,10 @@
       border-right: 50px solid transparent;
       border-bottom: 90px solid var(--accent-color-1);
       border-radius: 50%;
-      margin-top: -20px;
+      margin-top: -40px;
     }
 
+    /* Cylindre */
     .cylinder {
       width: 70px;
       height: 90px;
@@ -106,9 +105,10 @@
       border: 2px solid var(--accent-color-2);
       box-shadow: inset 0 0 15px rgba(0,0,0,0.15);
       border-radius: 40px / 50px;
-      margin: 0 auto;
+      margin-top: -15px;
     }
 
+    /* Pyramide */
     .pyramid {
       width: 0;
       height: 0;
@@ -118,6 +118,7 @@
       margin-top: -40px;
     }
 
+    /* Sphère */
     .sphere {
       width: 70px;
       height: 70px;
@@ -127,15 +128,6 @@
       margin-top: -40px;
     }
 
-    /* Vases : conteneur + effet hover */
-    .vase > div {
-      transition: transform 0.3s ease;
-    }
-
-    .vase:hover > div {
-      transform: scale(1.05);
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
-    }
   </style>
 </head>
 <body>
@@ -145,21 +137,21 @@
   <div class="grid">
 
     <!-- Vase 1 : parallélépipède rectangle + sphère -->
-    <div class="figure vase">
+    <div class="vase">
       <div class="parallelepipede"></div>
       <div class="sphere"></div>
       <div class="label">Vase 1</div>
     </div>
 
     <!-- Vase 2 : cube + cylindre -->
-    <div class="figure vase">
+    <div class="vase">
       <div class="cube"></div>
       <div class="cylinder"></div>
       <div class="label">Vase 2</div>
     </div>
 
     <!-- Vase 3 : cône + cylindre + sphère -->
-    <div class="figure vase">
+    <div class="vase">
       <div class="cone"></div>
       <div class="cylinder"></div>
       <div class="sphere"></div>
@@ -167,49 +159,49 @@
     </div>
 
     <!-- Vase 4 : pyramide + cube -->
-    <div class="figure vase">
+    <div class="vase">
       <div class="pyramid"></div>
       <div class="cube"></div>
       <div class="label">Vase 4</div>
     </div>
 
     <!-- Vase 5 : cylindre + sphère -->
-    <div class="figure vase">
+    <div class="vase">
       <div class="cylinder"></div>
       <div class="sphere"></div>
       <div class="label">Vase 5</div>
     </div>
 
     <!-- Vase 6 : cube + pyramide -->
-    <div class="figure vase">
+    <div class="vase">
       <div class="cube"></div>
       <div class="pyramid"></div>
       <div class="label">Vase 6</div>
     </div>
 
     <!-- Vase 7 : parallélépipède rectangle + cône -->
-    <div class="figure vase">
+    <div class="vase">
       <div class="parallelepipede"></div>
       <div class="cone"></div>
       <div class="label">Vase 7</div>
     </div>
 
     <!-- Vase 8 : sphère + cylindre -->
-    <div class="figure vase">
+    <div class="vase">
       <div class="sphere"></div>
       <div class="cylinder"></div>
       <div class="label">Vase 8</div>
     </div>
 
     <!-- Vase 9 : cône + cube -->
-    <div class="figure vase">
+    <div class="vase">
       <div class="cone"></div>
       <div class="cube"></div>
       <div class="label">Vase 9</div>
     </div>
 
     <!-- Vase 10 : parallélépipède rectangle + pyramide + sphère -->
-    <div class="figure vase">
+    <div class="vase">
       <div class="parallelepipede"></div>
       <div class="pyramid"></div>
       <div class="sphere"></div>
