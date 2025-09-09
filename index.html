@@ -2,8 +2,8 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Collection de Vases Géométriques</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Répertoire des Angles - Pile interactive</title>
 
   <!-- Polices -->
   <link href="https://fonts.googleapis.com/css2?family=Androgy+Demo&display=swap" rel="stylesheet" />
@@ -17,198 +17,315 @@
       --accent-color-2: #fb5607;
       --accent-color-3: #ffbe0b;
       --background-color: #f0f4f8;
-      --veil: rgba(58, 134, 255, 0.08);
-      --border-radius: 8px;
+      --card-veil: rgba(58, 134, 255, 0.08);
+      --border-radius: 12px;
       --transition: 0.3s ease;
     }
 
     body {
-      margin: 0;
       font-family: 'Mabry Pro', sans-serif;
       background: var(--background-color);
-      color: #212529;
+      margin: 0;
       padding: 2rem;
+      color: #212529;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      justify-content: center;
       text-align: center;
     }
 
     h1 {
       font-family: 'Androgy Demo', sans-serif;
+      font-size: 2.5rem;
       color: var(--primary-color);
-      font-size: 2.8rem;
       margin-bottom: 2rem;
     }
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 2rem;
-      max-width: 1100px;
-      margin: 0 auto 4rem;
-      justify-items: center;
+    .stack-container {
+      position: relative;
+      width: 320px;
+      height: 420px;
+      perspective: 1500px;
     }
 
-    .vase {
+    .card {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--card-veil);
+      border: 2px solid var(--primary-color);
+      border-radius: var(--border-radius);
+      backdrop-filter: blur(4px);
+      padding: 1.5rem;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+      transition: transform var(--transition), opacity var(--transition);
       display: flex;
       flex-direction: column;
       align-items: center;
-      cursor: default;
+      justify-content: start;
+      opacity: 0;
+      pointer-events: none;
     }
 
-    .label {
-      margin-top: 1rem;
+    .card.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateZ(0) scale(1);
+      z-index: 10;
+    }
+
+    .card h2 {
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+      color: var(--primary-color);
+    }
+
+    .angle-svg {
+      width: 140px;
+      height: 140px;
+      margin-bottom: 1rem;
+      flex-shrink: 0;
+    }
+
+    svg line {
+      stroke: var(--secondary-color);
+      stroke-width: 4;
+    }
+
+    svg circle {
+      fill: var(--accent-color-3);
+    }
+
+    svg path.arc {
+      stroke: var(--primary-color);
+      stroke-width: 3;
+      fill: none;
+      opacity: 0.6;
+    }
+
+    p.description {
+      flex-grow: 1;
+      font-size: 1rem;
+      margin-bottom: 1.2rem;
+      color: #333;
+    }
+
+    .question {
       font-weight: bold;
-      color: var(--secondary-color);
+      font-size: 1.1rem;
+      color: var(--accent-color-2);
+      margin-bottom: 1.5rem;
+      min-height: 48px;
     }
 
-    /* Formes */
+    .buttons {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+    }
 
-    /* Cube */
-    .cube {
-      width: 90px;
-      height: 90px;
-      background: var(--veil);
-      border: 2px solid var(--primary-color);
-      box-shadow: 0 0 12px rgba(58, 134, 255, 0.2);
-      backdrop-filter: blur(2px);
+    button {
+      flex: 1;
+      padding: 0.6rem 1rem;
+      font-size: 1rem;
       border-radius: var(--border-radius);
-      margin-top: -15px;
+      border: none;
+      background: var(--primary-color);
+      color: white;
+      cursor: pointer;
+      transition: background-color var(--transition);
+      user-select: none;
     }
 
-    /* Parallélépipède rectangle */
-    .parallelepipede {
-      width: 130px;
-      height: 70px;
-      background: var(--veil);
-      border: 2px solid var(--accent-color-3);
-      box-shadow: 6px 6px 0 rgba(58,134,255,0.3);
-      transform: skewY(-10deg);
-      border-radius: var(--border-radius);
-      margin-top: -15px;
+    button:hover {
+      background: var(--secondary-color);
     }
 
-    /* Cône */
-    .cone {
-      width: 0;
-      height: 0;
-      border-left: 50px solid transparent;
-      border-right: 50px solid transparent;
-      border-bottom: 90px solid var(--accent-color-1);
-      border-radius: 50%;
-      margin-top: -40px;
+    button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
     }
 
-    /* Cylindre */
-    .cylinder {
-      width: 70px;
-      height: 90px;
-      background: linear-gradient(90deg, var(--accent-color-2) 20%, #d67f18 50%, var(--accent-color-2) 80%);
-      border: 2px solid var(--accent-color-2);
-      box-shadow: inset 0 0 15px rgba(0,0,0,0.15);
-      border-radius: 40px / 50px;
-      margin-top: -15px;
+    @media (max-width: 380px) {
+      .stack-container {
+        width: 280px;
+        height: 380px;
+      }
     }
-
-    /* Pyramide */
-    .pyramid {
-      width: 0;
-      height: 0;
-      border-left: 50px solid transparent;
-      border-right: 50px solid transparent;
-      border-bottom: 90px solid var(--accent-color-3);
-      margin-top: -40px;
-    }
-
-    /* Sphère */
-    .sphere {
-      width: 70px;
-      height: 70px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 30% 30%, white, var(--veil));
-      box-shadow: 0 0 0 2px var(--primary-color), inset 0 0 15px rgba(255,255,255,0.5);
-      margin-top: -40px;
-    }
-
   </style>
 </head>
 <body>
 
-  <h1>Collection de Vases Géométriques</h1>
+  <h1>Répertoire des Types d’Angles</h1>
 
-  <div class="grid">
+  <div class="stack-container">
 
-    <!-- Vase 1 : parallélépipède rectangle + sphère -->
-    <div class="vase">
-      <div class="parallelepipede"></div>
-      <div class="sphere"></div>
-      <div class="label">Vase 1</div>
+    <!-- Cartes -->
+    <div class="card active" data-index="0" data-question="Quel est l’intervalle de mesure de cet angle ?">
+      <h2>Angle Aigu</h2>
+      <svg class="angle-svg" viewBox="0 0 100 100">
+        <line x1="20" y1="90" x2="50" y2="50" />
+        <line x1="50" y1="50" x2="85" y2="75" />
+        <circle cx="50" cy="50" r="4" />
+        <path class="arc" d="M 55 55 A 10 10 0 0 1 65 60" />
+      </svg>
+      <p class="description">Mesure entre 0° et 90°</p>
+      <div class="question"></div>
     </div>
 
-    <!-- Vase 2 : cube + cylindre -->
-    <div class="vase">
-      <div class="cube"></div>
-      <div class="cylinder"></div>
-      <div class="label">Vase 2</div>
+    <div class="card" data-index="1" data-question="Quelle est la mesure exacte de cet angle ?">
+      <h2>Angle Droit</h2>
+      <svg class="angle-svg" viewBox="0 0 100 100">
+        <line x1="20" y1="90" x2="50" y2="50" />
+        <line x1="50" y1="50" x2="90" y2="50" />
+        <circle cx="50" cy="50" r="4" />
+        <path class="arc" d="M 55 50 A 10 10 0 0 1 50 45" />
+      </svg>
+      <p class="description">Mesure exactement 90°</p>
+      <div class="question"></div>
     </div>
 
-    <!-- Vase 3 : cône + cylindre + sphère -->
-    <div class="vase">
-      <div class="cone"></div>
-      <div class="cylinder"></div>
-      <div class="sphere"></div>
-      <div class="label">Vase 3</div>
+    <div class="card" data-index="2" data-question="Cet angle mesure-t-il plus de 90° ?">
+      <h2>Angle Obtus</h2>
+      <svg class="angle-svg" viewBox="0 0 100 100">
+        <line x1="10" y1="90" x2="50" y2="50" />
+        <line x1="50" y1="50" x2="85" y2="20" />
+        <circle cx="50" cy="50" r="4" />
+        <path class="arc" d="M 60 60 A 20 20 0 0 1 75 40" />
+      </svg>
+      <p class="description">Mesure entre 90° et 180°</p>
+      <div class="question"></div>
     </div>
 
-    <!-- Vase 4 : pyramide + cube -->
-    <div class="vase">
-      <div class="pyramid"></div>
-      <div class="cube"></div>
-      <div class="label">Vase 4</div>
+    <div class="card" data-index="3" data-question="Quelle est la mesure exacte de cet angle plat ?">
+      <h2>Angle Plat</h2>
+      <svg class="angle-svg" viewBox="0 0 100 100">
+        <line x1="10" y1="50" x2="90" y2="50" />
+        <circle cx="50" cy="50" r="4" />
+        <path class="arc" d="M 60 50 A 10 10 0 0 1 40 50" />
+      </svg>
+      <p class="description">Mesure exactement 180°</p>
+      <div class="question"></div>
     </div>
 
-    <!-- Vase 5 : cylindre + sphère -->
-    <div class="vase">
-      <div class="cylinder"></div>
-      <div class="sphere"></div>
-      <div class="label">Vase 5</div>
+    <div class="card" data-index="4" data-question="Que peut-on dire de ces angles alternes-internes si les droites sont parallèles ?">
+      <h2>Alternes-Internes</h2>
+      <svg class="angle-svg" viewBox="0 0 100 100">
+        <line x1="10" y1="20" x2="90" y2="20" />
+        <line x1="10" y1="80" x2="90" y2="80" />
+        <line x1="50" y1="0" x2="50" y2="100" stroke-dasharray="4" />
+        <circle cx="50" cy="20" r="4" />
+        <circle cx="50" cy="80" r="4" />
+        <path class="arc" d="M 52 22 A 8 8 0 0 1 56 28" />
+      </svg>
+      <p class="description">Égaux si les droites sont parallèles</p>
+      <div class="question"></div>
     </div>
 
-    <!-- Vase 6 : cube + pyramide -->
-    <div class="vase">
-      <div class="cube"></div>
-      <div class="pyramid"></div>
-      <div class="label">Vase 6</div>
+    <div class="card" data-index="5" data-question="Quand deux angles sont correspondants, que peut-on dire si les droites sont parallèles ?">
+      <h2>Correspondants</h2>
+      <svg class="angle-svg" viewBox="0 0 100 100">
+        <line x1="10" y1="30" x2="90" y2="30" />
+        <line x1="10" y1="70" x2="90" y2="70" />
+        <line x1="40" y1="0" x2="60" y2="100" stroke-dasharray="4" />
+        <circle cx="45" cy="30" r="4" />
+        <circle cx="45" cy="70" r="4" />
+        <path class="arc" d="M 47 32 A 8 8 0 0 1 50 38" />
+      </svg>
+      <p class="description">Égaux si les droites sont parallèles</p>
+      <div class="question"></div>
     </div>
 
-    <!-- Vase 7 : parallélépipède rectangle + cône -->
-    <div class="vase">
-      <div class="parallelepipede"></div>
-      <div class="cone"></div>
-      <div class="label">Vase 7</div>
+    <div class="card" data-index="6" data-question="Comment s’appellent deux angles égaux face à face ?">
+      <h2>Opposés par le sommet</h2>
+      <svg class="angle-svg" viewBox="0 0 100 100">
+        <line x1="10" y1="90" x2="90" y2="10" />
+        <line x1="10" y1="10" x2="90" y2="90" />
+        <circle cx="50" cy="50" r="4" />
+        <path class="arc" d="M 55 45 A 10 10 0 0 1 60 50" />
+      </svg>
+      <p class="description">Deux angles égaux face à face</p>
+      <div class="question"></div>
     </div>
 
-    <!-- Vase 8 : sphère + cylindre -->
-    <div class="vase">
-      <div class="sphere"></div>
-      <div class="cylinder"></div>
-      <div class="label">Vase 8</div>
+    <div class="card" data-index="7" data-question="Quelle est la somme des angles complémentaires ?">
+      <h2>Complémentaires</h2>
+      <svg class="angle-svg" viewBox="0 0 100 100">
+        <line x1="50" y1="90" x2="50" y2="50" />
+        <line x1="50" y1="50" x2="85" y2="50" />
+        <line x1="50" y1="50" x2="75" y2="20" stroke="#fb5607" />
+        <circle cx="50" cy="50" r="4" />
+        <path class="arc" d="M 60 50 A 10 10 0 0 1 66 42" />
+      </svg>
+      <p class="description">Somme = 90°</p>
+      <div class="question"></div>
     </div>
 
-    <!-- Vase 9 : cône + cube -->
-    <div class="vase">
-      <div class="cone"></div>
-      <div class="cube"></div>
-      <div class="label">Vase 9</div>
-    </div>
-
-    <!-- Vase 10 : parallélépipède rectangle + pyramide + sphère -->
-    <div class="vase">
-      <div class="parallelepipede"></div>
-      <div class="pyramid"></div>
-      <div class="sphere"></div>
-      <div class="label">Vase 10</div>
+    <div class="card" data-index="8" data-question="Quelle est la somme des angles supplémentaires ?">
+      <h2>Supplémentaires</h2>
+      <svg class="angle-svg" viewBox="0 0 100 100">
+        <line x1="50" y1="90" x2="50" y2="50" />
+        <line x1="50" y1="50" x2="85" y2="50" />
+        <line x1="50" y1="50" x2="10" y2="70" stroke="#ff006e" />
+        <circle cx="50" cy="50" r="4" />
+        <path class="arc" d="M 60 50 A 20 20 0 0 1 20 65" />
+      </svg>
+      <p class="description">Somme = 180°</p>
+      <div class="question"></div>
     </div>
 
   </div>
+
+  <div class="buttons" style="width:320px; margin-top: 1rem;">
+    <button id="prevBtn" disabled>Précédent</button>
+    <button id="nextBtn">Suivant</button>
+  </div>
+
+  <script>
+    const cards = document.querySelectorAll('.card');
+    const questionDivs = document.querySelectorAll('.card .question');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+
+    let currentIndex = 0;
+
+    function showCard(index) {
+      cards.forEach((card, i) => {
+        card.classList.toggle('active', i === index);
+        // Affiche la question dans la carte active
+        if(i === index) {
+          const question = card.dataset.question;
+          card.querySelector('.question').textContent = question;
+        } else {
+          card.querySelector('.question').textContent = '';
+        }
+      });
+
+      // Gestion des boutons
+      prevBtn.disabled = index === 0;
+      nextBtn.disabled = index === cards.length - 1;
+    }
+
+    prevBtn.addEventListener('click', () => {
+      if (currentIndex > 0) {
+        currentIndex--;
+        showCard(currentIndex);
+      }
+    });
+
+    nextBtn.addEventListener('click', () => {
+      if (currentIndex < cards.length - 1) {
+        currentIndex++;
+        showCard(currentIndex);
+      }
+    });
+
+    // Affiche la première carte au chargement
+    showCard(currentIndex);
+  </script>
 
 </body>
 </html>
