@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Répertoire de Figures</title>
+  <title>Boule 3D Transparente</title>
 
   <!-- Polices -->
   <link href="https://fonts.googleapis.com/css2?family=Androgy+Demo&display=swap" rel="stylesheet" />
@@ -17,253 +17,80 @@
       --accent-color-2: #fb5607;
       --accent-color-3: #ffbe0b;
       --background-color: #f0f4f8;
-      --veil: rgba(58, 134, 255, 0.08);
-      --border-radius: 8px;
+      --sphere-glow: rgba(58, 134, 255, 0.25);
+      --border-radius: 50%;
       --transition: 0.3s ease;
     }
 
     body {
-      margin: 0;
       font-family: 'Mabry Pro', sans-serif;
       background: var(--background-color);
-      color: #212529;
+      margin: 0;
       padding: 2rem;
-      text-align: center;
-    }
-
-    h1 {
-      font-family: 'Androgy Demo', sans-serif;
-      color: var(--primary-color);
-      font-size: 2.8rem;
-      margin-bottom: 2rem;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 2rem;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .figure {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 1rem;
+      min-height: 100vh;
+      text-align: center;
+      color: #212529;
     }
 
-    .label {
-      margin-top: 0.8rem;
-      font-weight: bold;
-      color: var(--secondary-color);
+    h1 {
+      font-family: 'Androgy Demo', sans-serif;
+      font-size: 2.5rem;
+      color: var(--primary-color);
+      margin-bottom: 2rem;
     }
 
-    /* SHAPES 2D */
-
-    .square, .rectangle, .circle, .triangle {
-      background: var(--veil);
-      border: 2px solid var(--primary-color);
-      box-shadow: 0 0 12px rgba(58, 134, 255, 0.2);
-      backdrop-filter: blur(2px);
+    /* Boule Container */
+    .sphere-container {
+      width: 200px;
+      height: 200px;
+      perspective: 1000px;
     }
 
-    .square {
-      width: 100px;
-      height: 100px;
-    }
-
-    .rectangle {
-      width: 140px;
-      height: 80px;
-    }
-
-    .circle {
-      width: 100px;
-      height: 100px;
+    .sphere {
+      width: 100%;
+      height: 100%;
       border-radius: 50%;
-    }
-
-    .triangle {
-      width: 0;
-      height: 0;
-      border-left: 60px solid transparent;
-      border-right: 60px solid transparent;
-      border-bottom: 100px solid var(--primary-color);
-      background: none;
-      box-shadow: none;
-    }
-
-    /* CUBE */
-    .cube {
-      width: 100px;
-      height: 100px;
+      background: radial-gradient(circle at 30% 30%, 
+                  white 5%, 
+                  var(--primary-color) 40%, 
+                  var(--secondary-color) 70%, 
+                  var(--accent-color-1) 100%);
       position: relative;
+      box-shadow: 0 0 30px var(--sphere-glow), inset -10px -10px 30px rgba(0,0,0,0.3);
+      animation: rotateSphere 8s linear infinite;
       transform-style: preserve-3d;
-      transform: rotateX(-20deg) rotateY(20deg);
-      animation: rotateCube 10s linear infinite;
     }
 
-    .cube-face {
-      position: absolute;
-      width: 100px;
-      height: 100px;
-      background: var(--veil);
-      border: 2px solid var(--primary-color);
-      backdrop-filter: blur(2px);
-    }
-
-    .front  { transform: translateZ(50px); }
-    .back   { transform: rotateY(180deg) translateZ(50px); }
-    .right  { transform: rotateY(90deg) translateZ(50px); }
-    .left   { transform: rotateY(-90deg) translateZ(50px); }
-    .top    { transform: rotateX(90deg) translateZ(50px); }
-    .bottom { transform: rotateX(-90deg) translateZ(50px); }
-
-    @keyframes rotateCube {
-      from { transform: rotateX(-20deg) rotateY(0); }
-      to   { transform: rotateX(-20deg) rotateY(360deg); }
-    }
-
-    /* BOULE (3D stylisée) */
-    .boule {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 30% 30%,
-                  rgba(255, 255, 255, 0.9),
-                  var(--primary-color) 60%,
-                  rgba(0, 0, 0, 0.25) 100%);
-      border: 2px solid var(--primary-color);
-      box-shadow:
-        inset -15px -15px 25px rgba(0,0,0,0.25),
-        0 12px 25px rgba(0,0,0,0.3);
-      animation: rotateBoule 8s ease-in-out infinite alternate;
-    }
-
-    @keyframes rotateBoule {
+    @keyframes rotateSphere {
       0%   { transform: rotateY(0deg) rotateX(0deg); }
-      50%  { transform: rotateY(20deg) rotateX(10deg); }
-      100% { transform: rotateY(-20deg) rotateX(-10deg); }
+      100% { transform: rotateY(360deg) rotateX(360deg); }
     }
 
-    /* PYRAMIDE (2D simple pour l’instant) */
-    .pyramid {
-      width: 0;
-      height: 0;
-      border-left: 60px solid transparent;
-      border-right: 60px solid transparent;
-      border-bottom: 100px solid var(--accent-color-3);
+    .sphere:hover {
+      animation-play-state: paused;
+      cursor: grab;
     }
 
-    /* CÔNE */
-    .cone {
-      width: 0;
-      height: 0;
-      border-left: 60px solid transparent;
-      border-right: 60px solid transparent;
-      border-bottom: 100px solid var(--accent-color-1);
-      border-radius: 50%;
-    }
-
-    /* CYLINDRE */
-    .cylinder {
-      width: 80px;
-      height: 100px;
-      background: var(--veil);
-      border: 2px solid var(--accent-color-2);
-      border-radius: 40px / 10px;
-      box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
-    }
-
-    /* PARALLÉLÉPIPÈDE RECTANGLE */
-    .parallelepipede {
-      width: 140px;
-      height: 80px;
-      background: var(--veil);
-      border: 2px solid var(--accent-color-3);
-      box-shadow: 6px 6px 0 rgba(58,134,255,0.3);
-      transform: skewY(-10deg);
-    }
-
-    footer {
-      margin-top: 4rem;
-      font-size: 0.9rem;
-      color: #999;
+    /* Responsive */
+    @media (max-width: 600px) {
+      .sphere-container {
+        width: 150px;
+        height: 150px;
+      }
     }
   </style>
 </head>
 <body>
 
-  <h1>Répertoire de Figures Géométriques</h1>
+  <h1>Boule 3D Transparente</h1>
 
-  <div class="grid">
-
-    <!-- 2D SHAPES -->
-    <div class="figure">
-      <div class="square"></div>
-      <div class="label">Carré</div>
-    </div>
-
-    <div class="figure">
-      <div class="rectangle"></div>
-      <div class="label">Rectangle</div>
-    </div>
-
-    <div class="figure">
-      <div class="triangle"></div>
-      <div class="label">Triangle</div>
-    </div>
-
-    <div class="figure">
-      <div class="circle"></div>
-      <div class="label">Cercle</div>
-    </div>
-
-    <!-- 3D SHAPES -->
-    <div class="figure">
-      <div class="cube">
-        <div class="cube-face front"></div>
-        <div class="cube-face back"></div>
-        <div class="cube-face right"></div>
-        <div class="cube-face left"></div>
-        <div class="cube-face top"></div>
-        <div class="cube-face bottom"></div>
-      </div>
-      <div class="label">Cube</div>
-    </div>
-
-    <div class="figure">
-      <div class="boule"></div>
-      <div class="label">Boule</div>
-    </div>
-
-    <div class="figure">
-      <div class="pyramid"></div>
-      <div class="label">Pyramide</div>
-    </div>
-
-    <div class="figure">
-      <div class="cone"></div>
-      <div class="label">Cône</div>
-    </div>
-
-    <div class="figure">
-      <div class="cylinder"></div>
-      <div class="label">Cylindre</div>
-    </div>
-
-    <div class="figure">
-      <div class="parallelepipede"></div>
-      <div class="label">Parallélépipède rectangle</div>
-    </div>
-
+  <div class="sphere-container">
+    <div class="sphere"></div>
   </div>
-
-  <footer>
-    © 2025 — Répertoire de formes géométriques CSS
-  </footer>
 
 </body>
 </html>
