@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Répertoire de Figures — 3D étendu</title>
+  <title>Cylindre CSS</title>
 
-  <!-- Polices -->
   <link href="https://fonts.googleapis.com/css2?family=Androgy+Demo&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Mabry+Pro&display=swap" rel="stylesheet" />
 
@@ -13,365 +12,93 @@
     :root {
       --primary-color: #3a86ff;
       --secondary-color: #8338ec;
-      --accent-color-1: #ff006e;
       --accent-color-2: #fb5607;
-      --accent-color-3: #ffbe0b;
-      --background-color: #f0f4f8;
       --veil: rgba(58, 134, 255, 0.08);
-      --border-radius: 8px;
-      --transition: 0.3s ease;
-      --scene-perspective: 700px;
+      --background-color: #f0f4f8;
     }
-
-    * { box-sizing: border-box; }
 
     body {
       margin: 0;
       font-family: 'Mabry Pro', sans-serif;
       background: var(--background-color);
       color: #212529;
-      padding: 2rem;
-      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
     }
 
     h1 {
       font-family: 'Androgy Demo', sans-serif;
       color: var(--primary-color);
-      font-size: 2.6rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 2rem;
-      max-width: 1200px;
-      margin: 0 auto;
-      align-items: center;
+      font-size: 2.4rem;
+      margin-bottom: 2rem;
     }
 
     .figure {
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      padding: 1rem;
     }
 
     .label {
-      margin-top: 0.8rem;
+      margin-top: 1rem;
       font-weight: bold;
       color: var(--secondary-color);
     }
 
-    /* shared face style */
-    .face {
+    /* -------- CYLINDRE -------- */
+    .cylinder {
+      position: relative;
+      width: 100px;
+      height: 140px;
       background: var(--veil);
-      border: 2px solid var(--primary-color);
-      box-shadow: 0 0 12px rgba(58, 134, 255, 0.15);
-      backdrop-filter: blur(2px);
-      display: block;
-    }
-
-    /* ---------- 2D basics (kept) ---------- */
-    .square, .rectangle, .circle, .triangle {
-      margin: 0.25rem;
-    }
-    .square {
-      width: 100px; height: 100px;
-    }
-    .rectangle {
-      width: 140px; height: 80px;
-    }
-    .circle {
-      width: 100px; height: 100px; border-radius: 50%;
-    }
-    .triangle {
-      width: 0; height: 0;
-      border-left: 60px solid transparent;
-      border-right: 60px solid transparent;
-      border-bottom: 100px solid var(--primary-color);
-      background: none; box-shadow: none;
-    }
-
-    /* ---------- Scene wrapper to give perspective ---------- */
-    .scene {
-      width: 160px;
-      height: 120px;
-      perspective: var(--scene-perspective);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    /* ---------- CUBE (improved) ---------- */
-    .cube {
-      width: 100px;
-      height: 100px;
-      position: relative;
-      transform-style: preserve-3d;
-      transform: rotateX(-20deg) rotateY(25deg);
-      animation: rotateCube 8s linear infinite;
-    }
-    .cube .cube-face {
-      position: absolute;
-      width: 100px; height: 100px;
-      background: var(--veil);
-      border: 2px solid var(--primary-color);
-      box-shadow: inset 0 0 14px rgba(255,255,255,0.06);
-    }
-    .cube .front  { transform: translateZ(50px); }
-    .cube .back   { transform: rotateY(180deg) translateZ(50px); }
-    .cube .right  { transform: rotateY(90deg) translateZ(50px); }
-    .cube .left   { transform: rotateY(-90deg) translateZ(50px); }
-    .cube .top    { transform: rotateX(90deg) translateZ(50px); }
-    .cube .bottom { transform: rotateX(-90deg) translateZ(50px); }
-
-    @keyframes rotateCube {
-      from { transform: rotateX(-20deg) rotateY(0); }
-      to   { transform: rotateX(-20deg) rotateY(360deg); }
-    }
-
-    /* ---------- Pavé droit (rectangular prism / cuboid) ---------- */
-    .prism {
-      width: 140px;
-      height: 90px;
-      position: relative;
-      transform-style: preserve-3d;
-      transform: rotateX(-18deg) rotateY(22deg) scale(0.9);
-      animation: rotatePrism 10s linear infinite;
-    }
-
-    /* we manufacture faces sized to prism dimensions */
-    .prism .face {
-      position: absolute;
-      width: 140px; height: 90px;
-      border: 2px solid var(--accent-color-3);
-    }
-    /* depth = 80px (half = 40) */
-    .prism .front  { transform: translateZ(40px); }
-    .prism .back   { transform: rotateY(180deg) translateZ(40px); }
-    .prism .right  { width: 80px; height: 90px; left: 140px; transform-origin: left center; transform: rotateY(90deg) translateZ(0); border-left: none; border-right: 2px solid rgba(58,134,255,0.5); }
-    .prism .left   { width: 80px; height: 90px; right: 140px; transform-origin: right center; transform: rotateY(-90deg) translateZ(0); border-right: none; border-left: 2px solid rgba(58,134,255,0.5); }
-    .prism .top    { transform: rotateX(90deg) translateZ(45px); height: 80px; width: 140px; }
-    .prism .bottom { transform: rotateX(-90deg) translateZ(45px); height: 80px; width: 140px; }
-
-    @keyframes rotatePrism {
-      0%   { transform: rotateX(-18deg) rotateY(0deg) scale(0.95); }
-      100% { transform: rotateX(-18deg) rotateY(360deg) scale(0.95); }
-    }
-
-    /* ---------- Pyramide 3D (base carrée pyramid à 4 faces) ---------- */
-    .pyramid3d {
-      width: 100px;
-      height: 100px;
-      position: relative;
-      transform-style: preserve-3d;
-      transform: rotateX(-12deg) rotateY(18deg);
-      margin-top: 10px;
-      animation: rotatePyr 9s linear infinite;
-    }
-
-    /* base (square) */
-    .pyramid3d .base {
-      position: absolute;
-      width: 80px; height: 80px;
-      left: 10px; top: 10px;
-      transform: translateY(40px) rotateX(90deg);
-      background: var(--veil);
-      border: 2px solid var(--accent-color-3);
-    }
-
-    /* triangular faces built with transform and clip-path */
-    .pyramid3d .face {
-      position: absolute;
-      width: 0; height: 0;
-      border-left: 40px solid transparent;
-      border-right: 40px solid transparent;
-      border-bottom: 80px solid rgba(255,255,255,0.02);
-      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.06));
-    }
-
-    .pyramid3d .face.front  { transform: translateZ(20px) translateY(-10px) rotateX(10deg); border-bottom-color: var(--accent-color-3); }
-    .pyramid3d .face.right  { transform: rotateY(90deg) translateZ(20px) translateX(-40px) rotateX(10deg); border-bottom-color: rgba(255,190,11,0.95); }
-    .pyramid3d .face.left   { transform: rotateY(-90deg) translateZ(20px) translateX(40px) rotateX(10deg); border-bottom-color: rgba(131,56,236,0.95); }
-    .pyramid3d .face.back   { transform: rotateY(180deg) translateZ(20px) translateY(-10px) rotateX(10deg); border-bottom-color: rgba(58,134,255,0.95); }
-
-    @keyframes rotatePyr {
-      from { transform: rotateX(-12deg) rotateY(0); }
-      to   { transform: rotateX(-12deg) rotateY(360deg); }
-    }
-
-    /* ---------- Cône 3D (approximation) ---------- */
-    /* CSS ne fait pas facilement un cône 3D plein; on simule avec un élément incliné + base elliptique */
-    .cone3d {
-      width: 100px;
-      height: 120px;
-      position: relative;
-      transform-style: preserve-3d;
-      transform: rotateX(60deg) rotateY(10deg) scale(0.95);
-      margin-top: -10px;
-      animation: float 7s ease-in-out infinite;
-    }
-
-    .cone3d .body {
-      position: absolute;
-      left: 10px; right: 10px; top: 0;
-      height: 100px;
-      /* the triangular cone look */
-      clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
-      background: linear-gradient(180deg, rgba(255,255,255,0.35), var(--veil));
-      border-left: 2px solid rgba(58,134,255,0.25);
-      border-right: 2px solid rgba(58,134,255,0.25);
-      transform-origin: 50% 50%;
-      box-shadow: inset 0 12px 22px rgba(255,255,255,0.05);
-    }
-
-    .cone3d .base {
-      position: absolute;
-      width: 80px; height: 20px;
-      left: 10px; top: 92px;
-      border-radius: 50%;
-      background: linear-gradient(180deg, rgba(255,255,255,0.6), var(--veil));
-      border: 2px solid var(--accent-color-1);
-      box-shadow: 0 6px 12px rgba(0,0,0,0.06);
-      transform: rotateX(0deg);
-    }
-
-    @keyframes float {
-      0%,100% { transform: rotateX(60deg) rotateY(10deg) translateY(0); }
-      50%     { transform: rotateX(60deg) rotateY(10deg) translateY(-6px); }
-    }
-
-    /* ---------- Cylindre 3D (top + body + bottom) ---------- */
-    .cylinder3d {
-      width: 100px;
-      height: 120px;
-      position: relative;
-      transform-style: preserve-3d;
-      transform: rotateX(65deg) rotateY(8deg);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      animation: rotateCyl 8s linear infinite;
-    }
-
-    .cylinder3d .cyl-body {
-      width: 60px; height: 80px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.35), var(--veil));
       border: 2px solid var(--accent-color-2);
-      border-radius: 30px / 8px;
-      box-shadow: inset 0 8px 16px rgba(0,0,0,0.06);
-      transform: translateZ(0);
-      display: block;
+      border-radius: 50px / 12px;
+      box-shadow: inset 0 0 14px rgba(0,0,0,0.08);
+      animation: spin 8s linear infinite;
     }
 
-    .cylinder3d .cyl-top,
-    .cylinder3d .cyl-bottom {
+    .cylinder::before,
+    .cylinder::after {
+      content: "";
       position: absolute;
-      width: 76px; height: 18px;
-      left: 12px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.6), var(--veil));
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 24px;
       border-radius: 50%;
+      background: var(--veil);
       border: 2px solid var(--accent-color-2);
-      box-shadow: 0 6px 12px rgba(0,0,0,0.06);
-    }
-    .cylinder3d .cyl-top { top: 10px; transform: translateY(-2px); }
-    .cylinder3d .cyl-bottom { bottom: 10px; transform: translateY(2px); }
-
-    @keyframes rotateCyl {
-      from { transform: rotateX(65deg) rotateY(0deg); }
-      to   { transform: rotateX(65deg) rotateY(360deg); }
     }
 
-    /* small responsive tweak */
-    @media (max-width: 520px) {
-      .scene { width: 120px; height: 100px; }
-      .prism { transform: scale(0.8) rotateX(-18deg) rotateY(22deg); }
+    .cylinder::before {
+      top: -12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      background: radial-gradient(circle at 30% 30%, white, var(--veil));
     }
 
-    footer { margin-top: 2.5rem; font-size: 0.9rem; color: #999; }
+    .cylinder::after {
+      bottom: -12px;
+      box-shadow: inset 0 4px 8px rgba(0,0,0,0.08);
+      background: radial-gradient(circle at 70% 70%, white, var(--veil));
+    }
+
+    @keyframes spin {
+      from { transform: rotateY(0deg); }
+      to   { transform: rotateY(360deg); }
+    }
   </style>
 </head>
 <body>
 
-  <h1>Répertoire de Figures Géométriques — 3D étendu</h1>
+  <h1>Cylindre en CSS</h1>
 
-  <div class="grid">
-
-    <!-- pavé droit (prism) -->
-    <div class="figure">
-      <div class="scene">
-        <div class="prism" aria-hidden="true">
-          <div class="face front"></div>
-          <div class="face back"></div>
-          <!-- right/left faces visually created with different border hints -->
-          <div class="face right"></div>
-          <div class="face left"></div>
-          <div class="face top"></div>
-          <div class="face bottom"></div>
-        </div>
-      </div>
-      <div class="label">Pavé droit (Parallélépipède)</div>
-    </div>
-
-    <!-- pyramide 3D -->
-    <div class="figure">
-      <div class="scene">
-        <div class="pyramid3d" aria-hidden="true">
-          <div class="base"></div>
-          <div class="face front"></div>
-          <div class="face right"></div>
-          <div class="face left"></div>
-          <div class="face back"></div>
-        </div>
-      </div>
-      <div class="label">Pyramide (3D)</div>
-    </div>
-
-    <!-- cône (approximation) -->
-    <div class="figure">
-      <div class="scene">
-        <div class="cone3d" aria-hidden="true">
-          <div class="body"></div>
-          <div class="base"></div>
-        </div>
-      </div>
-      <div class="label">Cône (approx.)</div>
-    </div>
-
-    <!-- cylindre 3D -->
-    <div class="figure">
-      <div class="scene">
-        <div class="cylinder3d" aria-hidden="true">
-          <div class="cyl-top"></div>
-          <div class="cyl-body"></div>
-          <div class="cyl-bottom"></div>
-        </div>
-      </div>
-      <div class="label">Cylindre (3D)</div>
-    </div>
-
-    <!-- cube (amélioré) -->
-    <div class="figure">
-      <div class="scene">
-        <div class="cube" aria-hidden="true">
-          <div class="cube-face front face"></div>
-          <div class="cube-face back face"></div>
-          <div class="cube-face right face"></div>
-          <div class="cube-face left face"></div>
-          <div class="cube-face top face"></div>
-          <div class="cube-face bottom face"></div>
-        </div>
-      </div>
-      <div class="label">Cube (3D)</div>
-    </div>
-
+  <div class="figure">
+    <div class="cylinder"></div>
+    <div class="label">Cylindre</div>
   </div>
-
-  <footer>
-    © 2025 — Répertoire de formes géométriques CSS — version 3D étendue
-  </footer>
 
 </body>
 </html>
