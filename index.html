@@ -3,11 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Repertoire des Types d’Angles - Pile Interactive</title>
-
-  <!-- Polices -->
-  <link href="https://fonts.googleapis.com/css2?family=Androgy+Demo&display=swap" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Mabry+Pro&display=swap" rel="stylesheet" />
+  <title>Répertoire des Types d’Angles - Pile Interactive</title>
 
   <style>
     :root {
@@ -20,14 +16,15 @@
       --card-veil: rgba(58, 134, 255, 0.08);
       --border-radius: 12px;
       --transition: 0.3s ease;
+      --success: #4caf50;
+      --error: #e63946;
     }
 
     body {
-      font-family: 'Mabry Pro', sans-serif;
+      font-family: sans-serif;
       background: var(--background-color);
       margin: 0;
       padding: 2rem;
-      color: #212529;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -37,8 +34,7 @@
     }
 
     h1 {
-      font-family: 'Androgy Demo', sans-serif;
-      font-size: 2.5rem;
+      font-size: 2.2rem;
       color: var(--primary-color);
       margin-bottom: 2rem;
     }
@@ -52,8 +48,7 @@
 
     .card {
       position: absolute;
-      top: 0;
-      left: 0;
+      top: 0; left: 0;
       width: 100%;
       height: 100%;
       background: var(--card-veil);
@@ -76,9 +71,6 @@
       transform-origin: left center;
       transform: translateX(calc(-15px * var(--offset))) scale(calc(1 - 0.05 * var(--offset))) rotateY(-5deg);
       opacity: 0.4;
-      filter: brightness(0.9);
-      pointer-events: none;
-      user-select: none;
       z-index: calc(10 - var(--offset));
     }
 
@@ -91,43 +83,17 @@
     }
 
     .card h2 {
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       margin-bottom: 1rem;
       color: var(--primary-color);
-      user-select: text;
-    }
-
-    .angle-svg {
-      width: 140px;
-      height: 140px;
-      margin-bottom: 1rem;
-      flex-shrink: 0;
-      user-select: none;
-    }
-
-    svg line {
-      stroke: var(--secondary-color);
-      stroke-width: 4;
-    }
-
-    svg circle {
-      fill: var(--accent-color-3);
-    }
-
-    svg path.arc {
-      stroke: var(--primary-color);
-      stroke-width: 3;
-      fill: none;
-      opacity: 0.6;
     }
 
     .question {
       color: var(--secondary-color);
       font-weight: 700;
-      font-size: 1.15rem;
+      font-size: 1.1rem;
       margin-bottom: 1rem;
       min-height: 48px;
-      user-select: text;
     }
 
     .answer-input {
@@ -140,23 +106,19 @@
       border: 2px solid var(--secondary-color);
       font-size: 1rem;
       padding: 0.4rem 0.8rem;
-      resize: none;
-      font-family: 'Mabry Pro', sans-serif;
-      outline-offset: 2px;
-      user-select: text;
-      box-sizing: border-box;
       background: white;
+      box-sizing: border-box;
       transition: border-color 0.3s, background-color 0.3s;
     }
 
     .answer-input.correct {
-      border-color: green;
-      background-color: #d4f8d4;
+      border-color: var(--success);
+      background-color: #e6f7e6;
     }
 
     .answer-input.incorrect {
-      border-color: red;
-      background-color: #ffd6d6;
+      border-color: var(--error);
+      background-color: #fdecea;
     }
 
     .buttons {
@@ -177,7 +139,6 @@
       color: white;
       cursor: pointer;
       transition: background-color var(--transition);
-      user-select: none;
     }
 
     button:hover:not(:disabled) {
@@ -188,30 +149,45 @@
       background: #ccc;
       cursor: not-allowed;
     }
-
-    @media (max-width: 380px) {
-      .stack-container {
-        width: 280px;
-        height: 420px;
-      }
-      .buttons {
-        width: 280px;
-      }
-    }
   </style>
 </head>
 <body>
 
-  <h1>Repertoire des Types d’Angles</h1>
+  <h1>Répertoire des Types d’Angles</h1>
 
   <div class="stack-container">
-    <!-- Toutes tes cartes sont déjà incluses ici dans ton code actuel -->
-    <!-- Pas besoin de les réécrire ici, elles sont bien conservées -->
+
+    <div class="card active" data-index="0" data-question="Quel est l’intervalle de mesure de cet angle ?" data-answer="moins de 90">
+      <h2>Angle Aigu</h2>
+      <div class="question"></div>
+      <textarea class="answer-input" placeholder="Écris ta réponse ici..."></textarea>
+    </div>
+
+    <div class="card" data-index="1" data-question="Quelle est la mesure exacte de cet angle ?" data-answer="90">
+      <h2>Angle Droit</h2>
+      <div class="question"></div>
+      <textarea class="answer-input" placeholder="Écris ta réponse ici..."></textarea>
+    </div>
+
+    <div class="card" data-index="2" data-question="Cet angle mesure-t-il plus de 90° ?" data-answer="oui">
+      <h2>Angle Obtus</h2>
+      <div class="question"></div>
+      <textarea class="answer-input" placeholder="Écris ta réponse ici..."></textarea>
+    </div>
+
+    <div class="card" data-index="3" data-question="Quelle est la mesure exacte de cet angle plat ?" data-answer="180">
+      <h2>Angle Plat</h2>
+      <div class="question"></div>
+      <textarea class="answer-input" placeholder="Écris ta réponse ici..."></textarea>
+    </div>
+
+    <!-- Tu continues avec les autres cartes en ajoutant data-answer -->
+    
   </div>
 
   <div class="buttons">
     <button id="prevBtn" disabled>Précédent</button>
-    <button id="nextBtn" disabled>Suivant</button>
+    <button id="nextBtn">Valider</button>
   </div>
 
   <script>
@@ -219,66 +195,46 @@
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
 
-    const correctAnswers = [
-      "entre 0° et 90°",  // Angle aigu
-      "90°",              // Angle droit
-      "oui",              // Angle obtus
-      "180°",             // Angle plat
-      "ils sont égaux",   // Alternes-internes
-      "ils sont égaux",   // Correspondants
-      "angles opposés",   // Opposés par le sommet
-      "90°",              // Complémentaires
-      "180°"              // Supplémentaires
-    ];
-
     let currentIndex = 0;
 
     function updateStack() {
       cards.forEach((card, i) => {
         card.style.setProperty('--offset', i - currentIndex);
-        const input = card.querySelector('.answer-input');
-        const question = card.querySelector('.question');
-
         if (i === currentIndex) {
           card.classList.add('active');
-          question.textContent = card.dataset.question;
-          input.value = '';
-          input.classList.remove('correct', 'incorrect');
-          input.disabled = false;
-          input.focus();
+          card.querySelector('.question').textContent = card.dataset.question;
+          card.querySelector('.answer-input').value = '';
+          card.querySelector('.answer-input').classList.remove('correct', 'incorrect');
         } else {
           card.classList.remove('active');
-          question.textContent = '';
         }
       });
 
       prevBtn.disabled = currentIndex === 0;
-      nextBtn.disabled = true;
+      nextBtn.textContent = currentIndex === cards.length - 1 ? "Terminer" : "Valider";
     }
 
-    function validateAnswer(input, index) {
-      const userValue = input.value.trim().toLowerCase();
-      const expected = correctAnswers[index].toLowerCase();
+    function checkAnswer() {
+      const currentCard = cards[currentIndex];
+      const input = currentCard.querySelector('.answer-input');
+      const userAnswer = input.value.trim().toLowerCase();
+      const correctAnswer = currentCard.dataset.answer.toLowerCase();
 
-      if (userValue === expected) {
-        input.classList.remove('incorrect');
+      if (userAnswer.includes(correctAnswer)) {
         input.classList.add('correct');
-        input.disabled = true;
-        nextBtn.disabled = false;
-
-        // Passage automatique à la carte suivante après 1s
-        if (currentIndex < cards.length - 1) {
-          setTimeout(() => {
-            currentIndex++;
-            updateStack();
-          }, 1000);
-        }
       } else {
-        input.classList.remove('correct');
         input.classList.add('incorrect');
-        nextBtn.disabled = true;
       }
+
+      setTimeout(() => {
+        if (currentIndex < cards.length - 1) {
+          currentIndex++;
+          updateStack();
+        }
+      }, 1000);
     }
+
+    nextBtn.addEventListener('click', checkAnswer);
 
     prevBtn.addEventListener('click', () => {
       if (currentIndex > 0) {
@@ -287,22 +243,18 @@
       }
     });
 
-    nextBtn.addEventListener('click', () => {
-      if (currentIndex < cards.length - 1) {
-        currentIndex++;
-        updateStack();
-      }
-    });
-
-    // Lier chaque champ à la vérification
-    cards.forEach((card, index) => {
+    cards.forEach(card => {
       const input = card.querySelector('.answer-input');
-      input.addEventListener('input', () => {
-        validateAnswer(input, index);
+      input.addEventListener('keydown', e => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          checkAnswer();
+        }
       });
     });
 
     updateStack();
   </script>
+
 </body>
 </html>
