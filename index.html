@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Répertoire de Figures</title>
+  <title>Geometrie</title>
 
   <!-- Polices -->
   <link href="https://fonts.googleapis.com/css2?family=Androgy+Demo&display=swap" rel="stylesheet" />
@@ -11,14 +11,13 @@
 
   <style>
     :root {
-      --primary-color: #3a86ff;
-      --secondary-color: #8338ec;
-      --accent-color-1: #ff006e;
-      --accent-color-2: #fb5607;
-      --accent-color-3: #ffbe0b;
-      --background-color: #f0f4f8;
-      --veil: rgba(58, 134, 255, 0.08);
-      --border-radius: 8px;
+      --primary-color: #5b6dfa;
+      --secondary-color: #00bfa6;
+      --accent-color: #ff6b6b;
+      --background-color: #f9f9f9;
+      --grid-color: #dcdcdc;
+      --text-color: #222;
+      --border-radius: 10px;
       --transition: 0.3s ease;
     }
 
@@ -26,268 +25,176 @@
       margin: 0;
       font-family: 'Mabry Pro', sans-serif;
       background: var(--background-color);
-      color: #212529;
+      color: var(--text-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       padding: 2rem;
-      text-align: center;
+      min-height: 100vh;
     }
 
     h1 {
       font-family: 'Androgy Demo', sans-serif;
+      font-size: 2.5rem;
+      text-transform: lowercase;
       color: var(--primary-color);
-      font-size: 2.8rem;
-      margin-bottom: 2rem;
     }
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 2rem;
-      max-width: 1200px;
-      margin: 0 auto;
+    h1::first-letter {
+      text-transform: uppercase;
     }
 
-    .figure {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem;
+    .question-box {
+      font-size: 1.2rem;
+      text-align: center;
+      margin: 1.5rem 0;
+      max-width: 600px;
     }
 
-    .label {
-      margin-top: 0.8rem;
-      font-weight: bold;
-      color: var(--secondary-color);
+    #grid {
+      margin-top: 2rem;
+      background-color: white;
+      border: 2px solid var(--grid-color);
+      border-radius: var(--border-radius);
+      width: 600px;
+      height: 600px;
     }
 
-    /* SHAPES 2D */
-    .square, .rectangle, .circle, .triangle {
-      background: var(--veil);
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .btn {
+      margin-top: 2rem;
+      padding: 0.7rem 1.4rem;
+      font-size: 1rem;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-family: 'Mabry Pro', sans-serif;
+      transition: background-color var(--transition);
+    }
+
+    .btn:hover {
+      background-color: var(--secondary-color);
+    }
+
+    .point {
+      fill: var(--accent-color);
+      stroke: black;
+      stroke-width: 1;
+      cursor: pointer;
+    }
+
+    a.back {
+      display: inline-block;
+      margin-top: 2rem;
+      text-decoration: none;
+      font-weight: 600;
+      color: var(--primary-color);
       border: 2px solid var(--primary-color);
-      box-shadow: 0 0 12px rgba(58, 134, 255, 0.2);
-      backdrop-filter: blur(2px);
+      padding: 0.5rem 1rem;
+      border-radius: var(--border-radius);
+      transition: background-color var(--transition), color var(--transition);
     }
 
-    .square {
-      width: 100px;
-      height: 100px;
-    }
-
-    .rectangle {
-      width: 140px;
-      height: 80px;
-    }
-
-    .circle {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-    }
-
-    .triangle {
-      width: 0;
-      height: 0;
-      border-left: 60px solid transparent;
-      border-right: 60px solid transparent;
-      border-bottom: 100px solid var(--primary-color);
-      background: none;
-      box-shadow: none;
-    }
-
-    /* CUBE */
-    .cube {
-      width: 100px;
-      height: 100px;
-      position: relative;
-      transform-style: preserve-3d;
-      transform: rotateX(-20deg) rotateY(20deg);
-      animation: rotateCube 10s linear infinite;
-    }
-
-    .cube-face {
-      position: absolute;
-      width: 100px;
-      height: 100px;
-      background: var(--veil);
-      border: 2px solid var(--primary-color);
-      backdrop-filter: blur(2px);
-    }
-
-    .front  { transform: translateZ(50px); }
-    .back   { transform: rotateY(180deg) translateZ(50px); }
-    .right  { transform: rotateY(90deg) translateZ(50px); }
-    .left   { transform: rotateY(-90deg) translateZ(50px); }
-    .top    { transform: rotateX(90deg) translateZ(50px); }
-    .bottom { transform: rotateX(-90deg) translateZ(50px); }
-
-    @keyframes rotateCube {
-      from { transform: rotateX(-20deg) rotateY(0); }
-      to   { transform: rotateX(-20deg) rotateY(360deg); }
-    }
-
-    /* SPHERE */
-    .sphere {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 30% 30%, white, var(--veil));
-      box-shadow: 0 0 0 2px var(--primary-color), inset 0 0 20px rgba(255,255,255,0.3);
-      animation: rotateSphere 10s linear infinite;
-    }
-
-    @keyframes rotateSphere {
-      0% { transform: rotateY(0deg) rotateX(0deg); }
-      100% { transform: rotateY(360deg) rotateX(360deg); }
-    }
-
-    /* PYRAMIDE 3D */
-    .pyramid3d {
-      position: relative;
-      width: 0;
-      height: 0;
-      transform-style: preserve-3d;
-      transform: rotateX(-20deg) rotateY(20deg);
-      animation: rotatePyramid 12s linear infinite;
-    }
-
-    .pyramid3d .base {
-      position: absolute;
-      width: 100px;
-      height: 100px;
-      background: var(--veil);
-      border: 2px solid var(--accent-color-3);
-      transform: rotateX(90deg) translateZ(50px);
-      box-shadow: inset 0 0 12px rgba(0,0,0,0.1);
-    }
-
-    .pyramid3d .face {
-      position: absolute;
-      width: 0;
-      height: 0;
-      border-left: 50px solid transparent;
-      border-right: 50px solid transparent;
-      border-bottom: 100px solid var(--accent-color-3);
-      opacity: 0.9;
-    }
-
-    .pyramid3d .front  { transform: rotateY(0deg) translateZ(50px) rotateX(30deg); }
-    .pyramid3d .back   { transform: rotateY(180deg) translateZ(50px) rotateX(30deg); }
-    .pyramid3d .right  { transform: rotateY(90deg) translateZ(50px) rotateX(30deg); }
-    .pyramid3d .left   { transform: rotateY(-90deg) translateZ(50px) rotateX(30deg); }
-
-    @keyframes rotatePyramid {
-      from { transform: rotateX(-20deg) rotateY(0deg); }
-      to   { transform: rotateX(-20deg) rotateY(360deg); }
-    }
-
-    /* CÔNE */
-    .cone {
-      width: 0;
-      height: 0;
-      border-left: 60px solid transparent;
-      border-right: 60px solid transparent;
-      border-bottom: 100px solid var(--accent-color-1);
-      border-radius: 50%;
-    }
-
-    /* CYLINDRE */
-    .cylinder {
-      width: 80px;
-      height: 100px;
-      background: var(--veil);
-      border: 2px solid var(--accent-color-2);
-      border-radius: 40px / 10px;
-      box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
-    }
-
-    /* PARALLÉLÉPIPÈDE RECTANGLE */
-    .parallelepipede {
-      width: 140px;
-      height: 80px;
-      background: var(--veil);
-      border: 2px solid var(--accent-color-3);
-      box-shadow: 6px 6px 0 rgba(58,134,255,0.3);
-      transform: skewY(-10deg);
-    }
-
-    footer {
-      margin-top: 4rem;
-      font-size: 0.9rem;
-      color: #999;
+    a.back:hover {
+      background-color: var(--primary-color);
+      color: white;
     }
   </style>
 </head>
 <body>
 
-  <h1>Répertoire de Figures Géométriques</h1>
+  <h1>Geometrie</h1>
 
-  <div class="grid">
-
-    <!-- 2D SHAPES -->
-    <div class="figure">
-      <div class="square"></div>
-      <div class="label">Carré</div>
-    </div>
-
-    <div class="figure">
-      <div class="rectangle"></div>
-      <div class="label">Rectangle</div>
-    </div>
-
-    <div class="figure">
-      <div class="triangle"></div>
-      <div class="label">Triangle</div>
-    </div>
-
-    <div class="figure">
-      <div class="circle"></div>
-      <div class="label">Cercle</div>
-    </div>
-
-    <!-- 3D SHAPES -->
-    <div class="figure">
-      <div class="cube">
-        <div class="cube-face front"></div>
-        <div class="cube-face back"></div>
-        <div class="cube-face right"></div>
-        <div class="cube-face left"></div>
-        <div class="cube-face top"></div>
-        <div class="cube-face bottom"></div>
-      </div>
-      <div class="label">Cube</div>
-    </div>
-
-    <div class="figure">
-      <div class="pyramid3d">
-        <div class="base"></div>
-        <div class="face front"></div>
-        <div class="face back"></div>
-        <div class="face right"></div>
-        <div class="face left"></div>
-      </div>
-      <div class="label">Pyramide</div>
-    </div>
-
-    <div class="figure">
-      <div class="cone"></div>
-      <div class="label">Cône</div>
-    </div>
-
-    <div class="figure">
-      <div class="cylinder"></div>
-      <div class="label">Cylindre</div>
-    </div>
-
-    <div class="figure">
-      <div class="parallelepipede"></div>
-      <div class="label">Parallélépipède rectangle</div>
-    </div>
-
+  <div class="question-box" id="question">
+    Tracer l’image du triangle par la rotation de centre O d’angle 90°
   </div>
 
-  <footer>
-    © 2025 — Répertoire de formes géométriques CSS
-  </footer>
+  <div id="grid">
+    <svg id="svgGrid"></svg>
+  </div>
+
+  <button class="btn" onclick="nextQuestion()">Question suivante</button>
+
+  <a href="index.html" class="back">← Retour à l'accueil</a>
+
+  <script>
+    const questions = [
+      "Tracer l’image du triangle par la rotation de centre O d’angle 90°",
+      "Tracer l’image du triangle par la rotation de centre O d’angle 180°",
+      "Construire l’image du triangle par l’homothétie de centre O et de rapport 2",
+      "Construire l’image du triangle par l’homothétie de centre O et de rapport 4"
+    ];
+    let currentQuestion = 0;
+
+    function nextQuestion() {
+      if (currentQuestion < questions.length - 1) {
+        currentQuestion++;
+        document.getElementById('question').textContent = questions[currentQuestion];
+        clearPoints();
+      } else {
+        alert("Toutes les questions sont terminées !");
+      }
+    }
+
+    const svg = document.getElementById('svgGrid');
+    const gridSize = 20;
+    const cols = 30;
+    const rows = 30;
+
+    // Draw grid
+    function drawGrid() {
+      for (let i = 0; i <= cols; i++) {
+        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line.setAttribute("x1", i * gridSize);
+        line.setAttribute("y1", 0);
+        line.setAttribute("x2", i * gridSize);
+        line.setAttribute("y2", rows * gridSize);
+        line.setAttribute("stroke", "#e0e0e0");
+        svg.appendChild(line);
+      }
+
+      for (let j = 0; j <= rows; j++) {
+        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line.setAttribute("x1", 0);
+        line.setAttribute("y1", j * gridSize);
+        line.setAttribute("x2", cols * gridSize);
+        line.setAttribute("y2", j * gridSize);
+        line.setAttribute("stroke", "#e0e0e0");
+        svg.appendChild(line);
+      }
+    }
+
+    // Draw point on click
+    svg.addEventListener('click', function (e) {
+      const rect = svg.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      const snappedX = Math.round(x / gridSize) * gridSize;
+      const snappedY = Math.round(y / gridSize) * gridSize;
+
+      const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      circle.setAttribute("cx", snappedX);
+      circle.setAttribute("cy", snappedY);
+      circle.setAttribute("r", 5);
+      circle.setAttribute("class", "point");
+
+      svg.appendChild(circle);
+    });
+
+    function clearPoints() {
+      const points = svg.querySelectorAll('.point');
+      points.forEach(p => p.remove());
+    }
+
+    drawGrid();
+  </script>
 
 </body>
 </html>
