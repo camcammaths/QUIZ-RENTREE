@@ -200,15 +200,42 @@
   <h1>Répertoire des Types d’Angles</h1>
 
   <div class="stack-container">
-    <!-- Toutes les cartes HTML sont identiques à ton code initial -->
-    <!-- Je ne les répète pas ici pour gagner de l'espace -->
-    <!-- Tu peux garder toutes tes <div class="card"> comme tu les avais -->
-    <!-- Je continue directement avec le script -->
+
+    <div class="card active" data-index="0" data-question="Quel est l’intervalle de mesure de cet angle ?" style="--offset:0">
+      <h2>Angle Aigu</h2>
+      <svg class="angle-svg" viewBox="0 0 100 100"><line x1="20" y1="90" x2="50" y2="50" /><line x1="50" y1="50" x2="85" y2="75" /><circle cx="50" cy="50" r="4" /><path class="arc" d="M 55 55 A 10 10 0 0 1 65 60" /></svg>
+      <div class="question"></div>
+      <textarea class="answer-input" placeholder="Écris ta réponse ici..."></textarea>
+    </div>
+
+    <div class="card" data-index="1" data-question="Quelle est la mesure exacte de cet angle ?" style="--offset:1">
+      <h2>Angle Droit</h2>
+      <svg class="angle-svg" viewBox="0 0 100 100"><line x1="20" y1="90" x2="50" y2="50" /><line x1="50" y1="50" x2="90" y2="50" /><circle cx="50" cy="50" r="4" /><path class="arc" d="M 55 50 A 10 10 0 0 1 50 45" /></svg>
+      <div class="question"></div>
+      <textarea class="answer-input" placeholder="Écris ta réponse ici..."></textarea>
+    </div>
+
+    <div class="card" data-index="2" data-question="Cet angle mesure-t-il plus de 90° ?" style="--offset:2">
+      <h2>Angle Obtus</h2>
+      <svg class="angle-svg" viewBox="0 0 100 100"><line x1="10" y1="90" x2="50" y2="50" /><line x1="50" y1="50" x2="85" y2="20" /><circle cx="50" cy="50" r="4" /><path class="arc" d="M 60 60 A 20 20 0 0 1 75 40" /></svg>
+      <div class="question"></div>
+      <textarea class="answer-input" placeholder="Écris ta réponse ici..."></textarea>
+    </div>
+
+    <div class="card" data-index="3" data-question="Quelle est la mesure exacte de cet angle plat ?" style="--offset:3">
+      <h2>Angle Plat</h2>
+      <svg class="angle-svg" viewBox="0 0 100 100"><line x1="10" y1="50" x2="90" y2="50" /><circle cx="50" cy="50" r="4" /><path class="arc" d="M 60 50 A 10 10 0 0 1 40 50" /></svg>
+      <div class="question"></div>
+      <textarea class="answer-input" placeholder="Écris ta réponse ici..."></textarea>
+    </div>
+
+    <!-- Ajoute les autres cartes ici si besoin -->
+
   </div>
 
   <div class="buttons">
     <button id="prevBtn" disabled>Précédent</button>
-    <button id="nextBtn">Suivant</button>
+    <button id="nextBtn" disabled>Suivant</button>
   </div>
 
   <script>
@@ -217,66 +244,52 @@
     const nextBtn = document.getElementById('nextBtn');
 
     const correctAnswers = [
-      "entre 0° et 90°",
-      "90°",
-      "oui",
-      "180°",
-      "ils sont égaux",
-      "ils sont égaux",
-      "angles opposés par le sommet",
-      "90°",
-      "180°"
+      "entre 0° et 90°",      // angle aigu
+      "90°",                  // angle droit
+      "oui",                  // angle obtus
+      "180°"                  // angle plat
+      // Ajoute ici d'autres réponses si tu ajoutes plus de cartes
     ];
 
     let currentIndex = 0;
 
-    function normalize(str) {
-      return str.trim().toLowerCase().replace(/\s+/g, ' ');
-    }
-
     function updateStack() {
       cards.forEach((card, i) => {
         card.style.setProperty('--offset', i - currentIndex);
-        const questionBox = card.querySelector('.question');
-        const answerInput = card.querySelector('.answer-input');
-
         if (i === currentIndex) {
           card.classList.add('active');
-          questionBox.textContent = card.dataset.question;
-          answerInput.value = '';
-          answerInput.disabled = false;
-          answerInput.style.borderColor = '';
-          answerInput.style.backgroundColor = '';
-          answerInput.focus();
+          const input = card.querySelector('.answer-input');
+          const question = card.querySelector('.question');
+          input.value = '';
+          input.style.borderColor = '';
+          input.style.backgroundColor = '';
+          question.textContent = card.dataset.question;
+          input.disabled = false;
+          nextBtn.disabled = true;
 
-          answerInput.oninput = () => {
-            const userAnswer = normalize(answerInput.value);
-            const correctAnswer = normalize(correctAnswers[i]);
-
-            if (userAnswer === correctAnswer) {
-              answerInput.style.borderColor = '#00b894';
-              answerInput.style.backgroundColor = '#dfffe3';
-              nextBtn.disabled = false;
-            } else {
-              answerInput.style.borderColor = '#e17055';
-              answerInput.style.backgroundColor = '#ffeaea';
-              nextBtn.disabled = true;
-            }
-          };
+          input.focus();
         } else {
           card.classList.remove('active');
-          questionBox.textContent = '';
-          answerInput.value = '';
-          answerInput.disabled = true;
-          answerInput.style.borderColor = '';
-          answerInput.style.backgroundColor = '';
         }
       });
 
       prevBtn.disabled = currentIndex === 0;
+    }
 
-      const currentAnswerInput = cards[currentIndex].querySelector('.answer-input');
-      nextBtn.disabled = normalize(currentAnswerInput.value) !== normalize(correctAnswers[currentIndex]);
+    function validateAnswer(input, index) {
+      const userInput = input.value.trim().toLowerCase();
+      const correct = correctAnswers[index].toLowerCase();
+
+      if (userInput === correct) {
+        input.style.borderColor = "green";
+        input.style.backgroundColor = "#d3f9d8";
+        input.disabled = true;
+        nextBtn.disabled = false;
+      } else {
+        input.style.borderColor = "red";
+        input.style.backgroundColor = "#ffdce0";
+        nextBtn.disabled = true;
+      }
     }
 
     prevBtn.addEventListener('click', () => {
@@ -291,6 +304,11 @@
         currentIndex++;
         updateStack();
       }
+    });
+
+    cards.forEach((card, i) => {
+      const input = card.querySelector('.answer-input');
+      input.addEventListener('input', () => validateAnswer(input, i));
     });
 
     updateStack();
