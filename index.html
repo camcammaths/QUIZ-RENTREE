@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cylindre 3D CSS</title>
+  <title>Cylindre 3D réaliste CSS</title>
 
-  <!-- Polices -->
   <link href="https://fonts.googleapis.com/css2?family=Androgy+Demo&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Mabry+Pro&display=swap" rel="stylesheet" />
 
@@ -49,59 +48,59 @@
       color: var(--secondary-color);
     }
 
-    /* ---------- Scene ---------- */
+    /* Scene avec perspective */
     .scene {
-      width: 200px;
-      height: 200px;
-      perspective: 800px;
+      width: 240px;
+      height: 240px;
+      perspective: 1000px;
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
-    /* ---------- Cylindre 3D ---------- */
+    /* Cylindre 3D */
     .cylinder3d {
       position: relative;
-      width: 100px;
-      height: 140px;
+      width: 120px;
+      height: 160px;
       transform-style: preserve-3d;
-      transform: rotateX(-15deg) rotateY(25deg);
-      animation: spin 10s linear infinite;
+      transform: rotateX(-15deg) rotateY(20deg);
+      animation: spin 12s linear infinite;
     }
 
-    /* faces latérales */
+    /* Côtés (36 segments) */
     .cylinder-side {
       position: absolute;
-      width: 31.4px; /* approx circumference/10 */
-      height: 140px;
-      background: var(--veil);
-      border: 1px solid var(--accent-color-2);
-      left: 34.3px; /* centrer (100/2 - width/2) */
+      width: 10.47px; /* approx 2πr / 36 (r=60px) */
+      height: 160px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.5), var(--veil));
+      border: 1px solid rgba(251,86,7,0.3);
+      left: 54.8px; /* centre (120/2 - width/2) */
       top: 0;
-      transform-origin: 50% 50% -50px; /* rayon ~50px */
-      box-shadow: inset 0 0 8px rgba(0,0,0,0.05);
+      transform-origin: 50% 50% -60px; /* rayon 60px */
+      box-shadow: inset 0 0 8px rgba(0,0,0,0.08);
     }
 
-    /* disque supérieur et inférieur */
+    /* disques supérieur et inférieur */
     .cylinder-top,
     .cylinder-bottom {
       position: absolute;
-      width: 100px;
-      height: 100px;
+      width: 120px;
+      height: 120px;
       border-radius: 50%;
-      background: radial-gradient(circle at 30% 30%, white, var(--veil));
       border: 2px solid var(--accent-color-2);
       left: 0;
+      background: radial-gradient(circle at 30% 30%, white, var(--veil));
     }
 
     .cylinder-top {
-      transform: rotateX(90deg) translateZ(70px);
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      transform: rotateX(90deg) translateZ(80px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
 
     .cylinder-bottom {
-      transform: rotateX(90deg) translateZ(-70px);
-      box-shadow: inset 0 4px 8px rgba(0,0,0,0.08);
+      transform: rotateX(90deg) translateZ(-80px);
+      box-shadow: inset 0 4px 10px rgba(0,0,0,0.1);
     }
 
     @keyframes spin {
@@ -117,18 +116,16 @@
   <div class="figure">
     <div class="scene">
       <div class="cylinder3d">
-        <!-- 10 faces latérales pour donner l’impression de rondeur -->
-        <div class="cylinder-side" style="transform: rotateY(0deg) translateZ(50px);"></div>
-        <div class="cylinder-side" style="transform: rotateY(36deg) translateZ(50px);"></div>
-        <div class="cylinder-side" style="transform: rotateY(72deg) translateZ(50px);"></div>
-        <div class="cylinder-side" style="transform: rotateY(108deg) translateZ(50px);"></div>
-        <div class="cylinder-side" style="transform: rotateY(144deg) translateZ(50px);"></div>
-        <div class="cylinder-side" style="transform: rotateY(180deg) translateZ(50px);"></div>
-        <div class="cylinder-side" style="transform: rotateY(216deg) translateZ(50px);"></div>
-        <div class="cylinder-side" style="transform: rotateY(252deg) translateZ(50px);"></div>
-        <div class="cylinder-side" style="transform: rotateY(288deg) translateZ(50px);"></div>
-        <div class="cylinder-side" style="transform: rotateY(324deg) translateZ(50px);"></div>
-
+        <!-- Génération de 36 segments -->
+        <!-- tu peux en ajouter encore plus si tu veux plus de fluidité -->
+        <!-- chaque segment est tourné de 10° (360/36) -->
+        <!-- On garde un rayon de 60px -->
+        <!-- Faces latérales -->
+        <script>
+          for (let i = 0; i < 36; i++) {
+            document.write('<div class="cylinder-side" style="transform: rotateY('+(i*10)+'deg) translateZ(60px);"></div>');
+          }
+        </script>
         <!-- disques haut et bas -->
         <div class="cylinder-top"></div>
         <div class="cylinder-bottom"></div>
