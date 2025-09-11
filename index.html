@@ -2,8 +2,8 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Repertoire des Types d’Angles - Pile Interactive</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Répertoire de Figures — 3D étendu</title>
 
   <!-- Polices -->
   <link href="https://fonts.googleapis.com/css2?family=Androgy+Demo&display=swap" rel="stylesheet" />
@@ -17,303 +17,361 @@
       --accent-color-2: #fb5607;
       --accent-color-3: #ffbe0b;
       --background-color: #f0f4f8;
-      --card-veil: rgba(58, 134, 255, 0.08);
-      --border-radius: 12px;
-      --transition: 0.4s ease;
-      --success-color: #38b000;
-      --error-color: #e63946;
+      --veil: rgba(58, 134, 255, 0.08);
+      --border-radius: 8px;
+      --transition: 0.3s ease;
+      --scene-perspective: 700px;
     }
 
+    * { box-sizing: border-box; }
+
     body {
+      margin: 0;
       font-family: 'Mabry Pro', sans-serif;
       background: var(--background-color);
-      margin: 0;
-      padding: 2rem;
       color: #212529;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-      justify-content: center;
+      padding: 2rem;
       text-align: center;
     }
 
     h1 {
       font-family: 'Androgy Demo', sans-serif;
-      font-size: 2.5rem;
       color: var(--primary-color);
-      margin-bottom: 2rem;
+      font-size: 2.6rem;
+      margin-bottom: 1.5rem;
     }
 
-    .stack-container {
-      position: relative;
-      width: 320px;
-      height: 460px;
-      perspective: 1500px;
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      align-items: center;
     }
 
-    .card {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-      background: var(--card-veil);
-      border: 2px solid var(--primary-color);
-      border-radius: var(--border-radius);
-      backdrop-filter: blur(4px);
-      padding: 1.5rem 1.5rem 3.5rem;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-      transition: transform var(--transition), opacity var(--transition), border-color var(--transition);
+    .figure {
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: start;
-      opacity: 0.5;
-      pointer-events: none;
-      user-select: none;
+      justify-content: center;
+      padding: 1rem;
     }
 
-    .card:not(.active) {
-      transform-origin: left center;
-      transform: translateX(calc(-15px * var(--offset))) scale(calc(1 - 0.05 * var(--offset))) rotateY(-5deg);
-      opacity: 0.4;
-      z-index: calc(10 - var(--offset));
-    }
-
-    .card.active {
-      opacity: 1;
-      pointer-events: auto;
-      user-select: auto;
-      transform: translateX(0) scale(1) rotateY(0);
-      z-index: 20;
-    }
-
-    .card.correct {
-      border-color: var(--success-color);
-      box-shadow: 0 0 20px var(--success-color);
-    }
-
-    .card.wrong {
-      border-color: var(--error-color);
-      box-shadow: 0 0 20px var(--error-color);
-    }
-
-    .card h2 {
-      font-size: 1.5rem;
-      margin-bottom: 1rem;
-      color: var(--primary-color);
-      user-select: text;
-    }
-
-    .angle-svg {
-      width: 140px;
-      height: 140px;
-      margin-bottom: 1rem;
-      flex-shrink: 0;
-    }
-
-    svg line {
-      stroke: var(--secondary-color);
-      stroke-width: 4;
-    }
-
-    svg circle {
-      fill: var(--accent-color-3);
-    }
-
-    svg path.arc {
-      stroke: var(--primary-color);
-      stroke-width: 3;
-      fill: none;
-      opacity: 0.6;
-    }
-
-    .question {
+    .label {
+      margin-top: 0.8rem;
+      font-weight: bold;
       color: var(--secondary-color);
-      font-weight: 700;
-      font-size: 1.15rem;
-      margin-bottom: 1rem;
-      min-height: 48px;
     }
 
-    .answer-input {
-      position: absolute;
-      bottom: 1.4rem;
-      left: 1.5rem;
-      right: 1.5rem;
-      height: 50px;
-      border-radius: 8px;
-      border: 2px solid var(--secondary-color);
-      font-size: 1rem;
-      padding: 0.4rem 0.8rem;
-      resize: none;
-      font-family: 'Mabry Pro', sans-serif;
-      outline-offset: 2px;
-      background: white;
-      box-sizing: border-box;
+    /* shared face style */
+    .face {
+      background: var(--veil);
+      border: 2px solid var(--primary-color);
+      box-shadow: 0 0 12px rgba(58, 134, 255, 0.15);
+      backdrop-filter: blur(2px);
+      display: block;
     }
 
-    .answer-input.correct {
-      border-color: var(--success-color);
-      background: #d8f3dc;
+    /* ---------- 2D basics (kept) ---------- */
+    .square, .rectangle, .circle, .triangle {
+      margin: 0.25rem;
+    }
+    .square {
+      width: 100px; height: 100px;
+    }
+    .rectangle {
+      width: 140px; height: 80px;
+    }
+    .circle {
+      width: 100px; height: 100px; border-radius: 50%;
+    }
+    .triangle {
+      width: 0; height: 0;
+      border-left: 60px solid transparent;
+      border-right: 60px solid transparent;
+      border-bottom: 100px solid var(--primary-color);
+      background: none; box-shadow: none;
     }
 
-    .answer-input.wrong {
-      border-color: var(--error-color);
-      background: #ffe5e5;
-    }
-
-    .buttons {
+    /* ---------- Scene wrapper to give perspective ---------- */
+    .scene {
+      width: 160px;
+      height: 120px;
+      perspective: var(--scene-perspective);
       display: flex;
-      justify-content: space-between;
-      gap: 1rem;
-      width: 320px;
-      margin-top: 1rem;
+      align-items: center;
+      justify-content: center;
     }
 
-    button {
-      flex: 1;
-      padding: 0.6rem 1rem;
-      font-size: 1rem;
-      border-radius: var(--border-radius);
-      border: none;
-      background: var(--primary-color);
-      color: white;
-      cursor: pointer;
-      transition: background-color var(--transition);
+    /* ---------- CUBE (improved) ---------- */
+    .cube {
+      width: 100px;
+      height: 100px;
+      position: relative;
+      transform-style: preserve-3d;
+      transform: rotateX(-20deg) rotateY(25deg);
+      animation: rotateCube 8s linear infinite;
+    }
+    .cube .cube-face {
+      position: absolute;
+      width: 100px; height: 100px;
+      background: var(--veil);
+      border: 2px solid var(--primary-color);
+      box-shadow: inset 0 0 14px rgba(255,255,255,0.06);
+    }
+    .cube .front  { transform: translateZ(50px); }
+    .cube .back   { transform: rotateY(180deg) translateZ(50px); }
+    .cube .right  { transform: rotateY(90deg) translateZ(50px); }
+    .cube .left   { transform: rotateY(-90deg) translateZ(50px); }
+    .cube .top    { transform: rotateX(90deg) translateZ(50px); }
+    .cube .bottom { transform: rotateX(-90deg) translateZ(50px); }
+
+    @keyframes rotateCube {
+      from { transform: rotateX(-20deg) rotateY(0); }
+      to   { transform: rotateX(-20deg) rotateY(360deg); }
     }
 
-    button:hover:not(:disabled) {
-      background: var(--secondary-color);
+    /* ---------- Pavé droit (rectangular prism / cuboid) ---------- */
+    .prism {
+      width: 140px;
+      height: 90px;
+      position: relative;
+      transform-style: preserve-3d;
+      transform: rotateX(-18deg) rotateY(22deg) scale(0.9);
+      animation: rotatePrism 10s linear infinite;
     }
 
-    button:disabled {
-      background: #ccc;
-      cursor: not-allowed;
+    /* we manufacture faces sized to prism dimensions */
+    .prism .face {
+      position: absolute;
+      width: 140px; height: 90px;
+      border: 2px solid var(--accent-color-3);
+    }
+    /* depth = 80px (half = 40) */
+    .prism .front  { transform: translateZ(40px); }
+    .prism .back   { transform: rotateY(180deg) translateZ(40px); }
+    .prism .right  { width: 80px; height: 90px; left: 140px; transform-origin: left center; transform: rotateY(90deg) translateZ(0); border-left: none; border-right: 2px solid rgba(58,134,255,0.5); }
+    .prism .left   { width: 80px; height: 90px; right: 140px; transform-origin: right center; transform: rotateY(-90deg) translateZ(0); border-right: none; border-left: 2px solid rgba(58,134,255,0.5); }
+    .prism .top    { transform: rotateX(90deg) translateZ(45px); height: 80px; width: 140px; }
+    .prism .bottom { transform: rotateX(-90deg) translateZ(45px); height: 80px; width: 140px; }
+
+    @keyframes rotatePrism {
+      0%   { transform: rotateX(-18deg) rotateY(0deg) scale(0.95); }
+      100% { transform: rotateX(-18deg) rotateY(360deg) scale(0.95); }
     }
 
-    @media (max-width: 380px) {
-      .stack-container { width: 280px; height: 420px; }
-      .buttons { width: 280px; }
+    /* ---------- Pyramide 3D (base carrée pyramid à 4 faces) ---------- */
+    .pyramid3d {
+      width: 100px;
+      height: 100px;
+      position: relative;
+      transform-style: preserve-3d;
+      transform: rotateX(-12deg) rotateY(18deg);
+      margin-top: 10px;
+      animation: rotatePyr 9s linear infinite;
     }
+
+    /* base (square) */
+    .pyramid3d .base {
+      position: absolute;
+      width: 80px; height: 80px;
+      left: 10px; top: 10px;
+      transform: translateY(40px) rotateX(90deg);
+      background: var(--veil);
+      border: 2px solid var(--accent-color-3);
+    }
+
+    /* triangular faces built with transform and clip-path */
+    .pyramid3d .face {
+      position: absolute;
+      width: 0; height: 0;
+      border-left: 40px solid transparent;
+      border-right: 40px solid transparent;
+      border-bottom: 80px solid rgba(255,255,255,0.02);
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.06));
+    }
+
+    .pyramid3d .face.front  { transform: translateZ(20px) translateY(-10px) rotateX(10deg); border-bottom-color: var(--accent-color-3); }
+    .pyramid3d .face.right  { transform: rotateY(90deg) translateZ(20px) translateX(-40px) rotateX(10deg); border-bottom-color: rgba(255,190,11,0.95); }
+    .pyramid3d .face.left   { transform: rotateY(-90deg) translateZ(20px) translateX(40px) rotateX(10deg); border-bottom-color: rgba(131,56,236,0.95); }
+    .pyramid3d .face.back   { transform: rotateY(180deg) translateZ(20px) translateY(-10px) rotateX(10deg); border-bottom-color: rgba(58,134,255,0.95); }
+
+    @keyframes rotatePyr {
+      from { transform: rotateX(-12deg) rotateY(0); }
+      to   { transform: rotateX(-12deg) rotateY(360deg); }
+    }
+
+    /* ---------- Cône 3D (approximation) ---------- */
+    /* CSS ne fait pas facilement un cône 3D plein; on simule avec un élément incliné + base elliptique */
+    .cone3d {
+      width: 100px;
+      height: 120px;
+      position: relative;
+      transform-style: preserve-3d;
+      transform: rotateX(60deg) rotateY(10deg) scale(0.95);
+      margin-top: -10px;
+      animation: float 7s ease-in-out infinite;
+    }
+
+    .cone3d .body {
+      position: absolute;
+      left: 10px; right: 10px; top: 0;
+      height: 100px;
+      /* the triangular cone look */
+      clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+      background: linear-gradient(180deg, rgba(255,255,255,0.35), var(--veil));
+      border-left: 2px solid rgba(58,134,255,0.25);
+      border-right: 2px solid rgba(58,134,255,0.25);
+      transform-origin: 50% 50%;
+      box-shadow: inset 0 12px 22px rgba(255,255,255,0.05);
+    }
+
+    .cone3d .base {
+      position: absolute;
+      width: 80px; height: 20px;
+      left: 10px; top: 92px;
+      border-radius: 50%;
+      background: linear-gradient(180deg, rgba(255,255,255,0.6), var(--veil));
+      border: 2px solid var(--accent-color-1);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.06);
+      transform: rotateX(0deg);
+    }
+
+    @keyframes float {
+      0%,100% { transform: rotateX(60deg) rotateY(10deg) translateY(0); }
+      50%     { transform: rotateX(60deg) rotateY(10deg) translateY(-6px); }
+    }
+
+    /* ---------- Cylindre 3D (top + body + bottom) ---------- */
+    .cylinder3d {
+      width: 100px;
+      height: 120px;
+      position: relative;
+      transform-style: preserve-3d;
+      transform: rotateX(65deg) rotateY(8deg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: rotateCyl 8s linear infinite;
+    }
+
+    .cylinder3d .cyl-body {
+      width: 60px; height: 80px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.35), var(--veil));
+      border: 2px solid var(--accent-color-2);
+      border-radius: 30px / 8px;
+      box-shadow: inset 0 8px 16px rgba(0,0,0,0.06);
+      transform: translateZ(0);
+      display: block;
+    }
+
+    .cylinder3d .cyl-top,
+    .cylinder3d .cyl-bottom {
+      position: absolute;
+      width: 76px; height: 18px;
+      left: 12px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.6), var(--veil));
+      border-radius: 50%;
+      border: 2px solid var(--accent-color-2);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.06);
+    }
+    .cylinder3d .cyl-top { top: 10px; transform: translateY(-2px); }
+    .cylinder3d .cyl-bottom { bottom: 10px; transform: translateY(2px); }
+
+    @keyframes rotateCyl {
+      from { transform: rotateX(65deg) rotateY(0deg); }
+      to   { transform: rotateX(65deg) rotateY(360deg); }
+    }
+
+    /* small responsive tweak */
+    @media (max-width: 520px) {
+      .scene { width: 120px; height: 100px; }
+      .prism { transform: scale(0.8) rotateX(-18deg) rotateY(22deg); }
+    }
+
+    footer { margin-top: 2.5rem; font-size: 0.9rem; color: #999; }
   </style>
 </head>
 <body>
 
-  <h1>Repertoire des Types d’Angles</h1>
+  <h1>Répertoire de Figures Géométriques — 3D étendu</h1>
 
-  <div class="stack-container">
-    <!-- Les cartes (inchangées sauf classes) -->
-    <div class="card active" data-index="0" data-type="aigu" data-question="Quel est l’intervalle de mesure de cet angle ?" style="--offset:0">
-      <h2>Angle Aigu</h2>
-      <svg class="angle-svg" viewBox="0 0 100 100"><line x1="20" y1="90" x2="50" y2="50" /><line x1="50" y1="50" x2="85" y2="75" /><circle cx="50" cy="50" r="4" /><path class="arc" d="M 55 55 A 10 10 0 0 1 65 60" /></svg>
-      <div class="question"></div>
-      <textarea class="answer-input" placeholder="Écris ta réponse ici..."></textarea>
+  <div class="grid">
+
+    <!-- pavé droit (prism) -->
+    <div class="figure">
+      <div class="scene">
+        <div class="prism" aria-hidden="true">
+          <div class="face front"></div>
+          <div class="face back"></div>
+          <!-- right/left faces visually created with different border hints -->
+          <div class="face right"></div>
+          <div class="face left"></div>
+          <div class="face top"></div>
+          <div class="face bottom"></div>
+        </div>
+      </div>
+      <div class="label">Pavé droit (Parallélépipède)</div>
     </div>
 
-    <div class="card" data-index="1" data-type="droit" data-question="Quelle est la mesure exacte de cet angle ?" style="--offset:1">
-      <h2>Angle Droit</h2>
-      <svg class="angle-svg" viewBox="0 0 100 100"><line x1="20" y1="90" x2="50" y2="50" /><line x1="50" y1="50" x2="90" y2="50" /><circle cx="50" cy="50" r="4" /><path class="arc" d="M 55 50 A 10 10 0 0 1 50 45" /></svg>
-      <div class="question"></div>
-      <textarea class="answer-input" placeholder="Écris ta réponse ici..."></textarea>
+    <!-- pyramide 3D -->
+    <div class="figure">
+      <div class="scene">
+        <div class="pyramid3d" aria-hidden="true">
+          <div class="base"></div>
+          <div class="face front"></div>
+          <div class="face right"></div>
+          <div class="face left"></div>
+          <div class="face back"></div>
+        </div>
+      </div>
+      <div class="label">Pyramide (3D)</div>
     </div>
 
-    <div class="card" data-index="2" data-type="obtus" data-question="Cet angle mesure-t-il plus de 90° ?" style="--offset:2">
-      <h2>Angle Obtus</h2>
-      <svg class="angle-svg" viewBox="0 0 100 100"><line x1="10" y1="90" x2="50" y2="50" /><line x1="50" y1="50" x2="85" y2="20" /><circle cx="50" cy="50" r="4" /><path class="arc" d="M 60 60 A 20 20 0 0 1 75 40" /></svg>
-      <div class="question"></div>
-      <textarea class="answer-input" placeholder="Écris ta réponse ici..."></textarea>
+    <!-- cône (approximation) -->
+    <div class="figure">
+      <div class="scene">
+        <div class="cone3d" aria-hidden="true">
+          <div class="body"></div>
+          <div class="base"></div>
+        </div>
+      </div>
+      <div class="label">Cône (approx.)</div>
     </div>
 
-    <!-- (les autres cartes gardent le même schéma, seules data-type changent si nécessaire) -->
+    <!-- cylindre 3D -->
+    <div class="figure">
+      <div class="scene">
+        <div class="cylinder3d" aria-hidden="true">
+          <div class="cyl-top"></div>
+          <div class="cyl-body"></div>
+          <div class="cyl-bottom"></div>
+        </div>
+      </div>
+      <div class="label">Cylindre (3D)</div>
+    </div>
+
+    <!-- cube (amélioré) -->
+    <div class="figure">
+      <div class="scene">
+        <div class="cube" aria-hidden="true">
+          <div class="cube-face front face"></div>
+          <div class="cube-face back face"></div>
+          <div class="cube-face right face"></div>
+          <div class="cube-face left face"></div>
+          <div class="cube-face top face"></div>
+          <div class="cube-face bottom face"></div>
+        </div>
+      </div>
+      <div class="label">Cube (3D)</div>
+    </div>
+
   </div>
 
-  <div class="buttons">
-    <button id="prevBtn" disabled>Précédent</button>
-    <button id="nextBtn">Suivant</button>
-  </div>
-
-  <script>
-    const cards = document.querySelectorAll('.card');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-
-    let currentIndex = 0;
-
-    // Réponses correctes (simplifiées)
-    const correctAnswers = {
-      aigu: ["entre 0° et 90°", "0° < angle < 90°", "moins de 90"],
-      droit: ["90", "90°"],
-      obtus: ["oui", "plus de 90", "supérieur à 90"],
-      plat: ["180", "180°"],
-      "opposés par le sommet": ["opposés par le sommet"],
-      complémentaires: ["90", "90°"],
-      supplémentaires: ["180", "180°"]
-    };
-
-    function updateStack() {
-      cards.forEach((card, i) => {
-        card.style.setProperty('--offset', i - currentIndex);
-        if (i === currentIndex) {
-          card.classList.add('active');
-          card.querySelector('.question').textContent = card.dataset.question;
-          const input = card.querySelector('.answer-input');
-          input.value = '';
-          input.focus();
-          input.classList.remove("correct","wrong");
-          card.classList.remove("correct","wrong");
-          input.onkeydown = (e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              checkAnswer(card, input.value.trim().toLowerCase());
-            }
-          };
-        } else {
-          card.classList.remove('active');
-          card.querySelector('.question').textContent = '';
-        }
-      });
-
-      prevBtn.disabled = currentIndex === 0;
-      nextBtn.disabled = currentIndex === cards.length - 1;
-    }
-
-    function checkAnswer(card, answer) {
-      const type = card.dataset.type;
-      const goodAnswers = correctAnswers[type] || [];
-      const input = card.querySelector('.answer-input');
-
-      if (goodAnswers.some(g => answer.includes(g.toLowerCase()))) {
-        card.classList.add("correct");
-        input.classList.add("correct");
-        setTimeout(() => {
-          if (currentIndex < cards.length - 1) {
-            currentIndex++;
-            updateStack();
-          }
-        }, 1200);
-      } else {
-        card.classList.add("wrong");
-        input.classList.add("wrong");
-      }
-    }
-
-    prevBtn.addEventListener('click', () => {
-      if (currentIndex > 0) {
-        currentIndex--;
-        updateStack();
-      }
-    });
-
-    nextBtn.addEventListener('click', () => {
-      if (currentIndex < cards.length - 1) {
-        currentIndex++;
-        updateStack();
-      }
-    });
-
-    updateStack();
-  </script>
+  <footer>
+    © 2025 — Répertoire de formes géométriques CSS — version 3D étendue
+  </footer>
 
 </body>
 </html>
