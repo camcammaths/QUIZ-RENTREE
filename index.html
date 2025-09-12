@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Boule 3D Transparente Fermée</title>
+  <title>Boule 3D Transparente Voile Bleuté</title>
 
   <!-- Polices -->
   <link href="https://fonts.googleapis.com/css2?family=Androgy+Demo&display=swap" rel="stylesheet" />
@@ -12,10 +12,7 @@
   <style>
     :root {
       --primary-color: #3a86ff;
-      --secondary-color: #8338ec;
       --accent-color-1: #ff006e;
-      --accent-color-2: #fb5607;
-      --accent-color-3: #ffbe0b;
       --background-color: #f0f4f8;
     }
 
@@ -47,7 +44,7 @@
   </style>
 </head>
 <body>
-  <h1>Boule 3D Transparente Fermée</h1>
+  <h1>Boule 3D Voile Bleuté</h1>
 
   <!-- Librairie Three.js -->
   <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
@@ -66,28 +63,32 @@
     renderer.setSize(window.innerWidth * 0.8, window.innerHeight * 0.6);
     document.body.appendChild(renderer.domElement);
 
-    // Matériau verre
+    // Matériau "verre bleuté"
     const glassMaterial = new THREE.MeshPhysicalMaterial({
-      color: 0x3a86ff,
+      color: 0x3a86ff,         // bleu
       transparent: true,
-      opacity: 0.15,
-      roughness: 0.1,
-      metalness: 0.3,
-      reflectivity: 1,
-      transmission: 0.9,
+      opacity: 0.25,           // voile plus présent
+      roughness: 0.15,
+      metalness: 0.2,
+      reflectivity: 0.8,
+      transmission: 0.8,       // moins de transparence
       clearcoat: 1.0,
-      clearcoatRoughness: 0.1,
+      clearcoatRoughness: 0.2,
       side: THREE.DoubleSide
     });
 
-    // Boule (SphereGeometry)
+    // Boule
     const geometry = new THREE.SphereGeometry(2, 64, 64);
     const sphere = new THREE.Mesh(geometry, glassMaterial);
     scene.add(sphere);
 
-    // Arêtes (wireframe)
+    // Wireframe atténué
     const edges = new THREE.EdgesGeometry(geometry);
-    const edgeMaterial = new THREE.LineBasicMaterial({ color: 0xff006e });
+    const edgeMaterial = new THREE.LineBasicMaterial({
+      color: 0xff006e,
+      transparent: true,
+      opacity: 0.2           // traits roses beaucoup plus discrets
+    });
     const wireframe = new THREE.LineSegments(edges, edgeMaterial);
     sphere.add(wireframe);
 
@@ -96,7 +97,7 @@
     light1.position.set(5, 5, 5);
     scene.add(light1);
 
-    const light2 = new THREE.PointLight(0xffffff, 0.8);
+    const light2 = new THREE.PointLight(0xffffff, 0.6);
     light2.position.set(-5, -3, 5);
     scene.add(light2);
 
