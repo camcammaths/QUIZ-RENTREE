@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cylindre 3D Transparent Fermé</title>
+  <title>Boule 3D Transparente Fermée</title>
 
   <!-- Polices -->
   <link href="https://fonts.googleapis.com/css2?family=Androgy+Demo&display=swap" rel="stylesheet" />
@@ -47,7 +47,7 @@
   </style>
 </head>
 <body>
-  <h1>Cylindre 3D Transparent Fermé</h1>
+  <h1>Boule 3D Transparente Fermée</h1>
 
   <!-- Librairie Three.js -->
   <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
@@ -80,16 +80,16 @@
       side: THREE.DoubleSide
     });
 
-    // Cylindre fermé (openEnded: false)
-    const geometry = new THREE.CylinderGeometry(2, 2, 3, 64, 1, false);
-    const cylinder = new THREE.Mesh(geometry, glassMaterial);
-    scene.add(cylinder);
+    // Boule (SphereGeometry)
+    const geometry = new THREE.SphereGeometry(2, 64, 64);
+    const sphere = new THREE.Mesh(geometry, glassMaterial);
+    scene.add(sphere);
 
     // Arêtes (wireframe)
     const edges = new THREE.EdgesGeometry(geometry);
     const edgeMaterial = new THREE.LineBasicMaterial({ color: 0xff006e });
     const wireframe = new THREE.LineSegments(edges, edgeMaterial);
-    cylinder.add(wireframe);
+    sphere.add(wireframe);
 
     // Lumières
     const light1 = new THREE.PointLight(0xffffff, 1.2);
@@ -105,8 +105,8 @@
     function animate() {
       requestAnimationFrame(animate);
       if (rotating) {
-        cylinder.rotation.x += 0.01;
-        cylinder.rotation.y += 0.01;
+        sphere.rotation.x += 0.01;
+        sphere.rotation.y += 0.01;
       }
       renderer.render(scene, camera);
     }
