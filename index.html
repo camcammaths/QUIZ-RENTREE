@@ -66,33 +66,53 @@
     renderer.setSize(window.innerWidth * 0.8, window.innerHeight * 0.6);
     document.body.appendChild(renderer.domElement);
 
-    // Géométrie cylindre
-    const geometry = new THREE.CylinderGeometry(2, 2, 3, 64, 1, true);
-
-    // Matériau transparent façon "verre coloré"
-    const material = new THREE.MeshPhysicalMaterial({
+    // Matériau verre
+    const glassMaterial = new THREE.MeshPhysicalMaterial({
       color: 0x3a86ff,
       transparent: true,
       opacity: 0.15,
       roughness: 0.1,
       metalness: 0.3,
       reflectivity: 1,
-      transmission: 0.9, // effet verre
+      transmission: 0.9,
       clearcoat: 1.0,
       clearcoatRoughness: 0.1,
       side: THREE.DoubleSide
     });
 
-    const cylinder = new THREE.Mesh(geometry, material);
+    // Cylindre (parois seulement, openEnded: true)
+    const geometry = new THREE.CylinderGeometry(2, 2, 3, 64, 1, true);
+    const cylinder = new THREE.Mesh(geometry, glassMaterial);
     scene.add(cylinder);
 
-    // Ajout d’un bord filaire (comme les traits colorés du cube)
+    // Dessus (disque)
+    const topGeometry = new THREE.CircleGeometry(2, 64);
+    const top = new THREE.Mesh(topGeometry, glassMaterial);
+    top.rotation.x = Math.PI / 2;
+    top.position.y = 1.5; // moitié de la hauteur
+    scene.add(top);
+
+    // Dessous (disque)
+    const bottomGeometry = new THREE.CircleGeometry(2, 64);
+    const bottom = new THREE.Mesh(bottomGeometry, glassMaterial);
+    bottom.rotation.x = -Math.PI / 2;
+    bottom.position.y = -1.5; // moitié de la hauteur négative
+    scene.add(bottom);
+
+    // Arêtes (wireframe du cylindre)
     const edges = new THREE.EdgesGeometry(geometry);
-    const edgeMaterial = new THREE.LineBasicMaterial({ 
-      color: 0xff006e, linewidth: 2 
-    });
+    const edgeMaterial = new THREE.LineBasicMaterial({ color: 0xff006e, linewidth: 2 });
     const wireframe = new THREE.LineSegments(edges, edgeMaterial);
     cylinder.add(wireframe);
+
+    // Arêtes des cercles
+    const topEdges = new THREE.EdgesGeometry(topGeometry);
+    const topWire = new THREE.LineSegments(topEdges, new THREE.LineBasicMaterial({ color: 0xfb5607 }));
+    top.add(topWire);
+
+    const bottomEdges = new THREE.EdgesGeometry(bottomGeometry);
+    const bottomWire = new THREE.LineSegments(bottomEdges, new THREE.LineBasicMaterial({ color: 0xffbe0b }));
+    bottom.add(bottomWire);
 
     // Lumières
     const light1 = new THREE.PointLight(0xffffff, 1.2);
@@ -110,6 +130,8 @@
       if (rotating) {
         cylinder.rotation.x += 0.01;
         cylinder.rotation.y += 0.01;
+        top.rotation.y += 0.01;
+        bottom.rotation.y += 0.01;
       }
       renderer.render(scene, camera);
     }
