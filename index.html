@@ -2,283 +2,135 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Match Cards - Maths ludiques</title>
-
-  <!-- Polices -->
+  <title>Homothétie – Géométrie</title>
   <link href="https://fonts.googleapis.com/css2?family=Androgy+Demo&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Mabry+Pro&display=swap" rel="stylesheet" />
-
   <style>
     :root {
-      --primary: #3a86ff;
-      --secondary: #8338ec;
-      --background: #f0f4f8;
-      --text: #212529;
-      --btn-bg: #a8d0ff;
-      --btn-hover: #7ab3ff;
-      --border-radius: 8px;
-      --transition: 0.3s ease;
+      --primary-color: #5b6dfa;
+      --secondary-color: #00bfa6;
+      --accent-color: #ff6b6b;
+      --background-color: #f9f9f9;
+      --grid-color: #dcdcdc;
+      --text-color: #222;
     }
-
     body {
       font-family: 'Mabry Pro', sans-serif;
-      background: var(--background);
-      color: var(--text);
-      margin: 0;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      user-select: none;
+      background: var(--background-color);
+      text-align: center;
+      padding: 2rem;
     }
-
     h1 {
       font-family: 'Androgy Demo', sans-serif;
-      text-transform: capitalize;
-      color: var(--primary);
-      text-align: center;
-      margin-bottom: 1rem;
+      color: var(--primary-color);
     }
-
-    a.back {
-      position: absolute;
-      top: 1rem;
-      left: 1rem;
-      font-weight: 600;
-      color: var(--primary);
-      text-decoration: none;
-      font-family: 'Mabry Pro', sans-serif;
-      border: 2px solid var(--primary);
-      padding: 0.5rem 1rem;
-      border-radius: var(--border-radius);
-      transition: background-color var(--transition), color var(--transition);
-    }
-    a.back:hover {
-      background-color: var(--primary);
-      color: white;
-    }
-
-    p {
-      max-width: 800px;
-      margin: 0 auto 1rem;
-      font-size: 1.1rem;
-      text-align: center;
-      line-height: 1.5;
-      color: #444;
-    }
-
-    /* Conteneur en 16/9 */
-    #game {
-      aspect-ratio: 16 / 9;
-      width: 90%;
-      max-width: 1200px;
+    #grid {
+      margin: 2rem auto;
       background: white;
-      border-radius: var(--border-radius);
-      padding: 2rem;
-      display: flex;
-      gap: 3rem;
-      justify-content: center;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      border: 2px solid var(--grid-color);
+      width: 600px; height: 600px;
     }
-
-    .column {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      overflow-y: auto;
-    }
-
-    .column h2 {
-      font-family: 'Androgy Demo', sans-serif;
-      text-transform: capitalize;
-      color: var(--secondary);
-      margin-bottom: 1rem;
-      text-align: center;
-    }
-
-    .dropzone {
-      background: #f9f9f9;
-      min-height: 60px;
-      margin-bottom: 1rem;
-      border: 2px dashed var(--primary);
-      border-radius: var(--border-radius);
-      padding: 0.75rem 1rem;
-      font-style: italic;
-      display: flex;
-      align-items: center;
-      color: #555;
-      transition: background-color var(--transition), border-color var(--transition);
-      cursor: default;
-    }
-
-    .dropzone.filled {
-      border-style: solid;
-      background-color: #d0e2ff;
-      color: black;
-      font-style: normal;
-    }
-
-    .card {
-      background: var(--primary);
-      color: white;
-      padding: 1rem 1.25rem;
-      border-radius: var(--border-radius);
-      margin-bottom: 1rem;
-      cursor: grab;
-      font-weight: 600;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-      user-select: none;
-      transition: opacity 0.3s;
-    }
-
-    .card.dragging {
-      opacity: 0.5;
-      cursor: grabbing;
-    }
-
-    #check-btn {
-      margin: 1rem auto 0;
-      display: block;
-      padding: 0.75rem 2rem;
-      font-weight: 600;
-      font-size: 1.1rem;
-      background-color: var(--secondary);
-      color: white;
-      border: none;
-      border-radius: var(--border-radius);
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(131, 56, 236, 0.6);
-      transition: background-color var(--transition);
-      user-select: none;
-    }
-
-    #check-btn:hover {
-      background-color: #6829b0;
-    }
-
-    #result {
-      text-align: center;
-      font-weight: 700;
-      font-size: 1.2rem;
-      min-height: 1.5em;
-      margin-top: 0.5rem;
-    }
+    svg { width: 100%; height: 100%; }
+    .pointO { fill: black; }
+    .pointInit { fill: var(--primary-color); }
+    .pointUser { fill: var(--accent-color); cursor: pointer; }
+    .btn { padding: 0.7rem 1.4rem; margin-top: 1rem;
+      background: var(--primary-color); color:white; border:none; border-radius:8px; cursor:pointer; }
   </style>
 </head>
 <body>
 
-  <h1>Match cards</h1>
-  <a href="index.html" class="back">← Retour à la page principale</a>
+<h1>Homothétie</h1>
+<p>Construis l’image du rectangle ABCD par l’homothétie de centre O et de rapport 2.<br>
+Clique pour placer les 4 points A′, B′, C′, D′.</p>
 
-  <p>Associe chaque nombre à sa condition de divisibilité en faisant glisser les cartes.</p>
+<div id="grid">
+  <svg id="svgGrid"></svg>
+</div>
+<button class="btn" onclick="checkAnswer()">Vérifier</button>
 
-  <div id="game">
-    <div class="column" id="numbers-col">
-      <h2>Nombres</h2>
-      <div class="dropzone" data-num="1">1) Un nombre est divisible par 2</div>
-      <div class="dropzone" data-num="2">2) Un nombre entier est divisible par 3</div>
-      <div class="dropzone" data-num="3">3) Un nombre entier est divisible par 4</div>
-      <div class="dropzone" data-num="4">4) Un nombre entier est divisible par 5</div>
-      <div class="dropzone" data-num="5">5) Un nombre entier est divisible par 9</div>
-      <div class="dropzone" data-num="6">6) Un nombre entier est divisible par 10</div>
-    </div>
-    <div class="column" id="conditions-col">
-      <h2>Conditions</h2>
-      <div class="card" draggable="true" data-cond="A">A) Si son chiffre des unités est pair (0, 2, 4, 6 ou 8)</div>
-      <div class="card" draggable="true" data-cond="B">B) Si la somme de ses chiffres est divisible par 3</div>
-      <div class="card" draggable="true" data-cond="C">C) Si le nombre formé par son chiffre des dizaines et son chiffre des unités est divisible par 4</div>
-      <div class="card" draggable="true" data-cond="D">D) Si son chiffre des unités est 0 ou 5</div>
-      <div class="card" draggable="true" data-cond="E">E) Si la somme de ses chiffres est divisible par 9</div>
-      <div class="card" draggable="true" data-cond="F">F) Si son chiffre des unités est 0</div>
-    </div>
-  </div>
+<script>
+const svg = document.getElementById('svgGrid');
+const gridSize = 20, cols=30, rows=30;
 
-  <button id="check-btn">Vérifier les réponses</button>
-  <div id="result"></div>
+//--- Dessin de la grille
+for(let i=0;i<=cols;i++){
+  let l=document.createElementNS("http://www.w3.org/2000/svg","line");
+  l.setAttribute("x1",i*gridSize); l.setAttribute("y1",0);
+  l.setAttribute("x2",i*gridSize); l.setAttribute("y2",rows*gridSize);
+  l.setAttribute("stroke","#eee"); svg.appendChild(l);
+}
+for(let j=0;j<=rows;j++){
+  let l=document.createElementNS("http://www.w3.org/2000/svg","line");
+  l.setAttribute("x1",0); l.setAttribute("y1",j*gridSize);
+  l.setAttribute("x2",cols*gridSize); l.setAttribute("y2",j*gridSize);
+  l.setAttribute("stroke","#eee"); svg.appendChild(l);
+}
 
-  <script>
-    const cards = document.querySelectorAll('.card');
-    const dropzones = document.querySelectorAll('.dropzone');
-    const checkBtn = document.getElementById('check-btn');
-    const result = document.getElementById('result');
+//--- Centre O
+const O={x:300,y:300};
+let o=document.createElementNS("http://www.w3.org/2000/svg","circle");
+o.setAttribute("cx",O.x); o.setAttribute("cy",O.y); o.setAttribute("r",6); o.setAttribute("class","pointO");
+svg.appendChild(o);
+let ot=document.createElementNS("http://www.w3.org/2000/svg","text");
+ot.setAttribute("x",O.x+8); ot.setAttribute("y",O.y-8); ot.textContent="O"; svg.appendChild(ot);
 
-    let dragged = null;
+//--- Rectangle initial ABCD
+const A={x:200,y:200}, B={x:260,y:200}, C={x:260,y:240}, D={x:200,y:240};
+drawPoint(A,"A"); drawPoint(B,"B"); drawPoint(C,"C"); drawPoint(D,"D");
+drawPolygon([A,B,C,D],"#5b6dfa");
 
-    // Gestion du drag & drop
-    cards.forEach(card => {
-      card.addEventListener('dragstart', () => {
-        dragged = card;
-        card.classList.add('dragging');
-      });
-      card.addEventListener('dragend', () => {
-        dragged = null;
-        card.classList.remove('dragging');
-      });
-    });
+//--- Fonction utilitaire
+function drawPoint(p,label,cls="pointInit"){
+  let c=document.createElementNS("http://www.w3.org/2000/svg","circle");
+  c.setAttribute("cx",p.x); c.setAttribute("cy",p.y); c.setAttribute("r",5);
+  c.setAttribute("class",cls); svg.appendChild(c);
+  let t=document.createElementNS("http://www.w3.org/2000/svg","text");
+  t.setAttribute("x",p.x+6); t.setAttribute("y",p.y-6); t.textContent=label; svg.appendChild(t);
+}
+function drawPolygon(pts,color){
+  let poly=document.createElementNS("http://www.w3.org/2000/svg","polygon");
+  poly.setAttribute("points",pts.map(p=>`${p.x},${p.y}`).join(" "));
+  poly.setAttribute("fill",color); poly.setAttribute("opacity",0.2);
+  poly.setAttribute("stroke",color); poly.setAttribute("stroke-width",2);
+  svg.appendChild(poly);
+}
 
-    dropzones.forEach(zone => {
-      zone.addEventListener('dragover', e => {
-        e.preventDefault();
-        zone.style.backgroundColor = '#a8d0ff';
-      });
-      zone.addEventListener('dragleave', e => {
-        zone.style.backgroundColor = '';
-      });
-      zone.addEventListener('drop', e => {
-        e.preventDefault();
-        zone.style.backgroundColor = '';
+//--- Réponses attendues (homothétie k=2)
+function homothety(P){
+  return {x: O.x + 2*(P.x-O.x), y: O.y + 2*(P.y-O.y)};
+}
+const A2=homothety(A), B2=homothety(B), C2=homothety(C), D2=homothety(D);
 
-        if (!dragged) return;
+//--- Clics de l’élève
+let userPoints=[];
+svg.addEventListener("click", e=>{
+  if(userPoints.length>=4) return;
+  const rect=svg.getBoundingClientRect();
+  const x=Math.round((e.clientX-rect.left)/gridSize)*gridSize;
+  const y=Math.round((e.clientY-rect.top)/gridSize)*gridSize;
+  userPoints.push({x,y});
+  drawPoint({x,y},"", "pointUser");
+});
 
-        // Si une carte est déjà présente dans la dropzone, on la remet dans la colonne des conditions
-        const existing = zone.querySelector('.card');
-        if (existing) {
-          document.getElementById('conditions-col').appendChild(existing);
-        }
-
-        zone.appendChild(dragged);
-      });
-    });
-
-    // Corrections
-    const correctAnswers = {
-      1: 'A',
-      2: 'B',
-      3: 'C',
-      4: 'D',
-      5: 'E',
-      6: 'F'
-    };
-
-    checkBtn.addEventListener('click', () => {
-      let score = 0;
-      const total = Object.keys(correctAnswers).length;
-
-      dropzones.forEach(zone => {
-        const num = zone.getAttribute('data-num');
-        const card = zone.querySelector('.card');
-
-        if (card && card.getAttribute('data-cond') === correctAnswers[num]) {
-          zone.style.borderColor = 'green';
-          zone.style.backgroundColor = '#d4f8d4';
-          score++;
-        } else {
-          zone.style.borderColor = 'red';
-          zone.style.backgroundColor = '#f8d4d4';
-        }
-      });
-
-      if (score === total) {
-        result.style.color = 'green';
-        result.textContent = 'Bravo ! Toutes les paires sont correctes 🎉';
-      } else {
-        result.style.color = 'red';
-        result.textContent = `Il y a ${total - score} erreur(s). Essaie encore.`;
-      }
-    });
-  </script>
-
+//--- Vérification
+function checkAnswer(){
+  if(userPoints.length<4){alert("Place 4 points d’abord !"); return;}
+  let correct=[A2,B2,C2,D2];
+  let good=0;
+  for(let i=0;i<4;i++){
+    let up=userPoints[i];
+    // tolérance 5px
+    if(correct.some(p=>Math.abs(p.x-up.x)<6 && Math.abs(p.y-up.y)<6)) good++;
+  }
+  if(good===4){
+    drawPolygon(userPoints,"green");
+    alert("Bravo ! Ton rectangle est correct ✅");
+  }else{
+    drawPolygon(userPoints,"red");
+    alert("Ce n’est pas correct ❌ Essaie encore.");
+  }
+}
+</script>
 </body>
 </html>
