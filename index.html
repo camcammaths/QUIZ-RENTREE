@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Homothetie</title>
+  <title>Homothétie</title>
 
   <!-- Polices -->
   <link href="https://fonts.googleapis.com/css2?family=Androgy+Demo&display=swap" rel="stylesheet" />
@@ -12,13 +12,14 @@
   <style>
     :root {
       --primary-color: #5b6dfa;
-      --accent-color: #8000ff;
-      --good-color: rgba(0, 200, 0, 0.4);
-      --bad-color: rgba(200, 0, 0, 0.4);
-      --start-color: rgba(128, 0, 255, 0.25);
+      --secondary-color: #00bfa6;
+      --accent-color: #ff6b6b;
       --background-color: #f9f9f9;
-      --grid-color: #e0e0e0;
+      --grid-color: #dcdcdc;
       --text-color: #222;
+      --border-radius: 10px;
+      --transition: 0.3s ease;
+      --figure-color: rgba(128,0,128,0.3); /* voile violet transparent */
     }
 
     body {
@@ -28,183 +29,163 @@
       color: var(--text-color);
       display: flex;
       flex-direction: column;
-      height: 100vh;
+      align-items: center;
+      padding: 2rem;
+      min-height: 100vh;
     }
 
-    header {
+    h1 {
       font-family: 'Androgy Demo', sans-serif;
       font-size: 2.5rem;
-      text-align: center;
-      padding: 1rem;
+      text-transform: lowercase;
       color: var(--primary-color);
-      border-bottom: 2px solid var(--grid-color);
     }
+    h1::first-letter { text-transform: uppercase; }
 
-    .layout {
-      display: flex;
-      flex: 1;
-    }
-
-    aside {
-      width: 25%;
-      padding: 1rem;
-      background: white;
-      border-right: 2px solid var(--grid-color);
-      overflow-y: auto;
-    }
-
-    aside h2 {
+    .question-box {
       font-size: 1.2rem;
-      margin: 0 0 1rem;
-      color: var(--primary-color);
-    }
-
-    aside ul {
-      padding-left: 1rem;
-      list-style: none;
-    }
-
-    aside li {
-      margin-bottom: 0.6rem;
-      cursor: pointer;
-    }
-
-    aside li.active {
-      font-weight: bold;
-      color: var(--accent-color);
-    }
-
-    main {
-      flex: 1;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: #fff;
+      text-align: center;
+      margin: 1.5rem 0;
+      max-width: 600px;
     }
 
     #grid {
-      width: 90%;
-      max-width: 960px;
-      aspect-ratio: 16/9;
+      margin-top: 2rem;
+      background-color: white;
       border: 2px solid var(--grid-color);
-      background: #fff;
+      border-radius: var(--border-radius);
+      width: 800px;
+      height: 450px; /* format 16/9 */
     }
 
-    svg {
-      width: 100%;
-      height: 100%;
+    svg { width: 100%; height: 100%; }
+
+    .btn {
+      margin-top: 2rem;
+      padding: 0.7rem 1.4rem;
+      font-size: 1rem;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-family: 'Mabry Pro', sans-serif;
+      transition: background-color var(--transition);
+    }
+    .btn:hover { background-color: var(--secondary-color); }
+
+    .point {
+      fill: var(--accent-color);
+      stroke: black;
+      stroke-width: 1;
     }
 
-    .status {
-      width: 15%;
-      padding: 1rem;
-      border-left: 2px solid var(--grid-color);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      font-size: 1.2rem;
+    .centerO {
+      fill: var(--secondary-color);
+      stroke: black;
+      stroke-width: 2;
+    }
+
+    a.back {
+      display: inline-block;
+      margin-top: 2rem;
+      text-decoration: none;
+      font-weight: 600;
       color: var(--primary-color);
+      border: 2px solid var(--primary-color);
+      padding: 0.5rem 1rem;
+      border-radius: var(--border-radius);
+      transition: background-color var(--transition), color var(--transition);
+    }
+    a.back:hover {
+      background-color: var(--primary-color);
+      color: white;
     }
   </style>
 </head>
 <body>
 
-  <header>Homothetie</header>
+  <h1>Homothétie</h1>
 
-  <div class="layout">
-    <aside>
-      <h2>Questions</h2>
-      <ul id="qList"></ul>
-    </aside>
-
-    <main>
-      <div id="grid"><svg id="svgGrid" viewBox="0 0 1280 720"></svg></div>
-    </main>
-
-    <div class="status" id="status">1 / 10</div>
+  <div class="question-box" id="question">
+    Construire l’image du triangle par l’homothétie de centre O et de rapport 2
   </div>
 
+  <div id="grid">
+    <svg id="svgGrid"></svg>
+  </div>
+
+  <button class="btn" onclick="nextQuestion()">Question suivante</button>
+
+  <a href="index.html" class="back">← Retour à l'accueil</a>
+
   <script>
-    const svg = document.getElementById("svgGrid");
-    const ns = "http://www.w3.org/2000/svg";
-    const width = 1280, height = 720, gridSize = 40;
-    function el(tag, attrs = {}) {
-      const e = document.createElementNS(ns, tag);
-      for (const k in attrs) e.setAttribute(k, attrs[k]);
-      return e;
-    }
-    function clear() { while (svg.firstChild) svg.removeChild(svg.firstChild); }
-    function grid() {
-      for (let i = 0; i <= width; i += gridSize)
-        svg.appendChild(el("line", {x1:i, y1:0, x2:i, y2:height, stroke:"#eee"}));
-      for (let j = 0; j <= height; j += gridSize)
-        svg.appendChild(el("line", {x1:0, y1:j, x2:width, y2:j, stroke:"#eee"}));
-    }
-    function snap(x, y) {
-      return {x: Math.round(x / gridSize) * gridSize, y: Math.round(y / gridSize) * gridSize};
-    }
-    function drawPoly(pts, color, stroke=color) {
-      svg.appendChild(el("polygon", {points:pts.map(p=>`${p.x},${p.y}`).join(" "), fill:color, stroke:stroke, "stroke-width":2}));
-    }
-    function drawPoint(p, c="#000") {
-      svg.appendChild(el("circle", {cx:p.x, cy:p.y, r:6, fill:c, stroke:"#000"}));
-    }
-    function homothetie(O, P, k) {
-      return snap(O.x + k * (P.x - O.x), O.y + k * (P.y - O.y));
-    }
-
     const questions = [
-      {label:"Homothétie rapport 2", O:{x:200,y:160}, pts:[{x:160,y:120},{x:280,y:120},{x:280,y:200},{x:160,y:200}], k:2},
-      {label:"Homothétie rapport 1/2", O:{x:1000,y:400}, pts:[{x:960,y:360},{x:1040,y:360},{x:1000,y:440}], k:0.5},
-      {label:"Homothétie rapport 3", O:{x:400,y:500}, pts:[{x:360,y:460},{x:440,y:460},{x:440,y:540},{x:360,y:540}], k:3},
-      {label:"Homothétie rapport 1/3", O:{x:800,y:200}, pts:[{x:760,y:160},{x:840,y:160},{x:800,y:240}], k:1/3}
+      "Construire l’image du triangle par l’homothétie de centre O et de rapport 2",
+      "Construire l’image du triangle par l’homothétie de centre O et de rapport 4",
+      "Construire l’image du triangle par l’homothétie de centre O et de rapport 1/2",
+      "Construire l’image du triangle par l’homothétie de centre O et de rapport -1"
     ];
-    let current = 0, userPts = [], expected = [];
+    let currentQuestion = 0;
 
-    const qList = document.getElementById("qList");
-    questions.forEach((q,i)=>{
-      const li=document.createElement("li");
-      li.textContent=(i+1)+". "+q.label;
-      li.onclick=()=>render(i);
-      qList.appendChild(li);
-    });
+    const svg = document.getElementById('svgGrid');
+    const gridSize = 20;
+    const cols = 40;
+    const rows = 22;
 
-    function render(idx) {
-      current=idx; userPts=[]; clear(); grid();
-      [...qList.children].forEach((li,i)=>li.classList.toggle("active",i===idx));
-      const q=questions[idx];
-      drawPoly(q.pts,"var(--start-color)"); 
-      q.pts.forEach(p=>drawPoint(p,"var(--primary-color)"));
-      drawPoint(q.O,"#000");
-      expected=q.pts.map(p=>homothetie(q.O,p,q.k));
-      document.getElementById("status").textContent=`${idx+1} / ${questions.length}`;
-    }
+    let pointO = null; // stocke le centre O
 
-    function isCorrect(a,b){
-      if(a.length!==b.length) return false;
-      for(let i=0;i<a.length;i++)
-        if(Math.abs(a[i].x-b[i].x)>1 || Math.abs(a[i].y-b[i].y)>1) return false;
-      return true;
-    }
-
-    svg.addEventListener("click", e=>{
-      const rect=svg.getBoundingClientRect();
-      const x=(e.clientX-rect.left)*(width/rect.width);
-      const y=(e.clientY-rect.top)*(height/rect.height);
-      const p=snap(x,y);
-      userPts.push(p); drawPoint(p,"var(--accent-color)");
-      if(userPts.length===expected.length){
-        if(isCorrect(userPts,expected)){
-          drawPoly(userPts,"var(--good-color)");
-        }else{
-          drawPoly(userPts,"var(--bad-color)");
-          drawPoly(expected,"var(--good-color)","#008000");
-        }
+    function drawGrid() {
+      svg.innerHTML = ""; // efface le svg
+      for (let i = 0; i <= cols; i++) {
+        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line.setAttribute("x1", i * gridSize);
+        line.setAttribute("y1", 0);
+        line.setAttribute("x2", i * gridSize);
+        line.setAttribute("y2", rows * gridSize);
+        line.setAttribute("stroke", "#e0e0e0");
+        svg.appendChild(line);
       }
-    });
+      for (let j = 0; j <= rows; j++) {
+        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line.setAttribute("x1", 0);
+        line.setAttribute("y1", j * gridSize);
+        line.setAttribute("x2", cols * gridSize);
+        line.setAttribute("y2", j * gridSize);
+        line.setAttribute("stroke", "#e0e0e0");
+        svg.appendChild(line);
+      }
+    }
 
-    render(0);
+    function placeCenterO() {
+      // coordonnées aléatoires sur la grille
+      const x = Math.floor(Math.random() * cols) * gridSize;
+      const y = Math.floor(Math.random() * rows) * gridSize;
+      pointO = { x, y };
+
+      const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      circle.setAttribute("cx", x);
+      circle.setAttribute("cy", y);
+      circle.setAttribute("r", 6);
+      circle.setAttribute("class", "centerO");
+      svg.appendChild(circle);
+    }
+
+    function nextQuestion() {
+      if (currentQuestion < questions.length - 1) {
+        currentQuestion++;
+        document.getElementById('question').textContent = questions[currentQuestion];
+        drawGrid();
+        placeCenterO();
+      } else {
+        alert("Toutes les questions sont terminées !");
+      }
+    }
+
+    // Initial draw
+    drawGrid();
+    placeCenterO();
   </script>
+
 </body>
 </html>
