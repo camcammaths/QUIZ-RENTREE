@@ -1,72 +1,50 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <title>Test 16/9</title>
-  <style>
-    body {
-      margin: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background: #f0f0f0;
-    }
-    canvas {
-      background: white;
-      border: 1px solid #333;
-    }
-  </style>
-</head>
-<body>
-  <canvas id="canvas" width="960" height="540"></canvas>
+<style>
+  #grid {
+    width: 90vw;
+    aspect-ratio: 16 / 9;
+    background:white;
+    border:2px solid var(--grid);
+    border-radius:var(--radius);
+    margin: 0 auto;
+  }
+  svg { width:100%; height:100%; display:block }
+</style>
 
-  <script>
-    const canvas = document.getElementById("canvas");
-    const ctx = canvas.getContext("2d");
+<div id="grid">
+  <svg id="svgGrid" viewBox="0 0 960 540" preserveAspectRatio="xMidYMid meet"></svg>
+</div>
 
-    const cols = 30;
-    const rows = 40;
-    const cellW = canvas.width / cols;
-    const cellH = canvas.height / rows;
+<script>
+const svg = document.getElementById('svgGrid');
 
-    // --- grille ---
-    ctx.strokeStyle = "#ddd";
-    for (let i = 0; i <= cols; i++) {
-      ctx.beginPath();
-      ctx.moveTo(i * cellW, 0);
-      ctx.lineTo(i * cellW, canvas.height);
-      ctx.stroke();
-    }
-    for (let j = 0; j <= rows; j++) {
-      ctx.beginPath();
-      ctx.moveTo(0, j * cellH);
-      ctx.lineTo(canvas.width, j * cellH);
-      ctx.stroke();
-    }
+// dimensions 16/9
+const width = 960;
+const height = 540;
+const cols = 30;
+const rows = 40;
+const cellW = width / cols;
+const cellH = height / rows;
 
-    // --- figure test : triangle ---
-    const A = { x: 5 * cellW, y: 10 * cellH };
-    const B = { x: 15 * cellW, y: 10 * cellH };
-    const C = { x: 5 * cellW, y: 25 * cellH };
+function drawGrid(){
+  for(let i=0;i<=cols;i++){
+    const l = document.createElementNS("http://www.w3.org/2000/svg","line");
+    l.setAttribute("x1", i*cellW);
+    l.setAttribute("y1", 0);
+    l.setAttribute("x2", i*cellW);
+    l.setAttribute("y2", height);
+    l.setAttribute("stroke", "#eee");
+    svg.appendChild(l);
+  }
+  for(let j=0;j<=rows;j++){
+    const l = document.createElementNS("http://www.w3.org/2000/svg","line");
+    l.setAttribute("x1", 0);
+    l.setAttribute("y1", j*cellH);
+    l.setAttribute("x2", width);
+    l.setAttribute("y2", j*cellH);
+    l.setAttribute("stroke", "#eee");
+    svg.appendChild(l);
+  }
+}
 
-    ctx.fillStyle = "rgba(91,109,250,0.4)";
-    ctx.strokeStyle = "#333";
-    ctx.lineWidth = 2;
-
-    ctx.beginPath();
-    ctx.moveTo(A.x, A.y);
-    ctx.lineTo(B.x, B.y);
-    ctx.lineTo(C.x, C.y);
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
-
-    ctx.fillStyle = "#000";
-    ctx.font = "16px Arial";
-    ctx.fillText("A", A.x - 15, A.y - 5);
-    ctx.fillText("B", B.x + 5, B.y - 5);
-    ctx.fillText("C", C.x - 15, C.y + 20);
-  </script>
-</body>
-</html>
+drawGrid();
+</script>
