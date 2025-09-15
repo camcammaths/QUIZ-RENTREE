@@ -215,8 +215,8 @@ function renderQuestion(idx){
 
   // Instruction text for order
   const order = (q.type==='rectangle') ? "Ordre attendu : A', B', C', D' (4 clics)" : "Ordre attendu : A', B', C' (3 clics)";
-  document.getElementById('hint').textContent = `Clique pour placer ${ (q.type==='rectangle') ? "A', B', C', D' (dans cet ordre)" : "A', B', C' (dans cet ordre)" } — ${order}.`;
-
+  document.getElementById('hint').textContent 
+  
   // show little markers for expected (for teacher debugging you can uncomment)
   // expected.forEach((p,i)=> drawPoint(p,'rgba(0,0,0,0.08)',4));
 
