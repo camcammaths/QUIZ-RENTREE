@@ -2,55 +2,283 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cône 3D Stylisé</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Quiz - Arithmétique 3ème</title>
+
+  <!-- Polices -->
+  <link href="https://fonts.googleapis.com/css2?family=Androgy+Demo&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Mabry+Pro&display=swap" rel="stylesheet" />
+
   <style>
+    :root {
+      --primary-color: #3a86ff;
+      --secondary-color: #8338ec;
+      --background-color: #f0f4f8;
+      --button-bg: #a8d0ff;
+      --button-bg-hover: #7ab3ff;
+      --text-color: #212529;
+      --border-radius: 8px;
+      --transition: 0.3s ease;
+      --green: #4CAF50;
+      --red: #e74c3c;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background: radial-gradient(circle at center, #0a0a1a, #000);
       margin: 0;
+      padding: 2rem;
+      font-family: 'Mabry Pro', sans-serif;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      overflow-x: hidden;
     }
 
-    .cone {
-      width: 0;
-      height: 0;
-      border-left: 100px solid transparent;
-      border-right: 100px solid transparent;
-      border-bottom: 200px solid rgba(0, 150, 255, 0.2);
+    h1 {
+      font-family: 'Androgy Demo', sans-serif;
+      font-size: 2.5rem;
+      margin-bottom: 2rem;
+      color: var(--primary-color);
+    }
+
+    .quiz-container {
+      max-width: 600px;
+      width: 100%;
+      background: white;
+      border-radius: var(--border-radius);
+      padding: 2rem;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
       position: relative;
-      filter: drop-shadow(0 0 10px rgba(0, 150, 255, 0.6));
+      overflow: hidden;
     }
 
-    .cone::before {
-      content: "";
-      position: absolute;
-      top: 200px;
-      left: -100px;
-      width: 200px;
-      height: 200px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(255, 100, 180, 0.4), transparent 70%);
-      filter: blur(8px);
-    }
-
-    .cone::after {
-      content: "";
+    .question-slide {
+      opacity: 0;
+      transform: translateX(100%);
       position: absolute;
       top: 0;
-      left: -100px;
-      width: 200px;
-      height: 200px;
-      background: radial-gradient(circle at center, rgba(0, 150, 255, 0.5), transparent 70%);
-      clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-      mix-blend-mode: screen;
-      filter: blur(6px);
+      left: 0;
+      width: 100%;
+      transition: all var(--transition);
+    }
+
+    .question-slide.active {
+      opacity: 1;
+      transform: translateX(0);
+      position: relative;
+    }
+
+    .question {
+      font-size: 1.2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .answers button {
+      display: block;
+      width: 100%;
+      margin-bottom: 1rem;
+      padding: 0.75rem;
+      font-size: 1.1rem;
+      background-color: var(--button-bg);
+      border: none;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: all var(--transition);
+      font-family: 'Mabry Pro', sans-serif;
+    }
+
+    .answers button:hover:not(.disabled) {
+      background-color: var(--button-bg-hover);
+      color: white;
+    }
+
+    .answers button.correct {
+      background-color: var(--green);
+      color: white;
+    }
+
+    .answers button.incorrect {
+      background-color: var(--red);
+      color: white;
+    }
+
+    .answers button.disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    #result {
+      font-weight: bold;
+      font-size: 1.3rem;
+      text-align: center;
+      margin-top: 1.5rem;
+      color: var(--secondary-color);
     }
   </style>
 </head>
 <body>
-  <div class="cone"></div>
+
+  <h1>Quiz - Arithmétique 3ème</h1>
+
+  <div class="quiz-container" id="quiz-container">
+    <!-- Questions injectées ici -->
+  </div>
+
+  <div id="result"></div>
+
+  <script>
+    const questions = [
+      {
+        text: "Un nombre est divisible par 2",
+        answers: [
+          { text: "a) si son chiffre des unités est pair", correct: true },
+          { text: "b) si son chiffre des unités est impair", correct: false }
+        ]
+      },
+      {
+        text: "La décomposition en facteurs premiers de 60 est :",
+        answers: [
+          { text: "a) 2 × 30", correct: false },
+          { text: "b) 2² × 3 × 5", correct: true },
+          { text: "c) 2 × 5 × 7", correct: false }
+        ]
+      },
+      {
+        text: "Le PGCD de 36 et 54 est :",
+        answers: [
+          { text: "a) 6", correct: false },
+          { text: "b) 12", correct: false },
+          { text: "c) 18", correct: true }
+        ]
+      },
+      {
+        text: "Le PPCM de 12 et 18 est :",
+        answers: [
+          { text: "a) 24", correct: false },
+          { text: "b) 36", correct: true },
+          { text: "c) 72", correct: false }
+        ]
+      },
+      {
+        text: "Écrire 0,125 sous forme de fraction irréductible.",
+        answers: [
+          { text: "a) 1/4", correct: false },
+          { text: "b) 1/8", correct: true },
+          { text: "c) 1/10", correct: false }
+        ]
+      },
+      {
+        text: "Simplifier la fraction 45/60",
+        answers: [
+          { text: "a) 9/12", correct: false },
+          { text: "b) 3/4", correct: true },
+          { text: "c) 6/8", correct: false }
+        ]
+      },
+      {
+        text: "91 est-il premier ?",
+        answers: [
+          { text: "a) Oui", correct: false },
+          { text: "b) Non, car 91 = 7 × 13", correct: true }
+        ]
+      },
+      {
+        text: "Le reste de la division euclidienne de 257 par 12 est :",
+        answers: [
+          { text: "a) 5", correct: true },
+          { text: "b) 7", correct: false },
+          { text: "c) 9", correct: false }
+        ]
+      },
+      {
+        text: "Simplifier la fraction 154/252",
+        answers: [
+          { text: "a) 11/18", correct: true },
+          { text: "b) 7/9", correct: false },
+          { text: "c) 22/33", correct: false }
+        ]
+      },
+      {
+        text: "Le PGCD de 144 et 216 est :",
+        answers: [
+          { text: "a) 36", correct: false },
+          { text: "b) 72", correct: true },
+          { text: "c) 144", correct: false }
+        ]
+      }
+    ];
+
+    const quizContainer = document.getElementById('quiz-container');
+    const result = document.getElementById('result');
+    let currentQuestion = 0;
+    let score = 0;
+
+    function showQuestion(index) {
+      quizContainer.innerHTML = '';
+      const questionData = questions[index];
+
+      const slide = document.createElement('div');
+      slide.classList.add('question-slide', 'active');
+
+      const questionEl = document.createElement('div');
+      questionEl.classList.add('question');
+      questionEl.textContent = `${index + 1}) ${questionData.text}`;
+
+      const answersEl = document.createElement('div');
+      answersEl.classList.add('answers');
+
+      let hasAnswered = false;
+
+      questionData.answers.forEach((answer) => {
+        const btn = document.createElement('button');
+        btn.textContent = answer.text;
+
+        btn.addEventListener('click', () => {
+          if (hasAnswered) return;
+          hasAnswered = true;
+
+          if (answer.correct) {
+            btn.classList.add('correct');
+            score++;
+          } else {
+            btn.classList.add('incorrect');
+          }
+
+          // Bloquer tous les boutons
+          const allButtons = answersEl.querySelectorAll('button');
+          allButtons.forEach(b => b.classList.add('disabled'));
+
+          // Attendre avant de passer à la question suivante
+          setTimeout(() => {
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+              showQuestion(currentQuestion);
+            } else {
+              showFinalResult();
+            }
+          }, 1000);
+        });
+
+        answersEl.appendChild(btn);
+      });
+
+      slide.appendChild(questionEl);
+      slide.appendChild(answersEl);
+      quizContainer.appendChild(slide);
+    }
+
+    function showFinalResult() {
+      quizContainer.innerHTML = '';
+      result.textContent = `Ton score : ${score} / ${questions.length}`;
+    }
+
+    showQuestion(currentQuestion);
+  </script>
 </body>
 </html>
