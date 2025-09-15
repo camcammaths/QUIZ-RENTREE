@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Homothéties — Quiz (16:9)</title>
+<title>Homothétie — Quiz</title>
 <style>
   :root{
     --primary:#5b6dfa; --accent:#8000ff;
@@ -11,14 +11,21 @@
   }
   body{
     margin:0; background:var(--bg);
-    display:flex; height:100vh; font-family:sans-serif;
+    display:flex; flex-direction:column; height:100vh;
+    font-family:sans-serif;
   }
+  header{
+    text-align:center; padding:0.8rem;
+    background:#fff; border-bottom:2px solid #ddd;
+    font-size:1.4rem; font-weight:bold; color:var(--accent);
+  }
+  .layout{ flex:1; display:flex; }
   /* Colonne gauche (questions) */
   aside{
     width:25%; padding:1rem; overflow-y:auto;
     background:#fff; border-right:2px solid #ddd;
   }
-  aside h2{ font-size:1.2rem; margin:0 0 1rem; color:var(--primary) }
+  aside h2{ font-size:1.1rem; margin:0 0 1rem; color:var(--primary) }
   aside ul{ padding-left:1rem; }
   aside li{ margin-bottom:0.6rem; cursor:pointer }
   aside li.active{ font-weight:bold; color:var(--primary) }
@@ -45,16 +52,20 @@
 </head>
 <body>
 
-<aside>
-  <h2>Questions</h2>
-  <ul id="qList"></ul>
-</aside>
+<header>Homothétie — Quiz</header>
 
-<main>
-  <div id="grid"><svg id="svgGrid" viewBox="0 0 1280 720"></svg></div>
-</main>
+<div class="layout">
+  <aside>
+    <h2>Questions</h2>
+    <ul id="qList"></ul>
+  </aside>
 
-<div class="status" id="status">1 / 10</div>
+  <main>
+    <div id="grid"><svg id="svgGrid" viewBox="0 0 1280 720"></svg></div>
+  </main>
+
+  <div class="status" id="status">1 / 10</div>
+</div>
 
 <script>
 /* ---------- Config grille 16:9 ---------- */
@@ -74,10 +85,18 @@ function drawPoly(pts){
 function drawPoint(p,c="#000"){svg.appendChild(el("circle",{cx:p.x,cy:p.y,r:6,fill:c,stroke:"#000"}));}
 function snap(x,y){return{ x:Math.round(x/gridSize)*gridSize, y:Math.round(y/gridSize)*gridSize };}
 
-/* ---------- Données questions ---------- */
+/* ---------- Questions ---------- */
 const questions=[
-  {type:"rectangle",label:"Homothétie k=1/2",O:{x:400,y:200},pts:[{x:360,y:160},{x:440,y:160},{x:440,y:240},{x:360,y:240}],k:0.5},
-  {type:"triangle",label:"Homothétie k=2",O:{x:600,y:300},pts:[{x:560,y:280},{x:600,y:360},{x:640,y:280}],k:2}
+  {type:"rectangle",label:"Homothétie de rapport 1/2",O:{x:200,y:200},pts:[{x:160,y:160},{x:280,y:160},{x:280,y:240},{x:160,y:240}],k:0.5},
+  {type:"triangle",label:"Homothétie de rapport 2",O:{x:600,y:300},pts:[{x:560,y:280},{x:600,y:360},{x:640,y:280}],k:2},
+  {type:"rectangle",label:"Homothétie de rapport 3",O:{x:400,y:400},pts:[{x:360,y:360},{x:440,y:360},{x:440,y:440},{x:360,y:440}],k:3},
+  {type:"triangle",label:"Homothétie de rapport 1/3",O:{x:800,y:200},pts:[{x:760,y:160},{x:840,y:160},{x:800,y:240}],k:1/3},
+  {type:"rectangle",label:"Homothétie de rapport 2",O:{x:500,y:500},pts:[{x:460,y:460},{x:540,y:460},{x:540,y:520},{x:460,y:520}],k:2},
+  {type:"triangle",label:"Homothétie de rapport 1/2",O:{x:300,y:500},pts:[{x:260,y:460},{x:340,y:460},{x:300,y:540}],k:0.5},
+  {type:"rectangle",label:"Homothétie de rapport 3",O:{x:700,y:400},pts:[{x:660,y:360},{x:740,y:360},{x:740,y:440},{x:660,y:440}],k:3},
+  {type:"triangle",label:"Homothétie de rapport 2",O:{x:1000,y:500},pts:[{x:960,y:460},{x:1040,y:460},{x:1000,y:540}],k:2},
+  {type:"rectangle",label:"Homothétie de rapport 1/2",O:{x:900,y:300},pts:[{x:860,y:260},{x:940,y:260},{x:940,y:340},{x:860,y:340}],k:0.5},
+  {type:"triangle",label:"Homothétie de rapport 3",O:{x:600,y:150},pts:[{x:560,y:120},{x:640,y:120},{x:600,y:200}],k:3}
 ];
 let current=0,userPts=[],expected=[];
 
