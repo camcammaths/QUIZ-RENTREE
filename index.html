@@ -3,22 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Exercice - Figures et Rapports</title>
+  <title>Figures 16/9</title>
   <style>
     body {
       margin: 0;
-      background: #f9f9f9;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
+      background: #f0f0f0;
     }
     canvas {
-      border: 1px solid #ccc;
       background: white;
+      border: 1px solid #ccc;
       display: block;
-      max-width: 90vw;   /* responsive */
-      max-height: 90vh;
     }
   </style>
 </head>
@@ -29,26 +27,30 @@
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
 
-    // Dimensions fixes en 16/9 (1280x720) -> tu peux changer
+    // --- Fixer le canvas en 16/9 par rapport à la fenêtre ---
     function resizeCanvas() {
-      canvas.width = 1280;
-      canvas.height = 720;
+      let w = window.innerWidth * 0.9;   // 90% largeur écran
+      let h = w * 9 / 16;                // rapport 16/9
+      if (h > window.innerHeight * 0.9) {
+        h = window.innerHeight * 0.9;
+        w = h * 16 / 9;
+      }
+      canvas.width = w;
+      canvas.height = h;
       draw();
     }
-
     window.addEventListener("resize", resizeCanvas);
     resizeCanvas();
 
-    // Quadrillage 30 colonnes × 40 lignes
-    const cols = 30;
-    const rows = 40;
+    const cols = 30; // colonnes
+    const rows = 40; // lignes
 
+    // --- Tracer la grille ---
     function drawGrid() {
+      const cellW = canvas.width / cols;
+      const cellH = canvas.height / rows;
       ctx.strokeStyle = "#ddd";
       ctx.lineWidth = 1;
-
-      let cellW = canvas.width / cols;
-      let cellH = canvas.height / rows;
 
       for (let i = 0; i <= cols; i++) {
         ctx.beginPath();
@@ -64,16 +66,17 @@
       }
     }
 
+    // --- Tracer une figure de test ---
     function drawFigure() {
-      let cellW = canvas.width / cols;
-      let cellH = canvas.height / rows;
+      const cellW = canvas.width / cols;
+      const cellH = canvas.height / rows;
 
-      // Exemple : triangle rectangle A(5,10), B(15,10), C(5,25)
-      let A = { x: 5 * cellW, y: 10 * cellH };
-      let B = { x: 15 * cellW, y: 10 * cellH };
-      let C = { x: 5 * cellW, y: 25 * cellH };
+      // Triangle A(5,10), B(15,10), C(5,25)
+      const A = { x: 5 * cellW, y: 10 * cellH };
+      const B = { x: 15 * cellW, y: 10 * cellH };
+      const C = { x: 5 * cellW, y: 25 * cellH };
 
-      ctx.fillStyle = "rgba(100,150,255,0.5)";
+      ctx.fillStyle = "rgba(91,109,250,0.4)";
       ctx.strokeStyle = "#333";
       ctx.lineWidth = 2;
 
@@ -85,12 +88,12 @@
       ctx.fill();
       ctx.stroke();
 
-      // Noms des points
+      // Légendes
       ctx.fillStyle = "#000";
       ctx.font = "16px Arial";
-      ctx.fillText("A", A.x - 10, A.y - 5);
+      ctx.fillText("A", A.x - 15, A.y - 5);
       ctx.fillText("B", B.x + 5, B.y - 5);
-      ctx.fillText("C", C.x - 10, C.y + 15);
+      ctx.fillText("C", C.x - 15, C.y + 20);
     }
 
     function draw() {
