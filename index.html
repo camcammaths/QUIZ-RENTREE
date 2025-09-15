@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Homothetie</title>
+  <title>Exercice - Figures et Rapports</title>
   <style>
     body {
       margin: 0;
@@ -16,10 +16,9 @@
     canvas {
       border: 1px solid #ccc;
       background: white;
-      /* Adapter le canvas à 16/9 */
-      width: 90vw;
-      aspect-ratio: 16/9;
-      height: auto;
+      display: block;
+      max-width: 90vw;   /* responsive */
+      max-height: 90vh;
     }
   </style>
 </head>
@@ -30,7 +29,7 @@
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
 
-    // Taille réelle du canevas (16/9)
+    // Dimensions fixes en 16/9 (1280x720) -> tu peux changer
     function resizeCanvas() {
       canvas.width = 1280;
       canvas.height = 720;
@@ -40,7 +39,7 @@
     window.addEventListener("resize", resizeCanvas);
     resizeCanvas();
 
-    // Quadrillage 30 × 40
+    // Quadrillage 30 colonnes × 40 lignes
     const cols = 30;
     const rows = 40;
 
@@ -86,7 +85,7 @@
       ctx.fill();
       ctx.stroke();
 
-      // Nommer les points
+      // Noms des points
       ctx.fillStyle = "#000";
       ctx.font = "16px Arial";
       ctx.fillText("A", A.x - 10, A.y - 5);
