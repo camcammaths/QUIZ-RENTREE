@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Figures 16/9</title>
+  <meta charset="UTF-8">
+  <title>Test 16/9</title>
   <style>
     body {
       margin: 0;
@@ -15,92 +14,59 @@
     }
     canvas {
       background: white;
-      border: 1px solid #ccc;
-      display: block;
+      border: 1px solid #333;
     }
   </style>
 </head>
 <body>
-  <canvas id="canvas"></canvas>
+  <canvas id="canvas" width="960" height="540"></canvas>
 
   <script>
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
 
-    // --- Fixer le canvas en 16/9 par rapport à la fenêtre ---
-    function resizeCanvas() {
-      let w = window.innerWidth * 0.9;   // 90% largeur écran
-      let h = w * 9 / 16;                // rapport 16/9
-      if (h > window.innerHeight * 0.9) {
-        h = window.innerHeight * 0.9;
-        w = h * 16 / 9;
-      }
-      canvas.width = w;
-      canvas.height = h;
-      draw();
-    }
-    window.addEventListener("resize", resizeCanvas);
-    resizeCanvas();
+    const cols = 30;
+    const rows = 40;
+    const cellW = canvas.width / cols;
+    const cellH = canvas.height / rows;
 
-    const cols = 30; // colonnes
-    const rows = 40; // lignes
-
-    // --- Tracer la grille ---
-    function drawGrid() {
-      const cellW = canvas.width / cols;
-      const cellH = canvas.height / rows;
-      ctx.strokeStyle = "#ddd";
-      ctx.lineWidth = 1;
-
-      for (let i = 0; i <= cols; i++) {
-        ctx.beginPath();
-        ctx.moveTo(i * cellW, 0);
-        ctx.lineTo(i * cellW, canvas.height);
-        ctx.stroke();
-      }
-      for (let j = 0; j <= rows; j++) {
-        ctx.beginPath();
-        ctx.moveTo(0, j * cellH);
-        ctx.lineTo(canvas.width, j * cellH);
-        ctx.stroke();
-      }
-    }
-
-    // --- Tracer une figure de test ---
-    function drawFigure() {
-      const cellW = canvas.width / cols;
-      const cellH = canvas.height / rows;
-
-      // Triangle A(5,10), B(15,10), C(5,25)
-      const A = { x: 5 * cellW, y: 10 * cellH };
-      const B = { x: 15 * cellW, y: 10 * cellH };
-      const C = { x: 5 * cellW, y: 25 * cellH };
-
-      ctx.fillStyle = "rgba(91,109,250,0.4)";
-      ctx.strokeStyle = "#333";
-      ctx.lineWidth = 2;
-
+    // --- grille ---
+    ctx.strokeStyle = "#ddd";
+    for (let i = 0; i <= cols; i++) {
       ctx.beginPath();
-      ctx.moveTo(A.x, A.y);
-      ctx.lineTo(B.x, B.y);
-      ctx.lineTo(C.x, C.y);
-      ctx.closePath();
-      ctx.fill();
+      ctx.moveTo(i * cellW, 0);
+      ctx.lineTo(i * cellW, canvas.height);
       ctx.stroke();
-
-      // Légendes
-      ctx.fillStyle = "#000";
-      ctx.font = "16px Arial";
-      ctx.fillText("A", A.x - 15, A.y - 5);
-      ctx.fillText("B", B.x + 5, B.y - 5);
-      ctx.fillText("C", C.x - 15, C.y + 20);
+    }
+    for (let j = 0; j <= rows; j++) {
+      ctx.beginPath();
+      ctx.moveTo(0, j * cellH);
+      ctx.lineTo(canvas.width, j * cellH);
+      ctx.stroke();
     }
 
-    function draw() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      drawGrid();
-      drawFigure();
-    }
+    // --- figure test : triangle ---
+    const A = { x: 5 * cellW, y: 10 * cellH };
+    const B = { x: 15 * cellW, y: 10 * cellH };
+    const C = { x: 5 * cellW, y: 25 * cellH };
+
+    ctx.fillStyle = "rgba(91,109,250,0.4)";
+    ctx.strokeStyle = "#333";
+    ctx.lineWidth = 2;
+
+    ctx.beginPath();
+    ctx.moveTo(A.x, A.y);
+    ctx.lineTo(B.x, B.y);
+    ctx.lineTo(C.x, C.y);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = "#000";
+    ctx.font = "16px Arial";
+    ctx.fillText("A", A.x - 15, A.y - 5);
+    ctx.fillText("B", B.x + 5, B.y - 5);
+    ctx.fillText("C", C.x - 15, C.y + 20);
   </script>
 </body>
 </html>
