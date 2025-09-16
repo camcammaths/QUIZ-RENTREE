@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Homothetie</title>
+  <title>Homothétie</title>
 
   <!-- Polices -->
   <link href="https://fonts.googleapis.com/css2?family=Androgy+Demo&display=swap" rel="stylesheet" />
@@ -83,7 +83,7 @@
 </head>
 <body>
 
-  <h1>Homothetie</h1>
+  <h1>Homothétie</h1>
 
   <div class="question-box">
     <div id="question">Question</div>
@@ -94,6 +94,7 @@
   <div id="grid"><svg id="svgGrid"></svg></div>
 
   <div>
+    <button class="btn" onclick="goHome()">Retour à l’accueil</button>
     <button class="btn" onclick="resetPoints()">Réinitialiser</button>
     <button class="btn" onclick="nextQuestion()">Question suivante</button>
   </div>
@@ -104,17 +105,52 @@
     let current = 0, userPts = [], expected = [];
     let dragging = null;
 
-    const questions = [
-      { text:"Construire l’image du triangle par homothétie de rapport 2", 
-        O:{x:200,y:200}, pts:[{x:240,y:260},{x:280,y:200},{x:200,y:160}], k:2 },
-      { text:"Construire l’image du triangle par homothétie de rapport 1/2", 
-        O:{x:400,y:100}, pts:[{x:440,y:180},{x:480,y:100},{x:400,y:60}], k:0.5 },
-      { text:"Construire l’image du rectangle par homothétie de rapport -1", 
-        O:{x:300,y:300}, pts:[{x:320,y:320},{x:400,y:320},{x:400,y:380},{x:320,y:380}], k:-1 },
-      { text:"Construire l’image du triangle par homothétie de rapport 3", 
-        O:{x:500,y:200}, pts:[{x:540,y:260},{x:580,y:200},{x:500,y:140}], k:3 },
-      // ... compléter jusqu'à 10
-    ];
+    // valeurs de rapport possibles
+    const ratios = [-3,-2,-1,-0.5,0.5,1,2,3];
+
+    // Génère un entier multiple de gridSize
+    function randCoord(max) {
+      return Math.floor(Math.random()*max/gridSize)*gridSize;
+    }
+
+    // Génère une figure aléatoire
+    function randomFigure() {
+      const O = {x: randCoord(cols*gridSize), y: randCoord(rows*gridSize)};
+      const type = ["triangle","carré","rectangle"][Math.floor(Math.random()*3)];
+      let pts=[];
+      if(type==="triangle"){
+        pts = [
+          {x:O.x+randCoord(10*gridSize)-100, y:O.y+randCoord(8*gridSize)-80},
+          {x:O.x+randCoord(10*gridSize)-100, y:O.y+randCoord(8*gridSize)-80},
+          {x:O.x+randCoord(10*gridSize)-100, y:O.y+randCoord(8*gridSize)-80}
+        ];
+      } else if(type==="carré"){
+        const size = (Math.floor(Math.random()*5)+2)*gridSize;
+        pts = [
+          {x:O.x+size, y:O.y},
+          {x:O.x+size, y:O.y+size},
+          {x:O.x, y:O.y+size},
+          {x:O.x, y:O.y}
+        ];
+      } else if(type==="rectangle"){
+        const w = (Math.floor(Math.random()*6)+3)*gridSize;
+        const h = (Math.floor(Math.random()*4)+2)*gridSize;
+        pts = [
+          {x:O.x+w, y:O.y},
+          {x:O.x+w, y:O.y+h},
+          {x:O.x, y:O.y+h},
+          {x:O.x, y:O.y}
+        ];
+      }
+      const k = ratios[Math.floor(Math.random()*ratios.length)];
+      return {
+        text:`Construire l’image du ${type} par homothétie de rapport ${k}`,
+        O, pts, k
+      };
+    }
+
+    // Génération de 10 questions
+    const questions = Array.from({length:10}, ()=>randomFigure());
 
     function el(tag,attrs={}){const e=document.createElementNS("http://www.w3.org/2000/svg",tag);for(const k in attrs)e.setAttribute(k,attrs[k]);return e;}
     function clear(){while(svg.firstChild)svg.removeChild(svg.firstChild);}
@@ -142,10 +178,8 @@
       clear(); drawGrid();
       userPts = [];
       const q = questions[idx];
-      // figure de départ
       drawPoly(q.pts,"rgba(91,109,250,0.25)");
       q.pts.forEach(p=>drawPoint(p));
-      // centre O
       drawPoint(q.O);
       expected = q.pts.map(p=>homothety(q.O,p,q.k));
       document.getElementById("question").textContent = q.text;
@@ -165,7 +199,6 @@
       document.getElementById("feedback").textContent = "";
     }
 
-    // Vérifie la réponse une fois tous les points placés
     function checkAnswer(){
       if(userPts.length !== expected.length) return;
       const ok = userPts.every((p,i)=>Math.abs(p.x-expected[i].x)<1 && Math.abs(p.y-expected[i].y)<1);
@@ -181,7 +214,6 @@
       }
     }
 
-    // Ajout point élève
     svg.addEventListener("click", e=>{
       if(userPts.length >= expected.length || dragging) return;
       const pt = svg.createSVGPoint();
@@ -193,7 +225,6 @@
       if(userPts.length === expected.length) checkAnswer();
     });
 
-    // Drag & drop
     svg.addEventListener("mousemove", e=>{
       if(dragging){
         const pt = svg.createSVGPoint();
@@ -206,7 +237,6 @@
     });
     svg.addEventListener("mouseup", ()=>{
       if(dragging){
-        // mettre à jour tableau userPts
         const idx = Array.from(svg.querySelectorAll(".point")).indexOf(dragging);
         if(idx>=0) userPts[idx] = {x:+dragging.getAttribute("cx"), y:+dragging.getAttribute("cy")};
         dragging = null;
@@ -214,8 +244,12 @@
       }
     });
 
+    function goHome() {
+      window.location.href = "index.html"; 
+    }
+
     render(current);
   </script>
-
+  
 </body>
 </html>
