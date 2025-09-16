@@ -2,179 +2,64 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Homotheties — Quiz</title>
-
-  <!-- Polices -->
-  <link href="https://fonts.googleapis.com/css2?family=Androgy+Demo&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Mabry+Pro&display=swap" rel="stylesheet">
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz – Rapports</title>
   <style>
-    :root {
-      --primary: #3a86ff;
-      --secondary: #8338ec;
-      --accent1: #ff006e;
-      --accent2: #fb5607;
-      --accent3: #ffbe0b;
-      --bg: #f0f4f8;
-      --veil: rgba(58, 134, 255, 0.08);
-      --border-radius: 12px;
-      --transition: 0.3s ease;
-    }
-
     body {
-      margin: 0;
-      font-family: 'Mabry Pro', sans-serif;
-      background: var(--bg);
-      color: #212529;
+      font-family: "Androgy Demo", sans-serif;
+      background: #f4f7fb;
       display: flex;
-      height: 100vh;
-    }
-
-    /* Colonne gauche (questions) */
-    aside {
-      width: 25%;
-      padding: 1.2rem;
-      background: #fff;
-      border-right: 2px solid #ddd;
-      box-shadow: 2px 0 6px rgba(0,0,0,0.05);
-    }
-    aside h2 {
-      font-size: 1.4rem;
-      margin: 0 0 1rem;
-      font-family: 'Androgy Demo', sans-serif;
-      color: var(--primary);
-    }
-    aside ul { padding-left: 1rem; margin:0 }
-    aside li {
-      margin-bottom: 0.6rem;
-      cursor: pointer;
-      padding: 0.3rem 0.5rem;
-      border-radius: var(--border-radius);
-      transition: background var(--transition);
-    }
-    aside li:hover { background: var(--veil); }
-    aside li.active { font-weight: bold; color: var(--primary); }
-
-    /* Zone centrale */
-    main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
       justify-content: center;
-      padding: 1rem;
-    }
-    h1 {
-      font-family: 'Androgy Demo', sans-serif;
-      color: var(--primary);
-      font-size: 2.2rem;
-      margin-bottom: 1rem;
-    }
-    #grid {
-      width: 100%;
-      max-width: 960px;
-      aspect-ratio: 16/9;
-      border: 2px solid var(--primary);
-      background: #fff;
-      border-radius: var(--border-radius);
-      box-shadow: 0 4px 12px rgba(58,134,255,0.15);
-      overflow: hidden;
-    }
-    svg { width: 100%; height: 100%; }
-
-    /* Colonne droite (statut) */
-    .status {
-      width: 15%;
-      padding: 1rem;
-      border-left: 2px solid #ddd;
-      display: flex;
-      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      color: var(--secondary);
+      min-height: 100vh;
+    }
+    .quiz-container {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      max-width: 700px;
+      text-align: center;
+    }
+    .question {
+      margin: 20px 0;
       font-size: 1.2rem;
+      font-weight: 500;
+    }
+    .question-number {
+      font-weight: bold;
+      color: #3a86ff;
+      display: block;
+      margin-bottom: 8px;
+      font-size: 1.1rem;
     }
   </style>
 </head>
 <body>
+  <div class="quiz-container" id="quiz"></div>
 
-<aside>
-  <h2>Questions</h2>
-  <ul id="qList"></ul>
-</aside>
+  <script>
+    const rapports = [-2, 0.5, 3, -1]; // rapports possibles
+    const nbQuestions = 15;
+    const quizContainer = document.getElementById("quiz");
 
-<main>
-  <h1>Homothetie</h1>
-  <div id="grid"><svg id="svgGrid" viewBox="0 0 1280 720"></svg></div>
-</main>
+    function genererQuestions() {
+      let html = "<h2>Quiz – Rapports multiplicatifs</h2>";
+      for (let i = 1; i <= nbQuestions; i++) {
+        const rapport = rapports[Math.floor(Math.random() * rapports.length)];
+        const nombre = Math.floor(Math.random() * 20) + 1; // entre 1 et 20
+        const questionTexte = `Appliquer le rapport <b>${rapport}</b> à ${nombre}`;
+        html += `
+          <div class="question">
+            <span class="question-number">Question ${i}</span>
+            ${questionTexte}
+          </div>
+        `;
+      }
+      quizContainer.innerHTML = html;
+    }
 
-<div class="status" id="status">1 / 10</div>
-
-<script>
-/* ---------- Config grille 16:9 ---------- */
-const gridSize=40, cols=32, rows=18, width=1280, height=720;
-const svg=document.getElementById("svgGrid"), ns="http://www.w3.org/2000/svg";
-function el(tag,a={}){const e=document.createElementNS(ns,tag);for(const k in a)e.setAttribute(k,a[k]);return e;}
-function clear(){while(svg.firstChild)svg.removeChild(svg.firstChild);}
-function grid(){
-  for(let i=0;i<=cols;i++) svg.appendChild(el("line",{x1:i*gridSize,y1:0,x2:i*gridSize,y2:height,stroke:"#e0e0e0"}));
-  for(let j=0;j<=rows;j++) svg.appendChild(el("line",{x1:0,y1:j*gridSize,x2:width,y2:j*gridSize,stroke:"#e0e0e0"}));
-}
-function drawPoly(pts,color="rgba(131,56,236,0.25)"){
-  const poly=el("polygon",{points:pts.map(p=>`${p.x},${p.y}`).join(" "),
-    fill:color, stroke:color.replace("0.25","1"),"stroke-width":2});
-  svg.appendChild(poly);
-}
-function drawPoint(p,c="#000"){svg.appendChild(el("circle",{cx:p.x,cy:p.y,r:6,fill:c,stroke:"#000"}));}
-function snap(x,y){return{ x:Math.round(x/gridSize)*gridSize, y:Math.round(y/gridSize)*gridSize };}
-
-/* ---------- Données questions ---------- */
-const questions=[
-  {label:"Homothétie k=1/2",O:{x:400,y:200},pts:[{x:360,y:160},{x:440,y:160},{x:440,y:240},{x:360,y:240}],k:0.5},
-  {label:"Homothétie k=2",O:{x:600,y:300},pts:[{x:560,y:280},{x:600,y:360},{x:640,y:280}],k:2}
-];
-let current=0,userPts=[],expected=[];
-
-/* ---------- Préparation liste gauche ---------- */
-const qList=document.getElementById("qList");
-questions.forEach((q,i)=>{
-  const li=document.createElement("li");
-  li.textContent=(i+1)+". "+q.label;
-  li.onclick=()=>render(i);
-  qList.appendChild(li);
-});
-
-/* ---------- Rendu d'une question ---------- */
-function homothetie(O,P,k){return snap(O.x+k*(P.x-O.x), O.y+k*(P.y-O.y));}
-function render(idx){
-  current=idx; userPts=[]; clear(); grid();
-  [...qList.children].forEach((li,i)=>li.classList.toggle("active",i===idx));
-  const q=questions[idx];
-  drawPoly(q.pts,"rgba(58,134,255,0.25)"); 
-  q.pts.forEach(p=>drawPoint(p,varPrimary)); 
-  drawPoint(q.O,varSecondary);
-  expected=q.pts.map(p=>homothetie(q.O,p,q.k));
-  document.getElementById("status").textContent=`${idx+1} / ${questions.length}`;
-}
-
-/* ---------- Interaction ---------- */
-svg.addEventListener("click",e=>{
-  const rect=svg.getBoundingClientRect();
-  const x=(e.clientX-rect.left)*(width/rect.width);
-  const y=(e.clientY-rect.top)*(height/rect.height);
-  const p=snap(x,y);
-  userPts.push(p); drawPoint(p,"#ff006e");
-  if(userPts.length===expected.length){
-    drawPoly(userPts,"rgba(255,0,110,0.25)"); // figure élève en rose
-  }
-});
-
-/* ---------- Init ---------- */
-const varPrimary = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
-const varSecondary = getComputedStyle(document.documentElement).getPropertyValue('--secondary').trim();
-render(0);
-</script>
+    genererQuestions();
+  </script>
 </body>
 </html>
