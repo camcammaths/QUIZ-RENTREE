@@ -1,246 +1,221 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Quiz Homothétie</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Homothétie - Quiz</title>
+
+  <!-- Polices -->
+  <link href="https://fonts.googleapis.com/css2?family=Androgy+Demo&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Mabry+Pro&display=swap" rel="stylesheet" />
+
   <style>
+    :root {
+      --primary: #5b6dfa;
+      --secondary: #00bfa6;
+      --accent: #ff6b6b;
+      --grid: #e0e0e0;
+      --border-radius: 10px;
+    }
+
     body {
-      font-family: 'Androgy Demo', Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: #f5f5f7;
-      height: 100vh;
       margin: 0;
-    }
-    #app {
-      display: flex;
-      width: 95%;
-      height: 95%;
-      border-radius: 12px;
-      overflow: hidden;
-      background: white;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-    }
-    #left-panel {
-      width: 22%;
-      padding: 20px;
-      background: rgba(240,240,255,0.6);
+      font-family: 'Mabry Pro', sans-serif;
+      background: #f9f9f9;
+      color: #222;
       display: flex;
       flex-direction: column;
-      justify-content: flex-start;
       align-items: center;
+      min-height: 100vh;
+      padding: 1rem;
     }
-    #canvas-container {
-      flex-grow: 1;
-      position: relative;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    canvas {
-      border: 1px solid #ccc;
-      background: white;
-      border-radius: 8px;
-    }
+
     h1 {
+      font-family: 'Androgy Demo', sans-serif;
+      font-size: 2.5rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+
+    .question-box {
       text-align: center;
-      margin-bottom: 20px;
-      color: #8338ec;
+      margin-bottom: 1rem;
     }
     #question {
+      font-size: 1.3rem;
+      margin-bottom: 0.5rem;
+    }
+    #progress {
       font-weight: bold;
-      margin: 15px 0;
-      font-size: 1.1em;
+      color: var(--secondary);
     }
     #feedback {
-      margin-top: 15px;
+      margin-top: 0.5rem;
       font-weight: bold;
-      text-align: center;
     }
-    button {
-      margin-top: 20px;
-      padding: 10px 16px;
-      border: none;
-      border-radius: 12px;
-      background: #3a86ff;
+
+    #grid {
+      width: 800px;
+      height: 450px; /* format 16/9 */
+      background: white;
+      border: 2px solid var(--grid);
+      border-radius: var(--border-radius);
+      margin: 1rem 0;
+    }
+    svg { width: 100%; height: 100%; cursor: crosshair; }
+
+    .btn {
+      padding: 0.7rem 1.2rem;
+      background: var(--primary);
       color: white;
+      border: none;
+      border-radius: var(--border-radius);
       cursor: pointer;
-      font-weight: bold;
-      transition: background 0.2s;
+      transition: 0.3s;
+      font-size: 1rem;
+      margin: 0.5rem;
     }
-    button:hover {
-      background: #265dbe;
-    }
+    .btn:hover { background: var(--secondary); }
+
+    .point { fill: var(--accent); stroke: black; stroke-width: 1; cursor: grab; }
+    .point:active { cursor: grabbing; }
   </style>
 </head>
 <body>
-  <div id="app">
-    <div id="left-panel">
-      <h1>Homothétie</h1>
-      <div id="question">Place les points A’, B’, C’, D’</div>
-      <div id="feedback"></div>
-      <button onclick="resetAll()">Réinitialiser</button>
-    </div>
-    <div id="canvas-container">
-      <canvas id="gridCanvas"></canvas>
-    </div>
+
+  <h1>Homothétie</h1>
+
+  <div class="question-box">
+    <div id="question">Question</div>
+    <div id="progress">1 / 10</div>
+    <div id="feedback"></div>
+  </div>
+
+  <div id="grid"><svg id="svgGrid"></svg></div>
+
+  <div>
+    <button class="btn" onclick="resetPoints()">Réinitialiser</button>
+    <button class="btn" onclick="nextQuestion()">Question suivante</button>
   </div>
 
   <script>
-    const canvas = document.getElementById("gridCanvas");
-    const ctx = canvas.getContext("2d");
-    let width = canvas.parentElement.clientWidth;
-    let height = canvas.parentElement.clientHeight;
-    canvas.width = width;
-    canvas.height = height;
+    const svg = document.getElementById("svgGrid");
+    const gridSize = 20, cols = 40, rows = 22;
+    let current = 0, userPts = [], expected = [];
+    let dragging = null;
 
-    const cols = 30, rows = 40;
-    const cellSize = Math.min(width / cols, height / rows);
-
-    // Figure de départ (carré simple)
-    const baseFigure = [
-      {x: 5, y: 5}, {x: 10, y: 5}, {x: 10, y: 10}, {x: 5, y: 10}
+    const questions = [
+      { text:"Construire l’image du triangle par homothétie de rapport 2", 
+        O:{x:200,y:200}, pts:[{x:240,y:260},{x:280,y:200},{x:200,y:160}], k:2 },
+      { text:"Construire l’image du triangle par homothétie de rapport 1/2", 
+        O:{x:400,y:100}, pts:[{x:440,y:180},{x:480,y:100},{x:400,y:60}], k:0.5 },
+      { text:"Construire l’image du rectangle par homothétie de rapport -1", 
+        O:{x:300,y:300}, pts:[{x:320,y:320},{x:400,y:320},{x:400,y:380},{x:320,y:380}], k:-1 },
+      { text:"Construire l’image du triangle par homothétie de rapport 3", 
+        O:{x:500,y:200}, pts:[{x:540,y:260},{x:580,y:200},{x:500,y:140}], k:3 },
+      // ... compléter jusqu'à 10
     ];
 
-    // Centre O (aléatoire à chaque lancement)
-    let O = { 
-      x: Math.floor(Math.random() * (cols-10)) + 5, 
-      y: Math.floor(Math.random() * (rows-10)) + 5 
-    };
-
-    const k = 2; // rapport
-    let correctFigure = baseFigure.map(p => ({
-      x: O.x + k*(p.x - O.x),
-      y: O.y + k*(p.y - O.y)
-    }));
-
-    // Points de l’élève
-    let studentPoints = [];
-    let draggingPoint = null;
-
-    function drawGrid() {
-      ctx.clearRect(0, 0, width, height);
-      ctx.strokeStyle = "#eee";
-      for (let i = 0; i <= cols; i++) {
-        ctx.beginPath();
-        ctx.moveTo(i*cellSize, 0);
-        ctx.lineTo(i*cellSize, rows*cellSize);
-        ctx.stroke();
+    function el(tag,attrs={}){const e=document.createElementNS("http://www.w3.org/2000/svg",tag);for(const k in attrs)e.setAttribute(k,attrs[k]);return e;}
+    function clear(){while(svg.firstChild)svg.removeChild(svg.firstChild);}
+    function drawGrid(){
+      for(let i=0;i<=cols;i++) svg.appendChild(el("line",{x1:i*gridSize,y1:0,x2:i*gridSize,y2:rows*gridSize,stroke:"#e0e0e0"}));
+      for(let j=0;j<=rows;j++) svg.appendChild(el("line",{x1:0,y1:j*gridSize,x2:cols*gridSize,y2:j*gridSize,stroke:"#e0e0e0"}));
+    }
+    function drawPoly(pts,color){
+      svg.appendChild(el("polygon",{points:pts.map(p=>`${p.x},${p.y}`).join(" "),fill:color,stroke:"purple","stroke-width":2}));
+    }
+    function drawPoint(p,isUser=false){
+      const circle = el("circle",{cx:p.x,cy:p.y,r:5,fill:varColor(p,isUser),stroke:"black"});
+      if(isUser){
+        circle.classList.add("point");
+        circle.addEventListener("mousedown", ()=>{dragging=circle;});
       }
-      for (let j = 0; j <= rows; j++) {
-        ctx.beginPath();
-        ctx.moveTo(0, j*cellSize);
-        ctx.lineTo(cols*cellSize, j*cellSize);
-        ctx.stroke();
-      }
+      svg.appendChild(circle);
+      return circle;
+    }
+    function varColor(p,isUser){ return isUser ? "#ff6b6b" : "#5b6dfa"; }
+    function snap(x,y){return {x:Math.round(x/gridSize)*gridSize,y:Math.round(y/gridSize)*gridSize};}
+    function homothety(O,P,k){return snap(O.x+k*(P.x-O.x),O.y+k*(P.y-O.y));}
 
-      // Point O
-      ctx.fillStyle = "#000";
-      ctx.beginPath();
-      ctx.arc(O.x*cellSize, O.y*cellSize, 5, 0, 2*Math.PI);
-      ctx.fill();
+    function render(idx){
+      clear(); drawGrid();
+      userPts = [];
+      const q = questions[idx];
+      // figure de départ
+      drawPoly(q.pts,"rgba(91,109,250,0.25)");
+      q.pts.forEach(p=>drawPoint(p));
+      // centre O
+      drawPoint(q.O);
+      expected = q.pts.map(p=>homothety(q.O,p,q.k));
+      document.getElementById("question").textContent = q.text;
+      document.getElementById("progress").textContent = (idx+1)+" / "+questions.length;
+      document.getElementById("feedback").textContent = "";
+    }
 
-      // Figure de départ en voile violet
-      ctx.fillStyle = "rgba(131,56,236,0.3)";
-      ctx.beginPath();
-      ctx.moveTo(baseFigure[0].x*cellSize, baseFigure[0].y*cellSize);
-      baseFigure.forEach(p => ctx.lineTo(p.x*cellSize, p.y*cellSize));
-      ctx.closePath();
-      ctx.fill();
+    function nextQuestion(){
+      if(current < questions.length-1){ current++; render(current);}
+      else alert("Quiz terminé !");
+    }
 
-      // Points élèves
-      studentPoints.forEach((p, idx) => {
-        ctx.fillStyle = "#3a86ff";
-        ctx.beginPath();
-        ctx.arc(p.x*cellSize, p.y*cellSize, 6, 0, 2*Math.PI);
-        ctx.fill();
-        ctx.fillText(["A’","B’","C’","D’"][idx], p.x*cellSize+5, p.y*cellSize-5);
-      });
+    function resetPoints(){
+      const circles = svg.querySelectorAll(".point");
+      circles.forEach(c => c.remove());
+      userPts = [];
+      document.getElementById("feedback").textContent = "";
+    }
 
-      // Figure de l’élève si complète
-      if (studentPoints.length === 4) {
-        const isCorrect = compareFigures(studentPoints, correctFigure);
-        ctx.fillStyle = isCorrect 
-          ? "rgba(0,200,0,0.3)" 
-          : "rgba(255,0,0,0.3)";
-        ctx.beginPath();
-        ctx.moveTo(studentPoints[0].x*cellSize, studentPoints[0].y*cellSize);
-        studentPoints.forEach(p => ctx.lineTo(p.x*cellSize, p.y*cellSize));
-        ctx.closePath();
-        ctx.fill();
-
-        if (!isCorrect) {
-          // Affiche correction
-          ctx.fillStyle = "rgba(131,56,236,0.3)";
-          ctx.beginPath();
-          ctx.moveTo(correctFigure[0].x*cellSize, correctFigure[0].y*cellSize);
-          correctFigure.forEach(p => ctx.lineTo(p.x*cellSize, p.y*cellSize));
-          ctx.closePath();
-          ctx.fill();
-        }
+    // Vérifie la réponse une fois tous les points placés
+    function checkAnswer(){
+      if(userPts.length !== expected.length) return;
+      const ok = userPts.every((p,i)=>Math.abs(p.x-expected[i].x)<1 && Math.abs(p.y-expected[i].y)<1);
+      if(ok){
+        drawPoly(userPts,"rgba(0,200,0,0.3)");
+        document.getElementById("feedback").textContent = "✅ Bravo, c’est correct !";
+        document.getElementById("feedback").style.color = "green";
+      } else {
+        drawPoly(userPts,"rgba(255,0,0,0.3)");
+        drawPoly(expected,"rgba(131,56,236,0.3)");
+        document.getElementById("feedback").textContent = "❌ Mauvaise réponse. La figure correcte est affichée en violet.";
+        document.getElementById("feedback").style.color = "red";
       }
     }
 
-    function compareFigures(fig1, fig2) {
-      return fig1.every((p,i) => 
-        Math.abs(p.x-fig2[i].x)<0.5 && Math.abs(p.y-fig2[i].y)<0.5
-      );
-    }
-
-    function resetAll() {
-      studentPoints = [];
-      draggingPoint = null;
-      document.getElementById("feedback").innerText = "";
-      // Nouveau centre O à chaque reset
-      O = { 
-        x: Math.floor(Math.random() * (cols-10)) + 5, 
-        y: Math.floor(Math.random() * (rows-10)) + 5 
-      };
-      correctFigure = baseFigure.map(p => ({
-        x: O.x + k*(p.x - O.x),
-        y: O.y + k*(p.y - O.y)
-      }));
-      drawGrid();
-    }
-
-    // Drag & Drop
-    canvas.addEventListener("mousedown", e => {
-      const rect = canvas.getBoundingClientRect();
-      const x = (e.clientX - rect.left)/cellSize;
-      const y = (e.clientY - rect.top)/cellSize;
-      for (let p of studentPoints) {
-        if (Math.hypot(p.x-x, p.y-y) < 0.5) {
-          draggingPoint = p;
-          return;
-        }
-      }
-      if (studentPoints.length < 4) {
-        studentPoints.push({x: Math.round(x), y: Math.round(y)});
-      }
-      drawGrid();
+    // Ajout point élève
+    svg.addEventListener("click", e=>{
+      if(userPts.length >= expected.length || dragging) return;
+      const pt = svg.createSVGPoint();
+      pt.x = e.clientX; pt.y = e.clientY;
+      const svgP = pt.matrixTransform(svg.getScreenCTM().inverse());
+      const snapped = snap(svgP.x,svgP.y);
+      userPts.push(snapped);
+      drawPoint(snapped,true);
+      if(userPts.length === expected.length) checkAnswer();
     });
 
-    canvas.addEventListener("mousemove", e => {
-      if (draggingPoint) {
-        const rect = canvas.getBoundingClientRect();
-        draggingPoint.x = Math.round((e.clientX - rect.left)/cellSize);
-        draggingPoint.y = Math.round((e.clientY - rect.top)/cellSize);
-        drawGrid();
+    // Drag & drop
+    svg.addEventListener("mousemove", e=>{
+      if(dragging){
+        const pt = svg.createSVGPoint();
+        pt.x = e.clientX; pt.y = e.clientY;
+        const svgP = pt.matrixTransform(svg.getScreenCTM().inverse());
+        const snapped = snap(svgP.x,svgP.y);
+        dragging.setAttribute("cx",snapped.x);
+        dragging.setAttribute("cy",snapped.y);
+      }
+    });
+    svg.addEventListener("mouseup", ()=>{
+      if(dragging){
+        // mettre à jour tableau userPts
+        const idx = Array.from(svg.querySelectorAll(".point")).indexOf(dragging);
+        if(idx>=0) userPts[idx] = {x:+dragging.getAttribute("cx"), y:+dragging.getAttribute("cy")};
+        dragging = null;
+        if(userPts.length === expected.length) checkAnswer();
       }
     });
 
-    canvas.addEventListener("mouseup", () => {
-      if (studentPoints.length === 4) {
-        let ok = compareFigures(studentPoints, correctFigure);
-        document.getElementById("feedback").innerText = ok 
-          ? "✅ Bravo, c’est correct !" 
-          : "❌ Mauvaise réponse. La figure correcte est affichée en violet.";
-      }
-      draggingPoint = null;
-    });
-
-    drawGrid();
+    render(current);
   </script>
+
 </body>
 </html>
