@@ -53,13 +53,13 @@
 
     #grid {
       width: 800px;
-      height: 450px; /* format 16/9 */
+      height: 450px;
       background: white;
       border: 2px solid var(--grid);
       border-radius: var(--border-radius);
       margin: 1rem 0;
     }
-    svg { width: 100%; height: 100%; }
+    svg { width: 100%; height: 100%; cursor: crosshair; }
 
     .btn {
       padding: 0.7rem 1.2rem;
@@ -75,7 +75,8 @@
     .btn:hover { background: var(--secondary); }
 
     .centerO { fill: var(--secondary); stroke: black; stroke-width: 2; }
-    .point { fill: var(--accent); stroke: black; stroke-width: 1; }
+    .point { fill: var(--accent); stroke: black; stroke-width: 1; cursor: grab; }
+    .point:active { cursor: grabbing; }
   </style>
 </head>
 <body>
@@ -98,6 +99,7 @@
     const svg = document.getElementById("svgGrid");
     const gridSize = 20, cols = 40, rows = 22;
     let current = 0, userPts = [], expected = [];
+    let dragging = null;
 
     const questions = [
       { text:"Construire l’image du triangle par homothétie de rapport 2", 
@@ -108,7 +110,7 @@
         O:{x:300,y:300}, pts:[{x:320,y:320},{x:400,y:320},{x:400,y:380},{x:320,y:380}], k:-1 },
       { text:"Construire l’image du triangle par homothétie de rapport 3", 
         O:{x:500,y:200}, pts:[{x:540,y:260},{x:580,y:200},{x:500,y:140}], k:3 },
-      // ... jusqu'à 10
+      // ... compléter jusqu'à 10
     ];
 
     function el(tag,attrs={}){const e=document.createElementNS("http://www.w3.org/2000/svg",tag);for(const k in attrs)e.setAttribute(k,attrs[k]);return e;}
@@ -120,7 +122,15 @@
     function drawPoly(pts,color){
       svg.appendChild(el("polygon",{points:pts.map(p=>`${p.x},${p.y}`).join(" "),fill:color,stroke:"purple","stroke-width":2}));
     }
-    function drawPoint(p,c){svg.appendChild(el("circle",{cx:p.x,cy:p.y,r:5,fill:c,stroke:"black"}));}
+    function drawPoint(p,c,isUser=false){
+      const circle = el("circle",{cx:p.x,cy:p.y,r:5,fill:c,stroke:"black"});
+      if(isUser){
+        circle.classList.add("point");
+        circle.addEventListener("mousedown", e=>{dragging=circle;});
+      }
+      svg.appendChild(circle);
+      return circle;
+    }
     function snap(x,y){return {x:Math.round(x/gridSize)*gridSize,y:Math.round(y/gridSize)*gridSize};}
     function homothety(O,P,k){return snap(O.x+k*(P.x-O.x),O.y+k*(P.y-O.y));}
 
@@ -136,6 +146,13 @@
       expected = q.pts.map(p=>homothety(q.O,p,q.k));
       document.getElementById("question").textContent = q.text;
       document.getElementById("progress").textContent = (idx+1)+" / "+questions.length;
+
+      // placer les points élèves (draggables)
+      expected.forEach((p,i)=>{
+        const userP = {x:p.x+40,y:p.y+40}; // petite variation initiale
+        userPts.push(userP);
+        drawPoint(userP,"#ff6b6b",true);
+      });
     }
 
     function nextQuestion(){
@@ -144,8 +161,22 @@
     }
 
     function resetQuestion(){
-      render(current); // recharge la question actuelle
+      render(current);
     }
+
+    // Gestion du drag & drop
+    svg.addEventListener("mousemove", e=>{
+      if(dragging){
+        const pt = svg.createSVGPoint();
+        pt.x = e.clientX;
+        pt.y = e.clientY;
+        const svgP = pt.matrixTransform(svg.getScreenCTM().inverse());
+        const snapped = snap(svgP.x,svgP.y);
+        dragging.setAttribute("cx",snapped.x);
+        dragging.setAttribute("cy",snapped.y);
+      }
+    });
+    svg.addEventListener("mouseup", ()=>{ dragging=null; });
 
     render(current);
   </script>
