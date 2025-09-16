@@ -5,52 +5,69 @@
   <title>Quiz Homothétie</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Androgy Demo', Arial, sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
-      background: #f8f9fa;
+      background: #f5f5f7;
       height: 100vh;
       margin: 0;
     }
     #app {
       display: flex;
-      width: 90%;
-      height: 90%;
+      width: 95%;
+      height: 95%;
+      border-radius: 12px;
+      overflow: hidden;
+      background: white;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
     }
     #left-panel {
-      width: 20%;
-      padding: 10px;
-      text-align: center;
+      width: 22%;
+      padding: 20px;
+      background: rgba(240,240,255,0.6);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
     }
     #canvas-container {
       flex-grow: 1;
       position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
     canvas {
       border: 1px solid #ccc;
       background: white;
+      border-radius: 8px;
     }
     h1 {
       text-align: center;
       margin-bottom: 20px;
+      color: #8338ec;
     }
     #question {
       font-weight: bold;
-      margin: 10px 0;
+      margin: 15px 0;
+      font-size: 1.1em;
     }
     #feedback {
-      margin-top: 10px;
+      margin-top: 15px;
       font-weight: bold;
+      text-align: center;
     }
     button {
-      margin-top: 15px;
-      padding: 8px 12px;
+      margin-top: 20px;
+      padding: 10px 16px;
       border: none;
-      border-radius: 6px;
+      border-radius: 12px;
       background: #3a86ff;
       color: white;
       cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s;
     }
     button:hover {
       background: #265dbe;
@@ -81,12 +98,12 @@
     const cols = 30, rows = 40;
     const cellSize = Math.min(width / cols, height / rows);
 
-    // Figure de départ
+    // Figure de départ (carré simple)
     const baseFigure = [
       {x: 5, y: 5}, {x: 10, y: 5}, {x: 10, y: 10}, {x: 5, y: 10}
     ];
 
-    // Centre O (aléatoire)
+    // Centre O (aléatoire à chaque lancement)
     let O = { 
       x: Math.floor(Math.random() * (cols-10)) + 5, 
       y: Math.floor(Math.random() * (rows-10)) + 5 
@@ -98,7 +115,7 @@
       y: O.y + k*(p.y - O.y)
     }));
 
-    // Points posés par l'élève
+    // Points de l’élève
     let studentPoints = [];
     let draggingPoint = null;
 
@@ -119,13 +136,13 @@
       }
 
       // Point O
-      ctx.fillStyle = "black";
+      ctx.fillStyle = "#000";
       ctx.beginPath();
       ctx.arc(O.x*cellSize, O.y*cellSize, 5, 0, 2*Math.PI);
       ctx.fill();
 
-      // Figure de départ
-      ctx.fillStyle = "rgba(100, 100, 255, 0.3)";
+      // Figure de départ en voile violet
+      ctx.fillStyle = "rgba(131,56,236,0.3)";
       ctx.beginPath();
       ctx.moveTo(baseFigure[0].x*cellSize, baseFigure[0].y*cellSize);
       baseFigure.forEach(p => ctx.lineTo(p.x*cellSize, p.y*cellSize));
@@ -134,7 +151,7 @@
 
       // Points élèves
       studentPoints.forEach((p, idx) => {
-        ctx.fillStyle = "blue";
+        ctx.fillStyle = "#3a86ff";
         ctx.beginPath();
         ctx.arc(p.x*cellSize, p.y*cellSize, 6, 0, 2*Math.PI);
         ctx.fill();
@@ -143,18 +160,19 @@
 
       // Figure de l’élève si complète
       if (studentPoints.length === 4) {
-        ctx.fillStyle = compareFigures(studentPoints, correctFigure) 
+        const isCorrect = compareFigures(studentPoints, correctFigure);
+        ctx.fillStyle = isCorrect 
           ? "rgba(0,200,0,0.3)" 
-          : "rgba(200,0,0,0.3)";
+          : "rgba(255,0,0,0.3)";
         ctx.beginPath();
         ctx.moveTo(studentPoints[0].x*cellSize, studentPoints[0].y*cellSize);
         studentPoints.forEach(p => ctx.lineTo(p.x*cellSize, p.y*cellSize));
         ctx.closePath();
         ctx.fill();
 
-        if (!compareFigures(studentPoints, correctFigure)) {
+        if (!isCorrect) {
           // Affiche correction
-          ctx.fillStyle = "rgba(150,0,200,0.3)";
+          ctx.fillStyle = "rgba(131,56,236,0.3)";
           ctx.beginPath();
           ctx.moveTo(correctFigure[0].x*cellSize, correctFigure[0].y*cellSize);
           correctFigure.forEach(p => ctx.lineTo(p.x*cellSize, p.y*cellSize));
@@ -174,10 +192,19 @@
       studentPoints = [];
       draggingPoint = null;
       document.getElementById("feedback").innerText = "";
+      // Nouveau centre O à chaque reset
+      O = { 
+        x: Math.floor(Math.random() * (cols-10)) + 5, 
+        y: Math.floor(Math.random() * (rows-10)) + 5 
+      };
+      correctFigure = baseFigure.map(p => ({
+        x: O.x + k*(p.x - O.x),
+        y: O.y + k*(p.y - O.y)
+      }));
       drawGrid();
     }
 
-    // Drag & Drop des points
+    // Drag & Drop
     canvas.addEventListener("mousedown", e => {
       const rect = canvas.getBoundingClientRect();
       const x = (e.clientX - rect.left)/cellSize;
@@ -208,7 +235,7 @@
         let ok = compareFigures(studentPoints, correctFigure);
         document.getElementById("feedback").innerText = ok 
           ? "✅ Bravo, c’est correct !" 
-          : "❌ Mauvaise réponse. La figure correcte apparaît en violet.";
+          : "❌ Mauvaise réponse. La figure correcte est affichée en violet.";
       }
       draggingPoint = null;
     });
