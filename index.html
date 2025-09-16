@@ -3,257 +3,143 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Homothétie</title>
-
-  <!-- Polices -->
-  <link href="https://fonts.googleapis.com/css2?family=Androgy+Demo&display=swap" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Mabry+Pro&display=swap" rel="stylesheet" />
-
+  <title>Homothétie - Quiz</title>
   <style>
-    :root {
-      --primary: #5b6dfa;
-      --secondary: #00bfa6;
-      --accent: #ff6b6b;
-      --grid: #e0e0e0;
-      --border-radius: 10px;
-    }
-
     body {
-      margin: 0;
-      font-family: 'Mabry Pro', sans-serif;
-      background: #f9f9f9;
-      color: #222;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-      padding: 1rem;
-    }
-
-    h1 {
-      font-family: 'Androgy Demo', sans-serif;
-      font-size: 2.5rem;
-      color: var(--primary);
-      margin-bottom: 1rem;
-    }
-
-    .question-box {
+      font-family: Arial, sans-serif;
       text-align: center;
-      margin-bottom: 1rem;
+      background: #f5f5f5;
     }
-    #question {
-      font-size: 1.3rem;
-      margin-bottom: 0.5rem;
+    canvas {
+      border: 1px solid #333;
+      background: white;
+      margin-top: 20px;
     }
-    #progress {
-      font-weight: bold;
-      color: var(--secondary);
+    #controls {
+      margin-top: 15px;
+    }
+    button {
+      margin: 5px;
+      padding: 8px 15px;
+      font-size: 16px;
     }
     #feedback {
-      margin-top: 0.5rem;
+      margin-top: 15px;
       font-weight: bold;
     }
-
-    #grid {
-      width: 800px;
-      height: 440px;
-      background: white;
-      border: 2px solid var(--grid);
-      border-radius: var(--border-radius);
-      margin: 1rem 0;
-    }
-    svg { width: 100%; height: 100%; cursor: crosshair; }
-
-    .btn {
-      padding: 0.7rem 1.2rem;
-      background: var(--primary);
-      color: white;
-      border: none;
-      border-radius: var(--border-radius);
-      cursor: pointer;
-      transition: 0.3s;
-      font-size: 1rem;
-      margin: 0.5rem;
-    }
-    .btn:hover { background: var(--secondary); }
-
-    .point { fill: var(--accent); stroke: black; stroke-width: 1; cursor: grab; }
-    .point:active { cursor: grabbing; }
   </style>
 </head>
 <body>
-
-  <h1>Homothétie</h1>
-
-  <div class="question-box">
-    <div id="question">Question</div>
-    <div id="progress">1 / 10</div>
-    <div id="feedback"></div>
+  <h1>Quiz : Homothétie</h1>
+  <canvas id="canvas" width="500" height="500"></canvas>
+  
+  <div id="controls">
+    <label for="ratio">Rapport k = </label>
+    <input type="number" id="ratio" step="0.1" value="2" />
+    <button onclick="valider()">Valider</button>
+    <button onclick="nouvelleQuestion()">Nouvelle question</button>
   </div>
 
-  <div id="grid"><svg id="svgGrid"></svg></div>
-
-  <div>
-    <button class="btn" onclick="goHome()">Retour à l’accueil</button>
-    <button class="btn" onclick="resetPoints()">Réinitialiser</button>
-    <button class="btn" onclick="nextQuestion()">Question suivante</button>
-  </div>
+  <div id="feedback"></div>
 
   <script>
-    const svg = document.getElementById("svgGrid");
-    const gridSize = 20, cols = 40, rows = 22;
-    let current = 0, userPts = [], expected = [];
-    let dragging = null;
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    const size = 500;
+    const step = 25; // taille des carreaux
+    let figure, centre, k, imageCorrecte;
 
-    const ratios = [-3,-2,-1,-0.5,0.5,1,2,3];
-    const width = cols*gridSize, height = rows*gridSize;
-    const margin = 4*gridSize; // marge de sécurité
-
-    function randCoord(max, min=margin) {
-      return Math.floor((Math.random()*(max-2*margin)+min)/gridSize)*gridSize;
-    }
-
-    function insideGrid(pts){
-      return pts.every(p=>p.x>=0 && p.x<=width && p.y>=0 && p.y<=height);
-    }
-
-    function homothety(O,P,k){
-      return {x:O.x+k*(P.x-O.x), y:O.y+k*(P.y-O.y)};
-    }
-
-    function makeFigure(){
-      while(true){
-        const O = {x:randCoord(width), y:randCoord(height)};
-        const type = ["triangle","carré","rectangle"][Math.floor(Math.random()*3)];
-        let pts=[];
-        if(type==="triangle"){
-          pts = [
-            {x:O.x+randCoord(120,-60), y:O.y+randCoord(120,-60)},
-            {x:O.x+randCoord(120,-60), y:O.y+randCoord(120,-60)},
-            {x:O.x+randCoord(120,-60), y:O.y+randCoord(120,-60)}
-          ];
-        } else if(type==="carré"){
-          const size = (Math.floor(Math.random()*4)+2)*gridSize;
-          pts = [
-            {x:O.x, y:O.y},
-            {x:O.x+size, y:O.y},
-            {x:O.x+size, y:O.y+size},
-            {x:O.x, y:O.y+size}
-          ];
-        } else {
-          const w = (Math.floor(Math.random()*5)+3)*gridSize;
-          const h = (Math.floor(Math.random()*3)+2)*gridSize;
-          pts = [
-            {x:O.x, y:O.y},
-            {x:O.x+w, y:O.y},
-            {x:O.x+w, y:O.y+h},
-            {x:O.x, y:O.y+h}
-          ];
-        }
-        const k = ratios[Math.floor(Math.random()*ratios.length)];
-        const img = pts.map(p=>homothety(O,p,k));
-        if(insideGrid(pts) && insideGrid(img)){
-          return {text:`Construire l’image du ${type} par homothétie de rapport ${k}`,O,pts,k};
-        }
+    function drawGrid() {
+      ctx.clearRect(0, 0, size, size);
+      ctx.strokeStyle = "#ccc";
+      for (let x = 0; x <= size; x += step) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, size);
+        ctx.stroke();
+      }
+      for (let y = 0; y <= size; y += step) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(size, y);
+        ctx.stroke();
       }
     }
 
-    const questions = Array.from({length:10}, ()=>makeFigure());
+    function drawPoint(p, color="red", radius=4) {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, radius, 0, 2 * Math.PI);
+      ctx.fillStyle = color;
+      ctx.fill();
+    }
 
-    function el(tag,attrs={}){const e=document.createElementNS("http://www.w3.org/2000/svg",tag);for(const k in attrs)e.setAttribute(k,attrs[k]);return e;}
-    function clear(){while(svg.firstChild)svg.removeChild(svg.firstChild);}
-    function drawGrid(){
-      for(let i=0;i<=cols;i++) svg.appendChild(el("line",{x1:i*gridSize,y1:0,x2:i*gridSize,y2:rows*gridSize,stroke:"#e0e0e0"}));
-      for(let j=0;j<=rows;j++) svg.appendChild(el("line",{x1:0,y1:j*gridSize,x2:cols*gridSize,y2:j*gridSize,stroke:"#e0e0e0"}));
-    }
-    function drawPoly(pts,color){
-      svg.appendChild(el("polygon",{points:pts.map(p=>`${p.x},${p.y}`).join(" "),fill:color,stroke:"purple","stroke-width":2}));
-    }
-    function drawPoint(p,isUser=false){
-      const circle = el("circle",{cx:p.x,cy:p.y,r:5,fill:isUser?"#ff6b6b":"#5b6dfa",stroke:"black"});
-      if(isUser){
-        circle.classList.add("point");
-        circle.addEventListener("mousedown", ()=>{dragging=circle;});
+    function drawPolygon(points, color="blue") {
+      ctx.beginPath();
+      ctx.moveTo(points[0].x, points[0].y);
+      for (let i = 1; i < points.length; i++) {
+        ctx.lineTo(points[i].x, points[i].y);
       }
-      svg.appendChild(circle);
-      return circle;
+      ctx.closePath();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2;
+      ctx.stroke();
     }
 
-    function render(idx){
-      clear(); drawGrid();
-      userPts = [];
-      const q = questions[idx];
-      drawPoly(q.pts,"rgba(91,109,250,0.25)");
-      q.pts.forEach(p=>drawPoint(p));
-      drawPoint(q.O);
-      expected = q.pts.map(p=>homothety(q.O,p,q.k));
-      document.getElementById("question").textContent = q.text;
-      document.getElementById("progress").textContent = (idx+1)+" / "+questions.length;
+    function homothetie(points, centre, k) {
+      return points.map(p => ({
+        x: centre.x + k * (p.x - centre.x),
+        y: centre.y + k * (p.y - centre.y)
+      }));
+    }
+
+    function nouvelleQuestion() {
+      drawGrid();
+
+      // Figure aléatoire (triangle simple)
+      figure = [
+        {x: 150, y: 200},
+        {x: 200, y: 250},
+        {x: 100, y: 250}
+      ];
+
+      // Centre aléatoire dans le quadrillage
+      let gridX = Math.floor(Math.random() * (size / step)) * step;
+      let gridY = Math.floor(Math.random() * (size / step)) * step;
+      centre = {x: gridX, y: gridY};
+
+      // Rapport aléatoire
+      let rapports = [-2, -1, 0.5, 2, 3];
+      k = rapports[Math.floor(Math.random() * rapports.length)];
+
+      // Calcul de l'image correcte
+      imageCorrecte = homothetie(figure, centre, k);
+
+      // Dessin de la figure et du centre
+      drawPolygon(figure, "blue");
+      drawPoint(centre, "green");
+      
       document.getElementById("feedback").textContent = "";
+      document.getElementById("ratio").value = "";
     }
 
-    function nextQuestion(){
-      if(current < questions.length-1){ current++; render(current);}
-      else alert("Quiz terminé !");
-    }
+    function valider() {
+      let reponse = parseFloat(document.getElementById("ratio").value);
+      let feedback = document.getElementById("feedback");
 
-    function resetPoints(){
-      svg.querySelectorAll(".point").forEach(c => c.remove());
-      userPts = [];
-      document.getElementById("feedback").textContent = "";
-    }
-
-    function checkAnswer(){
-      if(userPts.length !== expected.length) return;
-      const ok = userPts.every((p,i)=>Math.abs(p.x-expected[i].x)<1 && Math.abs(p.y-expected[i].y)<1);
-      if(ok){
-        drawPoly(userPts,"rgba(0,200,0,0.3)");
-        document.getElementById("feedback").textContent = "✅ Bravo, c’est correct !";
-        document.getElementById("feedback").style.color = "green";
+      if (reponse === k) {
+        feedback.textContent = "✅ Bonne réponse !";
+        feedback.style.color = "green";
       } else {
-        drawPoly(userPts,"rgba(255,0,0,0.3)");
-        drawPoly(expected,"rgba(131,56,236,0.3)");
-        document.getElementById("feedback").textContent = "❌ Mauvaise réponse. La figure correcte est affichée en violet.";
-        document.getElementById("feedback").style.color = "red";
+        feedback.textContent = "❌ Mauvaise réponse. Le bon rapport était k = " + k;
+        feedback.style.color = "red";
       }
+
+      // Afficher la bonne image
+      drawPolygon(imageCorrecte, "red");
     }
 
-    svg.addEventListener("click", e=>{
-      if(userPts.length >= expected.length || dragging) return;
-      const pt = svg.createSVGPoint();
-      pt.x = e.clientX; pt.y = e.clientY;
-      const svgP = pt.matrixTransform(svg.getScreenCTM().inverse());
-      const snapped = {x:Math.round(svgP.x/gridSize)*gridSize,y:Math.round(svgP.y/gridSize)*gridSize};
-      userPts.push(snapped);
-      drawPoint(snapped,true);
-      if(userPts.length === expected.length) checkAnswer();
-    });
-
-    svg.addEventListener("mousemove", e=>{
-      if(dragging){
-        const pt = svg.createSVGPoint();
-        pt.x = e.clientX; pt.y = e.clientY;
-        const svgP = pt.matrixTransform(svg.getScreenCTM().inverse());
-        const snapped = {x:Math.round(svgP.x/gridSize)*gridSize,y:Math.round(svgP.y/gridSize)*gridSize};
-        dragging.setAttribute("cx",snapped.x);
-        dragging.setAttribute("cy",snapped.y);
-      }
-    });
-    svg.addEventListener("mouseup", ()=>{
-      if(dragging){
-        const idx = Array.from(svg.querySelectorAll(".point")).indexOf(dragging);
-        if(idx>=0) userPts[idx] = {x:+dragging.getAttribute("cx"), y:+dragging.getAttribute("cy")};
-        dragging = null;
-        if(userPts.length === expected.length) checkAnswer();
-      }
-    });
-
-    function goHome() {
-      window.location.href = "index.html"; 
-    }
-
-    render(current);
+    // Première question au lancement
+    nouvelleQuestion();
   </script>
-  
 </body>
 </html>
