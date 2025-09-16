@@ -1,65 +1,146 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quiz – Rapports</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Homothétie - Quiz</title>
+
+  <!-- Polices -->
+  <link href="https://fonts.googleapis.com/css2?family=Androgy+Demo&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Mabry+Pro&display=swap" rel="stylesheet" />
+
   <style>
+    :root {
+      --primary: #5b6dfa;
+      --secondary: #00bfa6;
+      --accent: #ff6b6b;
+      --grid: #e0e0e0;
+      --figure: rgba(128,0,128,0.3);
+      --border-radius: 10px;
+    }
+
     body {
-      font-family: "Androgy Demo", sans-serif;
-      background: #f4f7fb;
+      margin: 0;
+      font-family: 'Mabry Pro', sans-serif;
+      background: #f9f9f9;
+      color: #222;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
       min-height: 100vh;
+      padding: 1rem;
     }
-    .quiz-container {
-      background: rgba(255, 255, 255, 0.9);
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-      max-width: 700px;
+
+    h1 {
+      font-family: 'Androgy Demo', sans-serif;
+      font-size: 2.5rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+
+    .question-box {
       text-align: center;
+      margin-bottom: 1rem;
     }
-    .question {
-      margin: 20px 0;
-      font-size: 1.2rem;
-      font-weight: 500;
+    #question {
+      font-size: 1.3rem;
+      margin-bottom: 0.5rem;
     }
-    .question-number {
+    #progress {
       font-weight: bold;
-      color: #3a86ff;
-      display: block;
-      margin-bottom: 8px;
-      font-size: 1.1rem;
+      color: var(--secondary);
     }
+
+    #grid {
+      width: 800px;
+      height: 450px; /* format 16/9 */
+      background: white;
+      border: 2px solid var(--grid);
+      border-radius: var(--border-radius);
+      margin: 1rem 0;
+    }
+    svg { width: 100%; height: 100%; }
+
+    .btn {
+      padding: 0.7rem 1.2rem;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: 0.3s;
+      font-size: 1rem;
+    }
+    .btn:hover { background: var(--secondary); }
+
+    .centerO { fill: var(--secondary); stroke: black; stroke-width: 2; }
+    .point { fill: var(--accent); stroke: black; stroke-width: 1; }
   </style>
 </head>
 <body>
-  <div class="quiz-container" id="quiz"></div>
+
+  <h1>Homothétie</h1>
+
+  <div class="question-box">
+    <div id="question">Question</div>
+    <div id="progress">1 / 10</div>
+  </div>
+
+  <div id="grid"><svg id="svgGrid"></svg></div>
+
+  <button class="btn" onclick="nextQuestion()">Question suivante</button>
 
   <script>
-    const rapports = [-2, 0.5, 3, -1]; // rapports possibles
-    const nbQuestions = 15;
-    const quizContainer = document.getElementById("quiz");
+    const svg = document.getElementById("svgGrid");
+    const gridSize = 20, cols = 40, rows = 22;
+    let current = 0, userPts = [], expected = [];
 
-    function genererQuestions() {
-      let html = "<h2>Quiz – Rapports multiplicatifs</h2>";
-      for (let i = 1; i <= nbQuestions; i++) {
-        const rapport = rapports[Math.floor(Math.random() * rapports.length)];
-        const nombre = Math.floor(Math.random() * 20) + 1; // entre 1 et 20
-        const questionTexte = `Appliquer le rapport <b>${rapport}</b> à ${nombre}`;
-        html += `
-          <div class="question">
-            <span class="question-number">Question ${i}</span>
-            ${questionTexte}
-          </div>
-        `;
-      }
-      quizContainer.innerHTML = html;
+    const questions = [
+      { text:"Construire l’image du triangle par homothétie de rapport 2", 
+        O:{x:200,y:200}, pts:[{x:240,y:260},{x:280,y:200},{x:200,y:160}], k:2 },
+      { text:"Construire l’image du triangle par homothétie de rapport 1/2", 
+        O:{x:400,y:100}, pts:[{x:440,y:180},{x:480,y:100},{x:400,y:60}], k:0.5 },
+      { text:"Construire l’image du rectangle par homothétie de rapport -1", 
+        O:{x:300,y:300}, pts:[{x:320,y:320},{x:400,y:320},{x:400,y:380},{x:320,y:380}], k:-1 },
+      { text:"Construire l’image du triangle par homothétie de rapport 3", 
+        O:{x:500,y:200}, pts:[{x:540,y:260},{x:580,y:200},{x:500,y:140}], k:3 },
+      // ... complète jusqu'à 10
+    ];
+
+    function el(tag,attrs={}){const e=document.createElementNS("http://www.w3.org/2000/svg",tag);for(const k in attrs)e.setAttribute(k,attrs[k]);return e;}
+    function clear(){while(svg.firstChild)svg.removeChild(svg.firstChild);}
+    function drawGrid(){
+      for(let i=0;i<=cols;i++) svg.appendChild(el("line",{x1:i*gridSize,y1:0,x2:i*gridSize,y2:rows*gridSize,stroke:"#e0e0e0"}));
+      for(let j=0;j<=rows;j++) svg.appendChild(el("line",{x1:0,y1:j*gridSize,x2:cols*gridSize,y2:j*gridSize,stroke:"#e0e0e0"}));
+    }
+    function drawPoly(pts,color){
+      svg.appendChild(el("polygon",{points:pts.map(p=>`${p.x},${p.y}`).join(" "),fill:color,stroke:"purple","stroke-width":2}));
+    }
+    function drawPoint(p,c){svg.appendChild(el("circle",{cx:p.x,cy:p.y,r:5,fill:c,stroke:"black"}));}
+    function snap(x,y){return {x:Math.round(x/gridSize)*gridSize,y:Math.round(y/gridSize)*gridSize};}
+    function homothety(O,P,k){return snap(O.x+k*(P.x-O.x),O.y+k*(P.y-O.y));}
+
+    function render(idx){
+      clear(); drawGrid();
+      userPts = [];
+      const q = questions[idx];
+      // figure de départ
+      drawPoly(q.pts,"rgba(91,109,250,0.25)");
+      q.pts.forEach(p=>drawPoint(p,"#5b6dfa"));
+      // centre O
+      drawPoint(q.O,"#00bfa6");
+      expected = q.pts.map(p=>homothety(q.O,p,q.k));
+      document.getElementById("question").textContent = q.text;
+      document.getElementById("progress").textContent = (idx+1)+" / "+questions.length;
     }
 
-    genererQuestions();
+    function nextQuestion(){
+      if(current < questions.length-1){ current++; render(current);}
+      else alert("Quiz terminé !");
+    }
+
+    render(current);
   </script>
+
 </body>
 </html>
