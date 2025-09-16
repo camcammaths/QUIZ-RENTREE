@@ -56,7 +56,7 @@
 
     #grid {
       width: 800px;
-      height: 450px; /* format 16/9 */
+      height: 440px;
       background: white;
       border: 2px solid var(--grid);
       border-radius: var(--border-radius);
@@ -105,52 +105,60 @@
     let current = 0, userPts = [], expected = [];
     let dragging = null;
 
-    // valeurs de rapport possibles
     const ratios = [-3,-2,-1,-0.5,0.5,1,2,3];
+    const width = cols*gridSize, height = rows*gridSize;
+    const margin = 4*gridSize; // marge de sécurité
 
-    // Génère un entier multiple de gridSize
-    function randCoord(max) {
-      return Math.floor(Math.random()*max/gridSize)*gridSize;
+    function randCoord(max, min=margin) {
+      return Math.floor((Math.random()*(max-2*margin)+min)/gridSize)*gridSize;
     }
 
-    // Génère une figure aléatoire
-    function randomFigure() {
-      const O = {x: randCoord(cols*gridSize), y: randCoord(rows*gridSize)};
-      const type = ["triangle","carré","rectangle"][Math.floor(Math.random()*3)];
-      let pts=[];
-      if(type==="triangle"){
-        pts = [
-          {x:O.x+randCoord(10*gridSize)-100, y:O.y+randCoord(8*gridSize)-80},
-          {x:O.x+randCoord(10*gridSize)-100, y:O.y+randCoord(8*gridSize)-80},
-          {x:O.x+randCoord(10*gridSize)-100, y:O.y+randCoord(8*gridSize)-80}
-        ];
-      } else if(type==="carré"){
-        const size = (Math.floor(Math.random()*5)+2)*gridSize;
-        pts = [
-          {x:O.x+size, y:O.y},
-          {x:O.x+size, y:O.y+size},
-          {x:O.x, y:O.y+size},
-          {x:O.x, y:O.y}
-        ];
-      } else if(type==="rectangle"){
-        const w = (Math.floor(Math.random()*6)+3)*gridSize;
-        const h = (Math.floor(Math.random()*4)+2)*gridSize;
-        pts = [
-          {x:O.x+w, y:O.y},
-          {x:O.x+w, y:O.y+h},
-          {x:O.x, y:O.y+h},
-          {x:O.x, y:O.y}
-        ];
+    function insideGrid(pts){
+      return pts.every(p=>p.x>=0 && p.x<=width && p.y>=0 && p.y<=height);
+    }
+
+    function homothety(O,P,k){
+      return {x:O.x+k*(P.x-O.x), y:O.y+k*(P.y-O.y)};
+    }
+
+    function makeFigure(){
+      while(true){
+        const O = {x:randCoord(width), y:randCoord(height)};
+        const type = ["triangle","carré","rectangle"][Math.floor(Math.random()*3)];
+        let pts=[];
+        if(type==="triangle"){
+          pts = [
+            {x:O.x+randCoord(120,-60), y:O.y+randCoord(120,-60)},
+            {x:O.x+randCoord(120,-60), y:O.y+randCoord(120,-60)},
+            {x:O.x+randCoord(120,-60), y:O.y+randCoord(120,-60)}
+          ];
+        } else if(type==="carré"){
+          const size = (Math.floor(Math.random()*4)+2)*gridSize;
+          pts = [
+            {x:O.x, y:O.y},
+            {x:O.x+size, y:O.y},
+            {x:O.x+size, y:O.y+size},
+            {x:O.x, y:O.y+size}
+          ];
+        } else {
+          const w = (Math.floor(Math.random()*5)+3)*gridSize;
+          const h = (Math.floor(Math.random()*3)+2)*gridSize;
+          pts = [
+            {x:O.x, y:O.y},
+            {x:O.x+w, y:O.y},
+            {x:O.x+w, y:O.y+h},
+            {x:O.x, y:O.y+h}
+          ];
+        }
+        const k = ratios[Math.floor(Math.random()*ratios.length)];
+        const img = pts.map(p=>homothety(O,p,k));
+        if(insideGrid(pts) && insideGrid(img)){
+          return {text:`Construire l’image du ${type} par homothétie de rapport ${k}`,O,pts,k};
+        }
       }
-      const k = ratios[Math.floor(Math.random()*ratios.length)];
-      return {
-        text:`Construire l’image du ${type} par homothétie de rapport ${k}`,
-        O, pts, k
-      };
     }
 
-    // Génération de 10 questions
-    const questions = Array.from({length:10}, ()=>randomFigure());
+    const questions = Array.from({length:10}, ()=>makeFigure());
 
     function el(tag,attrs={}){const e=document.createElementNS("http://www.w3.org/2000/svg",tag);for(const k in attrs)e.setAttribute(k,attrs[k]);return e;}
     function clear(){while(svg.firstChild)svg.removeChild(svg.firstChild);}
@@ -162,7 +170,7 @@
       svg.appendChild(el("polygon",{points:pts.map(p=>`${p.x},${p.y}`).join(" "),fill:color,stroke:"purple","stroke-width":2}));
     }
     function drawPoint(p,isUser=false){
-      const circle = el("circle",{cx:p.x,cy:p.y,r:5,fill:varColor(p,isUser),stroke:"black"});
+      const circle = el("circle",{cx:p.x,cy:p.y,r:5,fill:isUser?"#ff6b6b":"#5b6dfa",stroke:"black"});
       if(isUser){
         circle.classList.add("point");
         circle.addEventListener("mousedown", ()=>{dragging=circle;});
@@ -170,9 +178,6 @@
       svg.appendChild(circle);
       return circle;
     }
-    function varColor(p,isUser){ return isUser ? "#ff6b6b" : "#5b6dfa"; }
-    function snap(x,y){return {x:Math.round(x/gridSize)*gridSize,y:Math.round(y/gridSize)*gridSize};}
-    function homothety(O,P,k){return snap(O.x+k*(P.x-O.x),O.y+k*(P.y-O.y));}
 
     function render(idx){
       clear(); drawGrid();
@@ -193,8 +198,7 @@
     }
 
     function resetPoints(){
-      const circles = svg.querySelectorAll(".point");
-      circles.forEach(c => c.remove());
+      svg.querySelectorAll(".point").forEach(c => c.remove());
       userPts = [];
       document.getElementById("feedback").textContent = "";
     }
@@ -219,7 +223,7 @@
       const pt = svg.createSVGPoint();
       pt.x = e.clientX; pt.y = e.clientY;
       const svgP = pt.matrixTransform(svg.getScreenCTM().inverse());
-      const snapped = snap(svgP.x,svgP.y);
+      const snapped = {x:Math.round(svgP.x/gridSize)*gridSize,y:Math.round(svgP.y/gridSize)*gridSize};
       userPts.push(snapped);
       drawPoint(snapped,true);
       if(userPts.length === expected.length) checkAnswer();
@@ -230,7 +234,7 @@
         const pt = svg.createSVGPoint();
         pt.x = e.clientX; pt.y = e.clientY;
         const svgP = pt.matrixTransform(svg.getScreenCTM().inverse());
-        const snapped = snap(svgP.x,svgP.y);
+        const snapped = {x:Math.round(svgP.x/gridSize)*gridSize,y:Math.round(svgP.y/gridSize)*gridSize};
         dragging.setAttribute("cx",snapped.x);
         dragging.setAttribute("cy",snapped.y);
       }
