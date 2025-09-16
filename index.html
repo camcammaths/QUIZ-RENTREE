@@ -70,13 +70,12 @@
       cursor: pointer;
       transition: 0.3s;
       font-size: 1rem;
+      margin: 0.5rem;
     }
     .btn:hover { background: var(--secondary); }
 
-    .feedback {
-      font-weight: bold;
-      margin: 0.5rem;
-    }
+    .centerO { fill: var(--secondary); stroke: black; stroke-width: 2; }
+    .point { fill: var(--accent); stroke: black; stroke-width: 1; }
   </style>
 </head>
 <body>
@@ -90,8 +89,10 @@
 
   <div id="grid"><svg id="svgGrid"></svg></div>
 
-  <div id="feedback" class="feedback"></div>
-  <button class="btn" onclick="nextQuestion()">Question suivante</button>
+  <div>
+    <button class="btn" onclick="resetQuestion()">Réinitialiser</button>
+    <button class="btn" onclick="nextQuestion()">Question suivante</button>
+  </div>
 
   <script>
     const svg = document.getElementById("svgGrid");
@@ -107,7 +108,7 @@
         O:{x:300,y:300}, pts:[{x:320,y:320},{x:400,y:320},{x:400,y:380},{x:320,y:380}], k:-1 },
       { text:"Construire l’image du triangle par homothétie de rapport 3", 
         O:{x:500,y:200}, pts:[{x:540,y:260},{x:580,y:200},{x:500,y:140}], k:3 },
-      // ... complète jusqu'à 10
+      // ... jusqu'à 10
     ];
 
     function el(tag,attrs={}){const e=document.createElementNS("http://www.w3.org/2000/svg",tag);for(const k in attrs)e.setAttribute(k,attrs[k]);return e;}
@@ -116,8 +117,8 @@
       for(let i=0;i<=cols;i++) svg.appendChild(el("line",{x1:i*gridSize,y1:0,x2:i*gridSize,y2:rows*gridSize,stroke:"#e0e0e0"}));
       for(let j=0;j<=rows;j++) svg.appendChild(el("line",{x1:0,y1:j*gridSize,x2:cols*gridSize,y2:j*gridSize,stroke:"#e0e0e0"}));
     }
-    function drawPoly(pts,color,stroke="purple"){
-      svg.appendChild(el("polygon",{points:pts.map(p=>`${p.x},${p.y}`).join(" "),fill:color,stroke:stroke,"stroke-width":2}));
+    function drawPoly(pts,color){
+      svg.appendChild(el("polygon",{points:pts.map(p=>`${p.x},${p.y}`).join(" "),fill:color,stroke:"purple","stroke-width":2}));
     }
     function drawPoint(p,c){svg.appendChild(el("circle",{cx:p.x,cy:p.y,r:5,fill:c,stroke:"black"}));}
     function snap(x,y){return {x:Math.round(x/gridSize)*gridSize,y:Math.round(y/gridSize)*gridSize};}
@@ -135,46 +136,15 @@
       expected = q.pts.map(p=>homothety(q.O,p,q.k));
       document.getElementById("question").textContent = q.text;
       document.getElementById("progress").textContent = (idx+1)+" / "+questions.length;
-      document.getElementById("feedback").textContent = "";
     }
-
-    // --- Interaction élève ---
-    svg.addEventListener("click", e=>{
-      if(!questions[current]) return;
-      const q = questions[current];
-      if(userPts.length >= q.pts.length) return;
-
-      const rect = svg.getBoundingClientRect();
-      const x = (e.clientX-rect.left)/rect.width*cols*gridSize;
-      const y = (e.clientY-rect.top)/rect.height*rows*gridSize;
-      const pt = snap(x,y);
-      userPts.push(pt);
-      drawPoint(pt,"#ff6b6b");
-
-      // Quand tous les points sont posés
-      if(userPts.length === q.pts.length){
-        drawPoly(userPts,"rgba(128,0,128,0.3)","purple");
-
-        // Vérification
-        let ok = userPts.every((p,i)=>{
-          const ex = expected[i];
-          return Math.abs(p.x-ex.x)<=gridSize/2 && Math.abs(p.y-ex.y)<=gridSize/2;
-        });
-
-        if(ok){
-          document.getElementById("feedback").style.color = "green";
-          document.getElementById("feedback").textContent = "✅ Bonne réponse !";
-        } else {
-          document.getElementById("feedback").style.color = "red";
-          document.getElementById("feedback").textContent = "❌ Mauvaise réponse. La bonne figure est affichée en vert.";
-          drawPoly(expected,"rgba(0,255,0,0.3)","green");
-        }
-      }
-    });
 
     function nextQuestion(){
       if(current < questions.length-1){ current++; render(current);}
       else alert("Quiz terminé !");
+    }
+
+    function resetQuestion(){
+      render(current); // recharge la question actuelle
     }
 
     render(current);
