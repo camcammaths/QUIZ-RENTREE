@@ -21,41 +21,73 @@
 <body>
   <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
   <script>
-    // Scène
+    // 🎨 Palette inspirée de ton cube
+    const colors = {
+      primary: 0x3a86ff,
+      secondary: 0x8338ec,
+      accent1: 0xff006e,
+      accent2: 0xfb5607,
+      accent3: 0xffbe0b
+    };
+
+    // 🟦 Scène
     const scene = new THREE.Scene();
 
-    // Caméra
+    // 📷 Caméra
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.z = 5;
 
-    // Rendu
+    // 🖼️ Rendu
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
-    // Cylindre (rayon haut, rayon bas, hauteur, segments)
+    // 🔵 Géométrie du cylindre (rayon haut, rayon bas, hauteur, segments)
     const geometry = new THREE.CylinderGeometry(1, 1, 2, 64, 1, false);
 
-    // Matériau transparent
+    // 🎭 Matériau transparent façon "cube CSS"
     const material = new THREE.MeshPhysicalMaterial({
-      color: 0x3a86ff,
+      color: colors.primary,
       transparent: true,
-      opacity: 0.3,
-      metalness: 0.1,
+      opacity: 0.15,
       roughness: 0.2,
-      transmission: 0.8, // effet de verre
-      clearcoat: 1.0
+      metalness: 0,
+      transmission: 0.6,
+      clearcoat: 0.8
     });
 
     const cylinder = new THREE.Mesh(geometry, material);
     scene.add(cylinder);
 
-    // Arêtes (maillage)
+    // ✏️ Arêtes colorées (wireframe décoratif)
     const edges = new THREE.EdgesGeometry(geometry);
-    const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0x000000 }));
-    scene.add(line);
+    const edgeColors = [
+      colors.primary, colors.secondary, colors.accent1, colors.accent2, colors.accent3
+    ];
+    const edgeLines = new THREE.Group();
 
-    // Lumières
+    // on applique différentes couleurs aux segments pour rappeler ton cube
+    const segments = edges.attributes.position.count / 2;
+    const positions = edges.attributes.position.array;
+
+    for (let i = 0; i < segments; i++) {
+      const geometryLine = new THREE.BufferGeometry();
+      const vertices = new Float32Array([
+        positions[i*6], positions[i*6+1], positions[i*6+2],
+        positions[i*6+3], positions[i*6+4], positions[i*6+5]
+      ]);
+      geometryLine.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+      const materialLine = new THREE.LineBasicMaterial({
+        color: edgeColors[i % edgeColors.length],
+        linewidth: 2
+      });
+      const line = new THREE.Line(geometryLine, materialLine);
+      edgeLines.add(line);
+    }
+
+    scene.add(edgeLines);
+
+    // 💡 Lumières
     const light = new THREE.DirectionalLight(0xffffff, 1);
     light.position.set(5, 5, 5);
     scene.add(light);
@@ -63,16 +95,16 @@
     const ambient = new THREE.AmbientLight(0xffffff, 0.6);
     scene.add(ambient);
 
-    // Animation
+    // 🔄 Animation
     function animate() {
       requestAnimationFrame(animate);
       cylinder.rotation.y += 0.01;
-      line.rotation.y += 0.01;
+      edgeLines.rotation.y += 0.01;
       renderer.render(scene, camera);
     }
     animate();
 
-    // Responsive
+    // 🔧 Responsive
     window.addEventListener('resize', () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
