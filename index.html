@@ -3,144 +3,107 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Homothétie - Quiz</title>
+  <title>Sphère 3D Transparente</title>
 
-  <!-- Polices -->
   <link href="https://fonts.googleapis.com/css2?family=Androgy+Demo&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Mabry+Pro&display=swap" rel="stylesheet" />
 
   <style>
     :root {
-      --primary: #5b6dfa;
-      --secondary: #00bfa6;
-      --accent: #ff6b6b;
-      --grid: #e0e0e0;
-      --figure: rgba(128,0,128,0.3);
-      --border-radius: 10px;
+      --primary-color: #3a86ff;
+      --secondary-color: #8338ec;
+      --accent-color-1: #ff006e;
+      --accent-color-2: #fb5607;
+      --accent-color-3: #ffbe0b;
+      --background-color: #f0f4f8;
+      --border-radius: 50%;
+      --transition: 0.3s ease;
+      --sphere-veil: rgba(58, 134, 255, 0.08);
     }
 
     body {
-      margin: 0;
       font-family: 'Mabry Pro', sans-serif;
-      background: #f9f9f9;
-      color: #222;
+      background: var(--background-color);
+      margin: 0;
+      padding: 2rem;
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
       min-height: 100vh;
-      padding: 1rem;
+      text-align: center;
+      color: #212529;
     }
 
     h1 {
       font-family: 'Androgy Demo', sans-serif;
       font-size: 2.5rem;
-      color: var(--primary);
-      margin-bottom: 1rem;
+      color: var(--primary-color);
+      margin-bottom: 2rem;
     }
 
-    .question-box {
-      text-align: center;
-      margin-bottom: 1rem;
-    }
-    #question {
-      font-size: 1.3rem;
-      margin-bottom: 0.5rem;
-    }
-    #progress {
-      font-weight: bold;
-      color: var(--secondary);
+    .sphere-container {
+      width: 200px;
+      height: 200px;
+      perspective: 800px;
     }
 
-    #grid {
-      width: 800px;
-      height: 450px; /* format 16/9 */
-      background: white;
-      border: 2px solid var(--grid);
-      border-radius: var(--border-radius);
-      margin: 1rem 0;
+    .sphere {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: var(--sphere-veil);
+      border: 2px solid var(--primary-color);
+      box-shadow: 
+        inset 10px 10px 30px rgba(0,0,0,0.1),
+        inset -10px -10px 30px rgba(255,255,255,0.3),
+        0 0 15px rgba(58,134,255,0.4);
+      animation: rotateSphere 20s linear infinite;
+      transform-style: preserve-3d;
     }
-    svg { width: 100%; height: 100%; }
 
-    .btn {
-      padding: 0.7rem 1.2rem;
-      background: var(--primary);
+    @keyframes rotateSphere {
+      0% { transform: rotateX(0deg) rotateY(0deg); }
+      100% { transform: rotateX(360deg) rotateY(360deg); }
+    }
+
+    .sphere:hover {
+      animation-play-state: paused;
+      cursor: grab;
+    }
+
+    a.back {
+      margin-top: 3rem;
+      display: inline-block;
+      text-decoration: none;
+      font-weight: 600;
+      color: var(--primary-color);
+      border: 2px solid var(--primary-color);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      transition: background-color var(--transition), color var(--transition);
+    }
+
+    a.back:hover {
+      background-color: var(--primary-color);
       color: white;
-      border: none;
-      border-radius: var(--border-radius);
-      cursor: pointer;
-      transition: 0.3s;
-      font-size: 1rem;
     }
-    .btn:hover { background: var(--secondary); }
 
-    .centerO { fill: var(--secondary); stroke: black; stroke-width: 2; }
-    .point { fill: var(--accent); stroke: black; stroke-width: 1; }
+    @media (max-width: 600px) {
+      .sphere-container {
+        width: 150px;
+        height: 150px;
+      }
+    }
   </style>
 </head>
 <body>
 
-  <h1>Homothétie</h1>
+  <h1>Sphère 3D Transparente</h1>
 
-  <div class="question-box">
-    <div id="question">Question</div>
-    <div id="progress">1 / 10</div>
+  <div class="sphere-container">
+    <div class="sphere"></div>
   </div>
-
-  <div id="grid"><svg id="svgGrid"></svg></div>
-
-  <button class="btn" onclick="nextQuestion()">Question suivante</button>
-
-  <script>
-    const svg = document.getElementById("svgGrid");
-    const gridSize = 20, cols = 40, rows = 22;
-    let current = 0, userPts = [], expected = [];
-
-    const questions = [
-      { text:"Construire l’image du triangle par homothétie de rapport 2", 
-        O:{x:200,y:200}, pts:[{x:240,y:260},{x:280,y:200},{x:200,y:160}], k:2 },
-      { text:"Construire l’image du triangle par homothétie de rapport 1/2", 
-        O:{x:400,y:100}, pts:[{x:440,y:180},{x:480,y:100},{x:400,y:60}], k:0.5 },
-      { text:"Construire l’image du rectangle par homothétie de rapport -1", 
-        O:{x:300,y:300}, pts:[{x:320,y:320},{x:400,y:320},{x:400,y:380},{x:320,y:380}], k:-1 },
-      { text:"Construire l’image du triangle par homothétie de rapport 3", 
-        O:{x:500,y:200}, pts:[{x:540,y:260},{x:580,y:200},{x:500,y:140}], k:3 },
-      // ... complète jusqu'à 10
-    ];
-
-    function el(tag,attrs={}){const e=document.createElementNS("http://www.w3.org/2000/svg",tag);for(const k in attrs)e.setAttribute(k,attrs[k]);return e;}
-    function clear(){while(svg.firstChild)svg.removeChild(svg.firstChild);}
-    function drawGrid(){
-      for(let i=0;i<=cols;i++) svg.appendChild(el("line",{x1:i*gridSize,y1:0,x2:i*gridSize,y2:rows*gridSize,stroke:"#e0e0e0"}));
-      for(let j=0;j<=rows;j++) svg.appendChild(el("line",{x1:0,y1:j*gridSize,x2:cols*gridSize,y2:j*gridSize,stroke:"#e0e0e0"}));
-    }
-    function drawPoly(pts,color){
-      svg.appendChild(el("polygon",{points:pts.map(p=>`${p.x},${p.y}`).join(" "),fill:color,stroke:"purple","stroke-width":2}));
-    }
-    function drawPoint(p,c){svg.appendChild(el("circle",{cx:p.x,cy:p.y,r:5,fill:c,stroke:"black"}));}
-    function snap(x,y){return {x:Math.round(x/gridSize)*gridSize,y:Math.round(y/gridSize)*gridSize};}
-    function homothety(O,P,k){return snap(O.x+k*(P.x-O.x),O.y+k*(P.y-O.y));}
-
-    function render(idx){
-      clear(); drawGrid();
-      userPts = [];
-      const q = questions[idx];
-      // figure de départ
-      drawPoly(q.pts,"rgba(91,109,250,0.25)");
-      q.pts.forEach(p=>drawPoint(p,"#5b6dfa"));
-      // centre O
-      drawPoint(q.O,"#00bfa6");
-      expected = q.pts.map(p=>homothety(q.O,p,q.k));
-      document.getElementById("question").textContent = q.text;
-      document.getElementById("progress").textContent = (idx+1)+" / "+questions.length;
-    }
-
-    function nextQuestion(){
-      if(current < questions.length-1){ current++; render(current);}
-      else alert("Quiz terminé !");
-    }
-
-    render(current);
-  </script>
 
 </body>
 </html>
