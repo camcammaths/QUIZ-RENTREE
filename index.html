@@ -17,25 +17,25 @@
   </style>
 </head>
 <body>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
+  <script type="module">
+    import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+    import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js';
 
-  <script>
     const violet = 0x8338ec;
 
-    // 🎬 Scène
+    // Scène
     const scene = new THREE.Scene();
 
-    // 📷 Caméra
+    // Caméra
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(3, 3, 5);
 
-    // 🎨 Rendu
+    // Rendu
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
-    // ✅ Groupe pour cylindre + arêtes + bases
+    // Groupe cylindre + arêtes + bases
     const cylinderGroup = new THREE.Group();
     scene.add(cylinderGroup);
 
@@ -53,15 +53,12 @@
     const cylinder = new THREE.Mesh(geometry, material);
     cylinderGroup.add(cylinder);
 
-    // Arêtes violettes
+    // Arêtes
     const edges = new THREE.EdgesGeometry(geometry);
-    const line = new THREE.LineSegments(
-      edges,
-      new THREE.LineBasicMaterial({ color: violet, linewidth: 2 })
-    );
+    const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: violet, linewidth: 2 }));
     cylinderGroup.add(line);
 
-    // Bases (violettes transparentes)
+    // Bases
     const baseMaterial = new THREE.MeshPhysicalMaterial({
       color: violet,
       transparent: true,
@@ -69,7 +66,6 @@
       roughness: 0.3,
       metalness: 0
     });
-
     const topCircle = new THREE.Mesh(new THREE.CircleGeometry(1, 64), baseMaterial);
     topCircle.rotation.x = Math.PI / 2;
     topCircle.position.y = 1;
@@ -88,22 +84,22 @@
     const ambient = new THREE.AmbientLight(0xffffff, 0.6);
     scene.add(ambient);
 
-    // 🖱️ Contrôles interactifs
-    const controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true; // inertie douce
+    // Contrôles interactifs
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
     controls.dampingFactor = 0.05;
     controls.enableZoom = true;
     controls.enablePan = false;
 
-    // 🔄 Boucle de rendu
+    // Animation
     function animate() {
       requestAnimationFrame(animate);
-      controls.update(); // met à jour la rotation selon la souris
+      controls.update();
       renderer.render(scene, camera);
     }
     animate();
 
-    // 📱 Responsive
+    // Responsive
     window.addEventListener('resize', () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
