@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Pyramide 3D Transparente</title>
+<title>Pyramide 3D Carrée</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Androgy+Demo&display=swap" rel="stylesheet" />
 <link href="https://fonts.googleapis.com/css2?family=Mabry+Pro&display=swap" rel="stylesheet" />
@@ -42,14 +42,12 @@ h1 {
   margin-bottom: 2rem;
 }
 
-/* Container pour perspective */
 .pyramid-container {
   width: 200px;
   height: 200px;
   perspective: 800px;
 }
 
-/* La pyramide */
 .pyramid {
   width: 100%;
   height: 100%;
@@ -59,25 +57,37 @@ h1 {
   animation: rotatePyramid 20s linear infinite;
 }
 
-/* Les faces triangulaires */
+/* Base carrée */
+.base {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  background: var(--pyramid-veil);
+  border: 2px solid var(--primary-color);
+  bottom: 0;
+  transform: rotateX(90deg) translateY(0);
+  border-radius: var(--border-radius);
+  backdrop-filter: blur(2px);
+}
+
+/* Faces triangulaires */
 .face {
   position: absolute;
   width: 0;
   height: 0;
   border-left: 100px solid transparent;
   border-right: 100px solid transparent;
-  border-bottom: 173.2px solid var(--pyramid-veil); /* hauteur d'un triangle équilatéral */
+  border-bottom: 173.2px solid var(--pyramid-veil); /* hauteur pour triangle équilatéral */
   transform-origin: bottom center;
   border-radius: var(--border-radius);
-  border-bottom-color: var(--primary-color);
   backdrop-filter: blur(2px);
 }
 
-/* Rotation pour chaque face */
-.front  { transform: rotateY(0deg) translateZ(50px); border-bottom-color: var(--primary-color);}
-.right  { transform: rotateY(90deg) translateZ(50px); border-bottom-color: var(--secondary-color);}
-.back   { transform: rotateY(180deg) translateZ(50px); border-bottom-color: var(--accent-color-1);}
-.left   { transform: rotateY(-90deg) translateZ(50px); border-bottom-color: var(--accent-color-2);}
+/* 4 faces autour */
+.front  { transform: rotateX(0deg) rotateY(0deg) translateZ(100px); border-bottom-color: var(--primary-color);}
+.right  { transform: rotateX(0deg) rotateY(90deg) translateZ(100px); border-bottom-color: var(--secondary-color);}
+.back   { transform: rotateX(0deg) rotateY(180deg) translateZ(100px); border-bottom-color: var(--accent-color-1);}
+.left   { transform: rotateX(0deg) rotateY(-90deg) translateZ(100px); border-bottom-color: var(--accent-color-2);}
 
 @keyframes rotatePyramid {
   0% { transform: rotateX(-20deg) rotateY(0deg); }
@@ -116,10 +126,11 @@ a.back:hover {
 </head>
 <body>
 
-<h1>Pyramide 3D Transparente</h1>
+<h1>Pyramide 3D Carrée</h1>
 
 <div class="pyramid-container">
   <div class="pyramid">
+    <div class="base"></div>
     <div class="face front"></div>
     <div class="face right"></div>
     <div class="face back"></div>
