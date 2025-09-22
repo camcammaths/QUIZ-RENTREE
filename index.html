@@ -3,10 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pyramide 3D Transparente</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Androgy+Demo&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Mabry+Pro&display=swap" rel="stylesheet">
+<title>Pyramide 3D Correcte</title>
 
 <style>
 :root {
@@ -22,42 +19,23 @@
 }
 
 body {
-  font-family: 'Mabry Pro', sans-serif;
   background: var(--background-color);
-  margin: 0;
-  padding: 2rem;
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   min-height: 100vh;
-  text-align: center;
-  color: #212529;
-}
-
-h1 {
-  font-family: 'Androgy Demo', sans-serif;
-  font-size: 2.5rem;
-  color: var(--primary-color);
-  margin-bottom: 2rem;
-}
-
-.pyramid-container {
-  width: 200px;
-  height: 200px;
+  margin: 0;
   perspective: 800px;
 }
 
 .pyramid {
-  width: 100%;
-  height: 100%;
   position: relative;
+  width: 200px;
+  height: 200px;
   transform-style: preserve-3d;
-  transform: rotateX(-20deg) rotateY(20deg);
   animation: rotatePyramid 20s linear infinite;
 }
 
-/* Base carrée */
 .base {
   position: absolute;
   width: 200px;
@@ -66,76 +44,45 @@ h1 {
   border: 2px solid var(--primary-color);
   bottom: 0;
   transform: rotateX(90deg) translateY(100px);
-  border-radius: var(--border-radius);
   backdrop-filter: blur(2px);
 }
 
-/* Faces triangulaires (4) */
 .face {
   position: absolute;
-  width: 0;
-  height: 0;
-  border-left: 100px solid transparent;
-  border-right: 100px solid transparent;
-  border-bottom: 141px solid var(--pyramid-veil); /* hauteur approximative pour triangle */
+  width: 200px;
+  height: 200px;
+  background: var(--pyramid-veil);
+  border: 2px solid;
+  border-radius: 4px;
   transform-origin: bottom center;
-  border-radius: var(--border-radius);
   backdrop-filter: blur(2px);
 }
 
-/* Positionnement des 4 faces autour du sommet */
-.front  { transform: rotateX(35deg) rotateY(0deg) translateZ(100px); border-bottom-color: var(--primary-color);}
-.right  { transform: rotateX(35deg) rotateY(90deg) translateZ(100px); border-bottom-color: var(--secondary-color);}
-.back   { transform: rotateX(35deg) rotateY(180deg) translateZ(100px); border-bottom-color: var(--accent-color-1);}
-.left   { transform: rotateX(35deg) rotateY(-90deg) translateZ(100px); border-bottom-color: var(--accent-color-2);}
+/* Positionnement des faces triangulaires */
+.front  { transform: rotateX(45deg) rotateY(0deg) translateY(-100px); border-color: var(--primary-color);}
+.right  { transform: rotateX(45deg) rotateY(90deg) translateY(-100px); border-color: var(--secondary-color);}
+.back   { transform: rotateX(45deg) rotateY(180deg) translateY(-100px); border-color: var(--accent-color-1);}
+.left   { transform: rotateX(45deg) rotateY(-90deg) translateY(-100px); border-color: var(--accent-color-2);}
 
 @keyframes rotatePyramid {
-  0% { transform: rotateX(-20deg) rotateY(0deg); }
-  100% { transform: rotateX(-20deg) rotateY(360deg); }
+  0% { transform: rotateX(-20deg) rotateY(0deg);}
+  100% { transform: rotateX(-20deg) rotateY(360deg);}
 }
 
 .pyramid:hover {
   animation-play-state: paused;
   cursor: grab;
 }
-
-a.back {
-  margin-top: 3rem;
-  display: inline-block;
-  text-decoration: none;
-  font-weight: 600;
-  color: var(--primary-color);
-  border: 2px solid var(--primary-color);
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  transition: background-color var(--transition), color var(--transition);
-}
-
-a.back:hover {
-  background-color: var(--primary-color);
-  color: white;
-}
-
-@media (max-width: 600px) {
-  .pyramid-container {
-    width: 150px;
-    height: 150px;
-  }
-}
 </style>
 </head>
 <body>
 
-<h1>Pyramide 3D Transparente</h1>
-
-<div class="pyramid-container">
-  <div class="pyramid">
-    <div class="base"></div>
-    <div class="face front"></div>
-    <div class="face right"></div>
-    <div class="face back"></div>
-    <div class="face left"></div>
-  </div>
+<div class="pyramid">
+  <div class="base"></div>
+  <div class="face front"></div>
+  <div class="face right"></div>
+  <div class="face back"></div>
+  <div class="face left"></div>
 </div>
 
 </body>
