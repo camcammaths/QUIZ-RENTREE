@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cube 3D Interactif - Faces et Arêtes</title>
+<title>Cube 3D Interactif - Arêtes et Faces</title>
 <style>
   body {
     font-family: Arial, sans-serif;
@@ -27,8 +27,7 @@
   }
   .face, .edge {
     position: absolute; box-sizing: border-box;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; font-weight: bold;
+    cursor: pointer;
   }
   .face {
     width: 100%; height: 100%;
@@ -50,7 +49,7 @@
   .bottom { transform: rotateX(-90deg) translateZ(100px); }
   /* Edges */
   .edge-front-right { transform: rotateY(45deg) translateZ(100px); height: 4px; width: 141px; background: rgba(255,0,110,0.7); }
-  .edge-front-left  { transform: rotateY(-45deg) translateZ(100px); height: 4px; width: 141px; background: rgba(255,0,110,0.7); }
+  /* Ajoute d'autres arêtes si nécessaire */
   .correct { background-color: #00ff7f !important; }
   .wrong { background-color: #ff4d4d !important; }
   .question { font-size: 1.2rem; margin-bottom: 1rem; }
@@ -60,20 +59,20 @@
 <body>
 
 <h1>Cube 3D Interactif</h1>
-<div class="question" id="question">Clique sur la face "front"</div>
+<div class="question" id="question">Clique sur l'arête rouge</div>
 
 <div class="cube-container">
   <div class="cube" id="cube">
-    <div class="face front" data-type="face" data-name="front">Front</div>
-    <div class="face back" data-type="face" data-name="back">Back</div>
-    <div class="face left" data-type="face" data-name="left">Left</div>
-    <div class="face right" data-type="face" data-name="right">Right</div>
-    <div class="face top" data-type="face" data-name="top">Top</div>
-    <div class="face bottom" data-type="face" data-name="bottom">Bottom</div>
+    <!-- Faces -->
+    <div class="face front" data-type="face" data-name="front"></div>
+    <div class="face back" data-type="face" data-name="back"></div>
+    <div class="face left" data-type="face" data-name="left"></div>
+    <div class="face right" data-type="face" data-name="right"></div>
+    <div class="face top" data-type="face" data-name="top"></div>
+    <div class="face bottom" data-type="face" data-name="bottom"></div>
 
+    <!-- Arêtes -->
     <div class="edge edge-front-right" data-type="edge" data-name="front-right"></div>
-    <div class="edge edge-front-left" data-type="edge" data-name="front-left"></div>
-    <!-- Tu peux ajouter d'autres arêtes ici -->
   </div>
 </div>
 
@@ -82,10 +81,8 @@
 
 <script>
 const questions = [
-  { type: "face", target: "front", text: "Clique sur la face 'front'" },
-  { type: "face", target: "top", text: "Clique sur la face 'top'" },
-  { type: "edge", target: "front-right", text: "Clique sur l'arête 'front-right'" },
-  { type: "edge", target: "front-left", text: "Clique sur l'arête 'front-left'" },
+  { type: "edge", target: "front-right", text: "Clique sur l'arête rouge" },
+  { type: "face", target: "front", text: "Clique sur la face bleue" }
 ];
 
 let current = 0;
