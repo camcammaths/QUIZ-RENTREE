@@ -3,17 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pyramide 3D Carrée</title>
+<title>Pyramide 3D Fermée</title>
 
 <style>
 :root {
+  --size: 200px;
+  --height: 150px;
   --primary-color: #3a86ff;
   --secondary-color: #8338ec;
   --accent-color-1: #ff006e;
   --accent-color-2: #fb5607;
   --accent-color-3: #ffbe0b;
   --background-color: #f0f4f8;
-  --pyramid-veil: rgba(58, 134, 255, 0.08);
+  --veil: rgba(58, 134, 255, 0.08);
 }
 
 body {
@@ -27,8 +29,9 @@ body {
 }
 
 .pyramid-container {
-  width: 200px;
-  height: 200px;
+  width: var(--size);
+  height: var(--size);
+  position: relative;
   transform-style: preserve-3d;
   animation: rotatePyramid 20s linear infinite;
 }
@@ -36,31 +39,31 @@ body {
 /* Base carrée */
 .base {
   position: absolute;
-  width: 200px;
-  height: 200px;
-  background: var(--pyramid-veil);
+  width: var(--size);
+  height: var(--size);
+  background: var(--veil);
   border: 2px solid var(--primary-color);
-  transform: rotateX(90deg) translateY(100px);
+  transform: rotateX(90deg) translateY(calc(var(--height)/2));
   backdrop-filter: blur(2px);
 }
 
-/* Faces triangulaires */
+/* Face triangulaire */
 .face {
   position: absolute;
-  width: 0;
-  height: 0;
-  border-left: 100px solid transparent;
-  border-right: 100px solid transparent;
-  border-bottom: 141px solid var(--pyramid-veil); /* hauteur approximative du triangle */
+  width: var(--size);
+  height: var(--height);
+  background: var(--veil);
+  border: 2px solid;
   transform-origin: bottom center;
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%); /* triangle */
   backdrop-filter: blur(2px);
 }
 
-/* 4 faces latérales */
-.front  { transform: rotateX(0deg) rotateY(0deg) translateZ(100px); border-bottom-color: var(--primary-color);}
-.right  { transform: rotateX(0deg) rotateY(90deg) translateZ(100px); border-bottom-color: var(--secondary-color);}
-.back   { transform: rotateX(0deg) rotateY(180deg) translateZ(100px); border-bottom-color: var(--accent-color-1);}
-.left   { transform: rotateX(0deg) rotateY(-90deg) translateZ(100px); border-bottom-color: var(--accent-color-2);}
+/* Positionnement des faces autour de la pyramide */
+.front  { transform: rotateX(0deg) rotateY(0deg) translateZ(calc(var(--size)/2)); border-color: var(--primary-color);}
+.right  { transform: rotateX(0deg) rotateY(90deg) translateZ(calc(var(--size)/2)); border-color: var(--secondary-color);}
+.back   { transform: rotateX(0deg) rotateY(180deg) translateZ(calc(var(--size)/2)); border-color: var(--accent-color-1);}
+.left   { transform: rotateX(0deg) rotateY(-90deg) translateZ(calc(var(--size)/2)); border-color: var(--accent-color-2);}
 
 @keyframes rotatePyramid {
   0% { transform: rotateX(-20deg) rotateY(0deg);}
