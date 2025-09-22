@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cône 3D Transparent</title>
+  <title>Cylindre 3D Transparent</title>
 
   <style>
     :root {
@@ -13,8 +13,8 @@
       --accent-color-2: #fb5607;
       --accent-color-3: #ffbe0b;
       --background-color: #f0f4f8;
-      --cone-veil: rgba(58, 134, 255, 0.08);
-      --border-radius: 4px;
+      --cyl-veil: rgba(58, 134, 255, 0.08);
+      --border-radius: 6px;
     }
 
     body {
@@ -38,63 +38,68 @@
       margin-bottom: 2rem;
     }
 
-    /* Container */
-    .cone-container {
+    .cyl-container {
       width: 200px;
       height: 200px;
       perspective: 1000px;
     }
 
-    /* Cône */
-    .cone {
+    .cyl {
       width: 100%;
       height: 100%;
       position: relative;
       transform-style: preserve-3d;
-      animation: rotateCone 10s linear infinite;
+      animation: rotateCyl 12s linear infinite;
     }
 
-    /* Base du cône (cercle) */
-    .base {
+    /* Faces haut et bas */
+    .top, .bottom {
       position: absolute;
       width: 200px;
       height: 200px;
       border-radius: 50%;
-      background: var(--cone-veil);
-      border: 2px solid var(--primary-color);
-      transform: rotateX(90deg) translateZ(-100px);
+      background: var(--cyl-veil);
+      border: 2px solid var(--accent-color-1);
       backdrop-filter: blur(2px);
     }
 
-    /* Surface latérale (triangle simulé en 3D) */
+    .top {
+      transform: rotateX(90deg) translateZ(100px);
+      border-color: var(--primary-color);
+    }
+
+    .bottom {
+      transform: rotateX(90deg) translateZ(-100px);
+      border-color: var(--secondary-color);
+    }
+
+    /* Surface latérale simulée (un anneau arrondi) */
     .side {
       position: absolute;
-      width: 0;
-      height: 0;
-      border-left: 100px solid transparent;
-      border-right: 100px solid transparent;
-      border-bottom: 200px solid var(--cone-veil);
-      transform: rotateY(0deg) translateZ(0);
-      transform-origin: bottom center;
-      filter: drop-shadow(0 0 4px rgba(0,0,0,0.1));
-    }
-
-    /* Bordures colorées sur la surface */
-    .side::after {
-      content: "";
-      position: absolute;
-      left: -100px;
-      top: 0;
       width: 200px;
       height: 200px;
-      border-left: 2px solid var(--accent-color-1);
-      border-right: 2px solid var(--accent-color-2);
-      border-bottom: 2px solid var(--accent-color-3);
-      border-radius: var(--border-radius);
+      background: var(--cyl-veil);
+      border-left: 2px solid var(--accent-color-2);
+      border-right: 2px solid var(--accent-color-3);
+      transform: rotateY(0deg) translateZ(0);
+      transform-origin: center;
+      border-radius: 50%;
+      backdrop-filter: blur(2px);
     }
 
-    /* Animation de rotation */
-    @keyframes rotateCone {
+    /* On duplique la surface latérale plusieurs fois pour simuler un cercle */
+    .slice {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      background: var(--cyl-veil);
+      border-left: 1px solid rgba(0,0,0,0.1);
+      transform-origin: center;
+      backdrop-filter: blur(2px);
+    }
+
+    /* Animation */
+    @keyframes rotateCyl {
       0%   { transform: rotateX(-20deg) rotateY(0deg); }
       100% { transform: rotateX(-20deg) rotateY(360deg); }
     }
@@ -102,14 +107,36 @@
 </head>
 <body>
 
-  <h1>Cône 3D Transparent</h1>
+  <h1>Cylindre 3D Transparent</h1>
 
-  <div class="cone-container">
-    <div class="cone">
-      <div class="side"></div>
-      <div class="base"></div>
+  <div class="cyl-container">
+    <div class="cyl">
+      <!-- Faces -->
+      <div class="top"></div>
+      <div class="bottom"></div>
+
+      <!-- Surface latérale (faite de tranches pour simuler le rond) -->
+      <div class="slice" style="transform: rotateY(0deg) translateZ(100px);"></div>
+      <div class="slice" style="transform: rotateY(10deg) translateZ(100px);"></div>
+      <div class="slice" style="transform: rotateY(20deg) translateZ(100px);"></div>
+      <div class="slice" style="transform: rotateY(30deg) translateZ(100px);"></div>
+      <div class="slice" style="transform: rotateY(40deg) translateZ(100px);"></div>
+      <div class="slice" style="transform: rotateY(50deg) translateZ(100px);"></div>
+      <div class="slice" style="transform: rotateY(60deg) translateZ(100px);"></div>
+      <div class="slice" style="transform: rotateY(70deg) translateZ(100px);"></div>
+      <div class="slice" style="transform: rotateY(80deg) translateZ(100px);"></div>
+      <div class="slice" style="transform: rotateY(90deg) translateZ(100px);"></div>
+      <div class="slice" style="transform: rotateY(100deg) translateZ(100px);"></div>
+      <div class="slice" style="transform: rotateY(110deg) translateZ(100px);"></div>
+      <div class="slice" style="transform: rotateY(120deg) translateZ(100px);"></div>
+      <div class="slice" style="transform: rotateY(130deg) translateZ(100px);"></div>
+      <div class="slice" style="transform: rotateY(140deg) translateZ(100px);"></div>
+      <div class="slice" style="transform: rotateY(150deg) translateZ(100px);"></div>
+      <div class="slice" style="transform: rotateY(160deg) translateZ(100px);"></div>
+      <div class="slice" style="transform: rotateY(170deg) translateZ(100px);"></div>
     </div>
   </div>
 
 </body>
 </html>
+
