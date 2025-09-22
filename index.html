@@ -1,69 +1,121 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pyramide 3D</title>
-<style>
-body {
-  margin: 0;
-  height: 100vh;
-  background: linear-gradient(black, darkblue);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  perspective: 1000px;
-}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cube 3D Transparent Animé</title>
 
-/* Container pour la pyramide */
-.pyramid-container {
-  width: 200px;
-  height: 200px;
-  position: relative;
-  transform-style: preserve-3d;
-  animation: rotate 20s linear infinite;
-}
+  <!-- Polices -->
+  <link href="https://fonts.googleapis.com/css2?family=Androgy+Demo&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Mabry+Pro&display=swap" rel="stylesheet" />
 
-@keyframes rotate {
-  0% { transform: rotateX(-20deg) rotateY(0deg); }
-  100% { transform: rotateX(-20deg) rotateY(360deg); }
-}
+  <style>
+    :root {
+      --primary-color: #3a86ff;
+      --secondary-color: #8338ec;
+      --accent-color-1: #ff006e;
+      --accent-color-2: #fb5607;
+      --accent-color-3: #ffbe0b;
+      --background-color: #f0f4f8;
+      --cube-veil: rgba(58, 134, 255, 0.08);
+      --border-radius: 8px;
+      --transition: 0.5s ease-in-out;
+    }
 
-/* Base carrée */
-.base {
-  position: absolute;
-  width: 200px;
-  height: 200px;
-  background: rgba(255, 255, 0, 0.3); /* jaune semi-transparent */
-  transform: rotateX(90deg) translateY(75px);
-}
+    body {
+      font-family: 'Mabry Pro', sans-serif;
+      background: var(--background-color);
+      margin: 0;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      color: #212529;
+    }
 
-/* Faces triangulaires */
-.face {
-  position: absolute;
-  width: 200px;
-  height: 150px; /* hauteur de la pyramide */
-  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-  transform-origin: bottom center;
-  backdrop-filter: blur(2px);
-}
+    h1 {
+      font-family: 'Androgy Demo', sans-serif;
+      font-size: 2.5rem;
+      color: var(--primary-color);
+      margin-bottom: 2rem;
+    }
 
-/* 4 faces autour du sommet */
-.front  { transform: rotateY(0deg) translateZ(100px); background: rgba(255,0,255,0.6);}  /* rose */
-.right  { transform: rotateY(90deg) translateZ(100px); background: rgba(255,165,0,0.6);} /* orange */
-.back   { transform: rotateY(180deg) translateZ(100px); background: rgba(128,0,128,0.6);} /* violet */
-.left   { transform: rotateY(-90deg) translateZ(100px); background: rgba(0,128,255,0.6);} /* bleu */
-</style>
+    /* Cube Container */
+    .cube-container {
+      width: 200px;
+      height: 200px;
+      perspective: 800px;
+    }
+
+    /* Cube */
+    .cube {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transform: rotateX(-20deg) rotateY(20deg);
+      animation: openCloseCube 4s ease-in-out infinite alternate;
+    }
+
+    /* Cube Faces */
+    .face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: var(--cube-veil);
+      border: 2px solid;
+      box-sizing: border-box;
+      backdrop-filter: blur(2px);
+      border-radius: var(--border-radius);
+      transition: transform var(--transition);
+    }
+
+    .front  { transform: translateZ(100px); border-color: var(--primary-color); }
+    .back   { transform: rotateY(180deg) translateZ(100px); border-color: var(--secondary-color); }
+    .right  { transform: rotateY(90deg) translateZ(100px); border-color: var(--accent-color-1); }
+    .left   { transform: rotateY(-90deg) translateZ(100px); border-color: var(--accent-color-2); }
+    .top    { transform: rotateX(90deg) translateZ(100px); border-color: var(--accent-color-3); }
+    .bottom { transform: rotateX(-90deg) translateZ(100px); border-color: var(--primary-color); }
+
+    /* Animation du cube : ouverture / fermeture */
+    @keyframes openCloseCube {
+      0% {
+        transform: rotateX(-20deg) rotateY(20deg);
+      }
+      50% {
+        transform: rotateX(-20deg) rotateY(20deg) translateZ(30px);
+      }
+      100% {
+        transform: rotateX(-20deg) rotateY(20deg);
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .cube-container {
+        width: 150px;
+        height: 150px;
+      }
+    }
+  </style>
 </head>
 <body>
 
-<div class="pyramid-container">
-  <div class="base"></div>
-  <div class="face front"></div>
-  <div class="face right"></div>
-  <div class="face back"></div>
-  <div class="face left"></div>
-</div>
+  <h1>Cube 3D Transparent Animé</h1>
+
+  <div class="cube-container">
+    <div class="cube">
+      <div class="face front"></div>
+      <div class="face back"></div>
+      <div class="face left"></div>
+      <div class="face right"></div>
+      <div class="face top"></div>
+      <div class="face bottom"></div>
+    </div>
+  </div>
 
 </body>
 </html>
