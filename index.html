@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cube 3D Interactif - Sommet, Arête, Face</title>
+<title>Cube 3D Interactif - Correct</title>
 <style>
 :root {
   --primary-color: #3a86ff;
@@ -12,106 +12,57 @@
   --accent-color-2: #fb5607;
   --accent-color-3: #ffbe0b;
   --cube-veil: rgba(58, 134, 255, 0.08);
-  --border-radius: 8px;
 }
 
 body {
-  font-family: 'Mabry Pro', sans-serif;
+  font-family: sans-serif;
   background: #f0f4f8;
   margin: 0;
   padding: 2rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  text-align: center;
-  color: #212529;
 }
 
-h1 {
-  font-family: 'Androgy Demo', sans-serif;
-  font-size: 2.5rem;
-  color: var(--primary-color);
-  margin-bottom: 2rem;
-}
+h1 { color: var(--primary-color); }
+.cube-container { width: 200px; height: 200px; perspective: 800px; margin-bottom: 2rem; }
+.cube { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transform: rotateX(-20deg) rotateY(20deg); }
 
-.cube-container {
-  width: 200px;
-  height: 200px;
-  perspective: 800px;
-  margin-bottom: 2rem;
-}
-
-.cube {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  transform-style: preserve-3d;
-  transform: rotateX(-20deg) rotateY(20deg);
-}
-
-/* Faces */
 .face {
-  position: absolute;
-  width: 100%;
-  height: 100%;
+  position: absolute; width: 200px; height: 200px;
   background: var(--cube-veil);
   border: 2px solid var(--primary-color);
   box-sizing: border-box;
-  border-radius: var(--border-radius);
-  backdrop-filter: blur(2px);
   cursor: pointer;
 }
-
-.front  { transform: translateZ(100px); border-color: var(--primary-color); }
+.front  { transform: translateZ(100px); }
 .back   { transform: rotateY(180deg) translateZ(100px); border-color: var(--secondary-color); }
 .right  { transform: rotateY(90deg) translateZ(100px); border-color: var(--accent-color-1); }
 .left   { transform: rotateY(-90deg) translateZ(100px); border-color: var(--accent-color-2); }
 .top    { transform: rotateX(90deg) translateZ(100px); border-color: var(--accent-color-3); }
 .bottom { transform: rotateX(-90deg) translateZ(100px); border-color: var(--primary-color); }
 
-/* Arêtes simplifiées */
+/* Arêtes : relient deux sommets */
 .edge {
-  position: absolute;
-  background: rgba(255,0,110,0.3);
-  cursor: pointer;
-  border-radius: 4px;
+  position: absolute; background: rgba(255,0,110,0.5); cursor: pointer; border-radius: 2px;
 }
-
-.edge-front-top    { width: 200px; height: 4px; transform: translateZ(100px) translateY(-100px); }
-.edge-front-bottom { width: 200px; height: 4px; transform: translateZ(100px) translateY(100px); }
-.edge-front-left   { width: 4px; height: 200px; transform: translateZ(100px) translateX(-100px); }
-.edge-front-right  { width: 4px; height: 200px; transform: translateZ(100px) translateX(100px); }
 
 /* Sommets */
 .vertex {
-  position: absolute;
-  width: 12px;
-  height: 12px;
-  background: rgba(0,128,255,0.5);
-  border-radius: 50%;
-  cursor: pointer;
+  position: absolute; width: 12px; height: 12px; background: rgba(0,128,255,0.7); border-radius: 50%; cursor: pointer;
 }
 
-.vertex1 { transform: translate3d(-100px,-100px,100px); }
-.vertex2 { transform: translate3d(100px,-100px,100px); }
-.vertex3 { transform: translate3d(-100px,100px,100px); }
-.vertex4 { transform: translate3d(100px,100px,100px); }
-
-/* Classes réponses */
 .correct { background-color: #00ff7f !important; }
 .wrong   { background-color: #ff4d4d !important; }
 
 .question { font-size: 1.2rem; margin-bottom: 1rem; }
-button { margin-top: 1rem; padding: 0.5rem 1rem; border: none; border-radius: var(--border-radius); background-color: var(--primary-color); color: white; cursor: pointer; font-size: 1rem; }
+button { margin-top: 1rem; padding: 0.5rem 1rem; border: none; border-radius: 5px; background-color: var(--primary-color); color: white; cursor: pointer; font-size: 1rem; }
 </style>
 </head>
 <body>
 
 <h1>Cube 3D Interactif</h1>
 <div class="question" id="question">Question 1 : Clique sur un sommet</div>
-
 <div class="cube-container">
   <div class="cube" id="cube">
     <!-- Faces -->
@@ -122,17 +73,21 @@ button { margin-top: 1rem; padding: 0.5rem 1rem; border: none; border-radius: va
     <div class="face top" data-type="face" data-name="top"></div>
     <div class="face bottom" data-type="face" data-name="bottom"></div>
 
-    <!-- Arêtes -->
-    <div class="edge edge-front-top" data-type="edge" data-name="front-top"></div>
-    <div class="edge edge-front-bottom" data-type="edge" data-name="front-bottom"></div>
-    <div class="edge edge-front-left" data-type="edge" data-name="front-left"></div>
-    <div class="edge edge-front-right" data-type="edge" data-name="front-right"></div>
+    <!-- Sommets du cube -->
+    <div class="vertex" data-type="vertex" data-name="v1" style="transform: translate3d(-100px,-100px,100px);"></div>
+    <div class="vertex" data-type="vertex" data-name="v2" style="transform: translate3d(100px,-100px,100px);"></div>
+    <div class="vertex" data-type="vertex" data-name="v3" style="transform: translate3d(-100px,100px,100px);"></div>
+    <div class="vertex" data-type="vertex" data-name="v4" style="transform: translate3d(100px,100px,100px);"></div>
+    <div class="vertex" data-type="vertex" data-name="v5" style="transform: translate3d(-100px,-100px,-100px);"></div>
+    <div class="vertex" data-type="vertex" data-name="v6" style="transform: translate3d(100px,-100px,-100px);"></div>
+    <div class="vertex" data-type="vertex" data-name="v7" style="transform: translate3d(-100px,100px,-100px);"></div>
+    <div class="vertex" data-type="vertex" data-name="v8" style="transform: translate3d(100px,100px,-100px);"></div>
 
-    <!-- Sommets -->
-    <div class="vertex vertex1" data-type="vertex" data-name="vertex1"></div>
-    <div class="vertex vertex2" data-type="vertex" data-name="vertex2"></div>
-    <div class="vertex vertex3" data-type="vertex" data-name="vertex3"></div>
-    <div class="vertex vertex4" data-type="vertex" data-name="vertex4"></div>
+    <!-- Arêtes : ex front-top -->
+    <div class="edge" data-type="edge" data-name="front-top" style="width:200px;height:4px; transform: translateZ(100px) translateY(-100px);"></div>
+    <div class="edge" data-type="edge" data-name="front-left" style="width:4px;height:200px; transform: translateZ(100px) translateX(-100px);"></div>
+    <div class="edge" data-type="edge" data-name="top-left" style="width:4px;height:200px; transform: rotateZ(90deg) translateY(-100px) translateX(-100px);"></div>
+    <!-- Ajouter les autres arêtes selon les sommets -->
   </div>
 </div>
 
@@ -141,8 +96,8 @@ button { margin-top: 1rem; padding: 0.5rem 1rem; border: none; border-radius: va
 
 <script>
 const questions = [
-  { type: "vertex", target: "vertex1", text: "Question 1 : Clique sur un sommet" },
-  { type: "edge", target: "front-right", text: "Question 2 : Clique sur une arête" },
+  { type: "vertex", target: "v1", text: "Question 1 : Clique sur un sommet" },
+  { type: "edge", target: "front-top", text: "Question 2 : Clique sur une arête" },
   { type: "face", target: "front", text: "Question 3 : Clique sur une face" }
 ];
 
@@ -155,13 +110,12 @@ const nextBtn = document.getElementById("next");
 
 function showQuestion() {
   questionEl.textContent = questions[current].text;
-  document.querySelectorAll(".face, .edge, .vertex").forEach(el => el.classList.remove("correct", "wrong"));
+  document.querySelectorAll(".vertex, .edge, .face").forEach(el => el.classList.remove("correct","wrong"));
 }
 
-document.querySelectorAll(".face, .edge, .vertex").forEach(el => {
+document.querySelectorAll(".vertex, .edge, .face").forEach(el => {
   el.addEventListener("click", () => {
-    const correct = questions[current].target;
-    if (el.dataset.name === correct) {
+    if(el.dataset.name === questions[current].target){
       el.classList.add("correct");
       score++;
       scoreEl.textContent = score;
@@ -173,10 +127,9 @@ document.querySelectorAll(".face, .edge, .vertex").forEach(el => {
 
 nextBtn.addEventListener("click", () => {
   current++;
-  if (current >= questions.length) {
+  if(current >= questions.length){
     alert(`Fin du quiz ! Score final: ${score}/${questions.length}`);
-    current = 0; score = 0;
-    scoreEl.textContent = score;
+    current=0; score=0; scoreEl.textContent=score;
   }
   showQuestion();
 });
