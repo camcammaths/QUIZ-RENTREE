@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cylindre 3D Transparent</title>
+  <title>Cylindre 3D - Violet</title>
   <style>
     body {
       margin: 0;
@@ -21,14 +21,8 @@
 <body>
   <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
   <script>
-    // 🎨 Palette inspirée de ton cube
-    const colors = {
-      primary: 0x3a86ff,
-      secondary: 0x8338ec,
-      accent1: 0xff006e,
-      accent2: 0xfb5607,
-      accent3: 0xffbe0b
-    };
+    // 🎨 Couleurs
+    const violet = 0x8338ec;
 
     // 🟦 Scène
     const scene = new THREE.Scene();
@@ -45,11 +39,11 @@
     // 🔵 Géométrie du cylindre (rayon haut, rayon bas, hauteur, segments)
     const geometry = new THREE.CylinderGeometry(1, 1, 2, 64, 1, false);
 
-    // 🎭 Matériau transparent façon "cube CSS"
+    // 🎭 Matériau transparent pour le cylindre
     const material = new THREE.MeshPhysicalMaterial({
-      color: colors.primary,
+      color: violet,
       transparent: true,
-      opacity: 0.15,
+      opacity: 0.08,   // voile très léger
       roughness: 0.2,
       metalness: 0,
       transmission: 0.6,
@@ -59,33 +53,29 @@
     const cylinder = new THREE.Mesh(geometry, material);
     scene.add(cylinder);
 
-    // ✏️ Arêtes colorées (wireframe décoratif)
+    // ✏️ Arêtes violettes
     const edges = new THREE.EdgesGeometry(geometry);
-    const edgeColors = [
-      colors.primary, colors.secondary, colors.accent1, colors.accent2, colors.accent3
-    ];
-    const edgeLines = new THREE.Group();
+    const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: violet, linewidth: 2 }));
+    scene.add(line);
 
-    // on applique différentes couleurs aux segments pour rappeler ton cube
-    const segments = edges.attributes.position.count / 2;
-    const positions = edges.attributes.position.array;
+    // 🔵 Disques pour bases (violet transparent plus visible que le latéral)
+    const baseMaterial = new THREE.MeshPhysicalMaterial({
+      color: violet,
+      transparent: true,
+      opacity: 0.25,  // plus marqué
+      roughness: 0.3,
+      metalness: 0
+    });
 
-    for (let i = 0; i < segments; i++) {
-      const geometryLine = new THREE.BufferGeometry();
-      const vertices = new Float32Array([
-        positions[i*6], positions[i*6+1], positions[i*6+2],
-        positions[i*6+3], positions[i*6+4], positions[i*6+5]
-      ]);
-      geometryLine.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
-      const materialLine = new THREE.LineBasicMaterial({
-        color: edgeColors[i % edgeColors.length],
-        linewidth: 2
-      });
-      const line = new THREE.Line(geometryLine, materialLine);
-      edgeLines.add(line);
-    }
+    const topCircle = new THREE.Mesh(new THREE.CircleGeometry(1, 64), baseMaterial);
+    topCircle.rotation.x = Math.PI / 2;
+    topCircle.position.y = 1; // haut du cylindre
+    scene.add(topCircle);
 
-    scene.add(edgeLines);
+    const bottomCircle = new THREE.Mesh(new THREE.CircleGeometry(1, 64), baseMaterial);
+    bottomCircle.rotation.x = -Math.PI / 2;
+    bottomCircle.position.y = -1; // bas du cylindre
+    scene.add(bottomCircle);
 
     // 💡 Lumières
     const light = new THREE.DirectionalLight(0xffffff, 1);
@@ -99,7 +89,9 @@
     function animate() {
       requestAnimationFrame(animate);
       cylinder.rotation.y += 0.01;
-      edgeLines.rotation.y += 0.01;
+      line.rotation.y += 0.01;
+      topCircle.rotation.y += 0.01;
+      bottomCircle.rotation.y += 0.01;
       renderer.render(scene, camera);
     }
     animate();
