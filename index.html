@@ -3,11 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cube 3D Transparent Animé</title>
-
-  <!-- Polices -->
-  <link href="https://fonts.googleapis.com/css2?family=Androgy+Demo&display=swap" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Mabry+Pro&display=swap" rel="stylesheet" />
+  <title>Cube 3D Patron → Cube</title>
 
   <style>
     :root {
@@ -19,11 +15,10 @@
       --background-color: #f0f4f8;
       --cube-veil: rgba(58, 134, 255, 0.08);
       --border-radius: 8px;
-      --transition: 0.5s ease-in-out;
     }
 
     body {
-      font-family: 'Mabry Pro', sans-serif;
+      font-family: sans-serif;
       background: var(--background-color);
       margin: 0;
       padding: 2rem;
@@ -33,85 +28,88 @@
       justify-content: center;
       min-height: 100vh;
       text-align: center;
-      color: #212529;
     }
 
     h1 {
-      font-family: 'Androgy Demo', sans-serif;
-      font-size: 2.5rem;
+      font-size: 2rem;
       color: var(--primary-color);
       margin-bottom: 2rem;
     }
 
-    /* Cube Container */
     .cube-container {
       width: 200px;
       height: 200px;
-      perspective: 800px;
+      perspective: 1200px;
     }
 
-    /* Cube */
     .cube {
       width: 100%;
       height: 100%;
       position: relative;
       transform-style: preserve-3d;
-      transform: rotateX(-20deg) rotateY(20deg);
-      animation: openCloseCube 4s ease-in-out infinite alternate;
+      animation: unfoldFold 6s ease-in-out infinite alternate;
     }
 
-    /* Cube Faces */
     .face {
       position: absolute;
-      width: 100%;
-      height: 100%;
+      width: 200px;
+      height: 200px;
       background: var(--cube-veil);
       border: 2px solid;
       box-sizing: border-box;
       backdrop-filter: blur(2px);
       border-radius: var(--border-radius);
-      transition: transform var(--transition);
     }
 
-    .front  { transform: translateZ(100px); border-color: var(--primary-color); }
-    .back   { transform: rotateY(180deg) translateZ(100px); border-color: var(--secondary-color); }
-    .right  { transform: rotateY(90deg) translateZ(100px); border-color: var(--accent-color-1); }
-    .left   { transform: rotateY(-90deg) translateZ(100px); border-color: var(--accent-color-2); }
-    .top    { transform: rotateX(90deg) translateZ(100px); border-color: var(--accent-color-3); }
-    .bottom { transform: rotateX(-90deg) translateZ(100px); border-color: var(--primary-color); }
+    /* Couleurs */
+    .front  { border-color: var(--primary-color); }
+    .back   { border-color: var(--secondary-color); }
+    .right  { border-color: var(--accent-color-1); }
+    .left   { border-color: var(--accent-color-2); }
+    .top    { border-color: var(--accent-color-3); }
+    .bottom { border-color: var(--primary-color); }
 
-    /* Animation du cube : ouverture / fermeture */
-    @keyframes openCloseCube {
+    /* Animation : du patron (0%) au cube (100%) */
+    @keyframes unfoldFold {
       0% {
-        transform: rotateX(-20deg) rotateY(20deg);
+        /* Patron (faces à plat) */
+        transform: rotateX(-20deg) rotateY(30deg);
       }
-      50% {
-        transform: rotateX(-20deg) rotateY(20deg) translateZ(30px);
+      0%, 50% {
+        /* Position patron */
+        /* front au centre */
+        .front  { transform: translateZ(0); }
+        .back   { transform: translateX(0) translateY(-200px); }
+        .right  { transform: translateX(200px) translateY(0); }
+        .left   { transform: translateX(-200px) translateY(0); }
+        .top    { transform: translateY(-200px); }
+        .bottom { transform: translateY(200px); }
       }
       100% {
-        transform: rotateX(-20deg) rotateY(20deg);
+        /* Position cube fermé */
+        transform: rotateX(-20deg) rotateY(30deg);
       }
-    }
-
-    /* Responsive */
-    @media (max-width: 600px) {
-      .cube-container {
-        width: 150px;
-        height: 150px;
+      100% {
+        .front  { transform: translateZ(100px); }
+        .back   { transform: rotateY(180deg) translateZ(100px); }
+        .right  { transform: rotateY(90deg) translateZ(100px); }
+        .left   { transform: rotateY(-90deg) translateZ(100px); }
+        .top    { transform: rotateX(90deg) translateZ(100px); }
+        .bottom { transform: rotateX(-90deg) translateZ(100px); }
       }
     }
   </style>
 </head>
 <body>
 
-  <h1>Cube 3D Transparent Animé</h1>
+  <h1>Cube 3D : Patron → Cube</h1>
 
   <div class="cube-container">
     <div class="cube">
       <div class="face front"></div>
       <div class="face back"></div>
-      <div class="face left"></div>
       <div class="face right"></div>
+      <div class="face left"></div>
       <div class="face top"></div>
       <div class="face bottom"></div>
     </div>
