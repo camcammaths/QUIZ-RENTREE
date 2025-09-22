@@ -3,15 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cylindre 3D - Violet</title>
+  <title>Cylindre 3D Violet - Contrôlable</title>
   <style>
     body {
       margin: 0;
       height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
       background: #f0f4f8;
+      overflow: hidden;
     }
     canvas {
       display: block;
@@ -19,62 +17,67 @@
   </style>
 </head>
 <body>
+  <!-- Three.js -->
   <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+  <!-- OrbitControls -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
+
   <script>
-    // 🎨 Couleurs
     const violet = 0x8338ec;
 
-    // 🟦 Scène
+    // 🎬 Scène
     const scene = new THREE.Scene();
 
     // 📷 Caméra
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.z = 5;
+    camera.position.set(3, 3, 5);
 
-    // 🖼️ Rendu
+    // 🎨 Rendu
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
-    // 🔵 Géométrie du cylindre (rayon haut, rayon bas, hauteur, segments)
+    // 🔵 Géométrie du cylindre
     const geometry = new THREE.CylinderGeometry(1, 1, 2, 64, 1, false);
 
-    // 🎭 Matériau transparent pour le cylindre
+    // 🎭 Matériau transparent (latéral discret)
     const material = new THREE.MeshPhysicalMaterial({
       color: violet,
       transparent: true,
-      opacity: 0.08,   // voile très léger
+      opacity: 0.08,
       roughness: 0.2,
       metalness: 0,
       transmission: 0.6,
       clearcoat: 0.8
     });
-
     const cylinder = new THREE.Mesh(geometry, material);
     scene.add(cylinder);
 
     // ✏️ Arêtes violettes
     const edges = new THREE.EdgesGeometry(geometry);
-    const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: violet, linewidth: 2 }));
+    const line = new THREE.LineSegments(
+      edges,
+      new THREE.LineBasicMaterial({ color: violet, linewidth: 2 })
+    );
     scene.add(line);
 
-    // 🔵 Disques pour bases (violet transparent plus visible que le latéral)
+    // 🔵 Bases (disques violets transparents)
     const baseMaterial = new THREE.MeshPhysicalMaterial({
       color: violet,
       transparent: true,
-      opacity: 0.25,  // plus marqué
+      opacity: 0.25,
       roughness: 0.3,
       metalness: 0
     });
 
     const topCircle = new THREE.Mesh(new THREE.CircleGeometry(1, 64), baseMaterial);
     topCircle.rotation.x = Math.PI / 2;
-    topCircle.position.y = 1; // haut du cylindre
+    topCircle.position.y = 1;
     scene.add(topCircle);
 
     const bottomCircle = new THREE.Mesh(new THREE.CircleGeometry(1, 64), baseMaterial);
     bottomCircle.rotation.x = -Math.PI / 2;
-    bottomCircle.position.y = -1; // bas du cylindre
+    bottomCircle.position.y = -1;
     scene.add(bottomCircle);
 
     // 💡 Lumières
@@ -85,18 +88,22 @@
     const ambient = new THREE.AmbientLight(0xffffff, 0.6);
     scene.add(ambient);
 
-    // 🔄 Animation
+    // 🖱️ Contrôles interactifs
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true; // inertie douce
+    controls.dampingFactor = 0.05;
+    controls.enableZoom = true;
+    controls.enablePan = false;
+
+    // 🔄 Boucle de rendu
     function animate() {
       requestAnimationFrame(animate);
-      cylinder.rotation.y += 0.01;
-      line.rotation.y += 0.01;
-      topCircle.rotation.y += 0.01;
-      bottomCircle.rotation.y += 0.01;
+      controls.update();
       renderer.render(scene, camera);
     }
     animate();
 
-    // 🔧 Responsive
+    // 📱 Responsive
     window.addEventListener('resize', () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
