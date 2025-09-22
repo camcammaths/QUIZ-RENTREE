@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cube 3D Interactif - Correct</title>
+<title>Cube 3D Interactif</title>
 <style>
 :root {
   --primary-color: #3a86ff;
@@ -17,15 +17,15 @@
 body {
   font-family: sans-serif;
   background: #f0f4f8;
-  margin: 0;
-  padding: 2rem;
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin: 0;
+  padding: 2rem;
 }
 
 h1 { color: var(--primary-color); }
-.cube-container { width: 200px; height: 200px; perspective: 800px; margin-bottom: 2rem; }
+.cube-container { width: 200px; height: 200px; perspective: 800px; margin-bottom: 1rem; }
 .cube { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transform: rotateX(-20deg) rotateY(20deg); }
 
 .face {
@@ -35,6 +35,7 @@ h1 { color: var(--primary-color); }
   box-sizing: border-box;
   cursor: pointer;
 }
+
 .front  { transform: translateZ(100px); }
 .back   { transform: rotateY(180deg) translateZ(100px); border-color: var(--secondary-color); }
 .right  { transform: rotateY(90deg) translateZ(100px); border-color: var(--accent-color-1); }
@@ -42,12 +43,15 @@ h1 { color: var(--primary-color); }
 .top    { transform: rotateX(90deg) translateZ(100px); border-color: var(--accent-color-3); }
 .bottom { transform: rotateX(-90deg) translateZ(100px); border-color: var(--primary-color); }
 
-/* Arêtes : relient deux sommets */
+/* Arêtes : relient deux sommets uniquement */
 .edge {
   position: absolute; background: rgba(255,0,110,0.5); cursor: pointer; border-radius: 2px;
 }
+.edge-horizontal { width: 200px; height: 4px; }
+.edge-vertical   { width: 4px; height: 200px; }
+.edge-depth      { width: 4px; height: 4px; }
 
-/* Sommets */
+/* Sommets : 8 coins du cube */
 .vertex {
   position: absolute; width: 12px; height: 12px; background: rgba(0,128,255,0.7); border-radius: 50%; cursor: pointer;
 }
@@ -63,6 +67,7 @@ button { margin-top: 1rem; padding: 0.5rem 1rem; border: none; border-radius: 5p
 
 <h1>Cube 3D Interactif</h1>
 <div class="question" id="question">Question 1 : Clique sur un sommet</div>
+
 <div class="cube-container">
   <div class="cube" id="cube">
     <!-- Faces -->
@@ -73,21 +78,33 @@ button { margin-top: 1rem; padding: 0.5rem 1rem; border: none; border-radius: 5p
     <div class="face top" data-type="face" data-name="top"></div>
     <div class="face bottom" data-type="face" data-name="bottom"></div>
 
-    <!-- Sommets du cube -->
-    <div class="vertex" data-type="vertex" data-name="v1" style="transform: translate3d(-100px,-100px,100px);"></div>
-    <div class="vertex" data-type="vertex" data-name="v2" style="transform: translate3d(100px,-100px,100px);"></div>
-    <div class="vertex" data-type="vertex" data-name="v3" style="transform: translate3d(-100px,100px,100px);"></div>
-    <div class="vertex" data-type="vertex" data-name="v4" style="transform: translate3d(100px,100px,100px);"></div>
-    <div class="vertex" data-type="vertex" data-name="v5" style="transform: translate3d(-100px,-100px,-100px);"></div>
-    <div class="vertex" data-type="vertex" data-name="v6" style="transform: translate3d(100px,-100px,-100px);"></div>
-    <div class="vertex" data-type="vertex" data-name="v7" style="transform: translate3d(-100px,100px,-100px);"></div>
-    <div class="vertex" data-type="vertex" data-name="v8" style="transform: translate3d(100px,100px,-100px);"></div>
+    <!-- Sommets -->
+    <div class="vertex" data-type="vertex" data-name="v1" style="transform: translate3d(-100px,-100px,100px)"></div>
+    <div class="vertex" data-type="vertex" data-name="v2" style="transform: translate3d(100px,-100px,100px)"></div>
+    <div class="vertex" data-type="vertex" data-name="v3" style="transform: translate3d(-100px,100px,100px)"></div>
+    <div class="vertex" data-type="vertex" data-name="v4" style="transform: translate3d(100px,100px,100px)"></div>
+    <div class="vertex" data-type="vertex" data-name="v5" style="transform: translate3d(-100px,-100px,-100px)"></div>
+    <div class="vertex" data-type="vertex" data-name="v6" style="transform: translate3d(100px,-100px,-100px)"></div>
+    <div class="vertex" data-type="vertex" data-name="v7" style="transform: translate3d(-100px,100px,-100px)"></div>
+    <div class="vertex" data-type="vertex" data-name="v8" style="transform: translate3d(100px,100px,-100px)"></div>
 
-    <!-- Arêtes : ex front-top -->
-    <div class="edge" data-type="edge" data-name="front-top" style="width:200px;height:4px; transform: translateZ(100px) translateY(-100px);"></div>
-    <div class="edge" data-type="edge" data-name="front-left" style="width:4px;height:200px; transform: translateZ(100px) translateX(-100px);"></div>
-    <div class="edge" data-type="edge" data-name="top-left" style="width:4px;height:200px; transform: rotateZ(90deg) translateY(-100px) translateX(-100px);"></div>
-    <!-- Ajouter les autres arêtes selon les sommets -->
+    <!-- Arêtes horizontales -->
+    <div class="edge edge-horizontal" data-type="edge" data-name="front-top" style="transform: translateY(-100px) translateZ(100px)"></div>
+    <div class="edge edge-horizontal" data-type="edge" data-name="front-bottom" style="transform: translateY(100px) translateZ(100px)"></div>
+    <div class="edge edge-horizontal" data-type="edge" data-name="back-top" style="transform: translateY(-100px) translateZ(-100px)"></div>
+    <div class="edge edge-horizontal" data-type="edge" data-name="back-bottom" style="transform: translateY(100px) translateZ(-100px)"></div>
+
+    <!-- Arêtes verticales -->
+    <div class="edge edge-vertical" data-type="edge" data-name="left-front" style="transform: translateX(-100px) translateZ(100px)"></div>
+    <div class="edge edge-vertical" data-type="edge" data-name="left-back" style="transform: translateX(-100px) translateZ(-100px)"></div>
+    <div class="edge edge-vertical" data-type="edge" data-name="right-front" style="transform: translateX(100px) translateZ(100px)"></div>
+    <div class="edge edge-vertical" data-type="edge" data-name="right-back" style="transform: translateX(100px) translateZ(-100px)"></div>
+
+    <!-- Arêtes profondeur (Z) -->
+    <div class="edge edge-depth" data-type="edge" data-name="top-left" style="transform: translateX(-100px) translateY(-100px)"></div>
+    <div class="edge edge-depth" data-type="edge" data-name="top-right" style="transform: translateX(100px) translateY(-100px)"></div>
+    <div class="edge edge-depth" data-type="edge" data-name="bottom-left" style="transform: translateX(-100px) translateY(100px)"></div>
+    <div class="edge edge-depth" data-type="edge" data-name="bottom-right" style="transform: translateX(100px) translateY(100px)"></div>
   </div>
 </div>
 
@@ -96,9 +113,9 @@ button { margin-top: 1rem; padding: 0.5rem 1rem; border: none; border-radius: 5p
 
 <script>
 const questions = [
-  { type: "vertex", target: "v1", text: "Question 1 : Clique sur un sommet" },
-  { type: "edge", target: "front-top", text: "Question 2 : Clique sur une arête" },
-  { type: "face", target: "front", text: "Question 3 : Clique sur une face" }
+  { type: "vertex", target: "v1", text: "Clique sur un sommet" },
+  { type: "edge", target: "front-top", text: "Clique sur une arête" },
+  { type: "face", target: "front", text: "Clique sur une face" }
 ];
 
 let current = 0;
