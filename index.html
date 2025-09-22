@@ -9,11 +9,10 @@
 :root {
   --size: 200px;
   --height: 150px;
-  --primary-color: #3a86ff;
-  --secondary-color: #8338ec;
-  --accent-color-1: #ff006e;
-  --accent-color-2: #fb5607;
-  --accent-color-3: #ffbe0b;
+  --primary-color: #ff006e;   /* rose */
+  --secondary-color: #fb5607; /* orange */
+  --accent-color-1: #8338ec;  /* violet */
+  --accent-color-2: #3a86ff;  /* bleu */
   --background-color: #f0f4f8;
   --veil: rgba(58, 134, 255, 0.08);
 }
@@ -25,7 +24,7 @@ body {
   align-items: center;
   height: 100vh;
   margin: 0;
-  perspective: 800px;
+  perspective: 1000px;
 }
 
 .pyramid-container {
@@ -36,14 +35,14 @@ body {
   animation: rotatePyramid 20s linear infinite;
 }
 
-/* Base carrée */
+/* Base carrée transparente */
 .base {
   position: absolute;
   width: var(--size);
   height: var(--size);
   background: var(--veil);
-  border: 2px solid var(--primary-color);
   transform: rotateX(90deg) translateY(calc(var(--height)/2));
+  border-radius: 4px;
   backdrop-filter: blur(2px);
 }
 
@@ -52,18 +51,16 @@ body {
   position: absolute;
   width: var(--size);
   height: var(--height);
-  background: var(--veil);
-  border: 2px solid;
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
   transform-origin: bottom center;
-  clip-path: polygon(50% 0%, 0% 100%, 100% 100%); /* triangle */
   backdrop-filter: blur(2px);
 }
 
-/* Positionnement des faces autour de la pyramide */
-.front  { transform: rotateX(0deg) rotateY(0deg) translateZ(calc(var(--size)/2)); border-color: var(--primary-color);}
-.right  { transform: rotateX(0deg) rotateY(90deg) translateZ(calc(var(--size)/2)); border-color: var(--secondary-color);}
-.back   { transform: rotateX(0deg) rotateY(180deg) translateZ(calc(var(--size)/2)); border-color: var(--accent-color-1);}
-.left   { transform: rotateX(0deg) rotateY(-90deg) translateZ(calc(var(--size)/2)); border-color: var(--accent-color-2);}
+/* 4 faces latérales autour de la pyramide */
+.front  { transform: rotateX(0deg) rotateY(0deg) translateZ(calc(var(--size)/2)); background-color: var(--primary-color);}
+.right  { transform: rotateX(0deg) rotateY(90deg) translateZ(calc(var(--size)/2)); background-color: var(--secondary-color);}
+.back   { transform: rotateX(0deg) rotateY(180deg) translateZ(calc(var(--size)/2)); background-color: var(--accent-color-1);}
+.left   { transform: rotateX(0deg) rotateY(-90deg) translateZ(calc(var(--size)/2)); background-color: var(--accent-color-2);}
 
 @keyframes rotatePyramid {
   0% { transform: rotateX(-20deg) rotateY(0deg);}
