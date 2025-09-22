@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>3D Pyramid</title>
+<title>Pyramide 3D</title>
 <style>
 body {
   margin: 0;
@@ -15,9 +15,11 @@ body {
   perspective: 1000px;
 }
 
+/* Container pour la pyramide */
 .pyramid-container {
   width: 200px;
   height: 200px;
+  position: relative;
   transform-style: preserve-3d;
   animation: rotate 20s linear infinite;
 }
@@ -32,7 +34,7 @@ body {
   position: absolute;
   width: 200px;
   height: 200px;
-  background: rgba(255,255,0,0.3); /* jaune semi-transparent */
+  background: rgba(255, 255, 0, 0.3); /* jaune semi-transparent */
   transform: rotateX(90deg) translateY(75px);
 }
 
@@ -43,15 +45,18 @@ body {
   height: 150px; /* hauteur de la pyramide */
   clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
   transform-origin: bottom center;
+  backdrop-filter: blur(2px);
 }
 
-.front  { transform: rotateY(0deg) translateZ(100px); background: rgba(255,0,0,0.6);}
-.right  { transform: rotateY(90deg) translateZ(100px); background: rgba(0,255,0,0.6);}
-.back   { transform: rotateY(180deg) translateZ(100px); background: rgba(0,0,255,0.6);}
-.left   { transform: rotateY(-90deg) translateZ(100px); background: rgba(255,0,255,0.6);}
+/* 4 faces autour du sommet */
+.front  { transform: rotateY(0deg) translateZ(100px); background: rgba(255,0,255,0.6);}  /* rose */
+.right  { transform: rotateY(90deg) translateZ(100px); background: rgba(255,165,0,0.6);} /* orange */
+.back   { transform: rotateY(180deg) translateZ(100px); background: rgba(128,0,128,0.6);} /* violet */
+.left   { transform: rotateY(-90deg) translateZ(100px); background: rgba(0,128,255,0.6);} /* bleu */
 </style>
 </head>
 <body>
+
 <div class="pyramid-container">
   <div class="base"></div>
   <div class="face front"></div>
@@ -59,5 +64,6 @@ body {
   <div class="face back"></div>
   <div class="face left"></div>
 </div>
+
 </body>
 </html>
