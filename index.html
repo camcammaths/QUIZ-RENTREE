@@ -3,143 +3,54 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Homothétie - Quiz</title>
+  <title>Cône 3D Stylisé</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      background: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: radial-gradient(circle at center, #0a0a1a, #000);
+      margin: 0;
     }
-    canvas {
-      border: 1px solid #333;
-      background: white;
-      margin-top: 20px;
+
+    .cone {
+      width: 0;
+      height: 0;
+      border-left: 100px solid transparent;
+      border-right: 100px solid transparent;
+      border-bottom: 200px solid rgba(0, 150, 255, 0.2);
+      position: relative;
+      filter: drop-shadow(0 0 10px rgba(0, 150, 255, 0.6));
     }
-    #controls {
-      margin-top: 15px;
+
+    .cone::before {
+      content: "";
+      position: absolute;
+      top: 200px;
+      left: -100px;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 100, 180, 0.4), transparent 70%);
+      filter: blur(8px);
     }
-    button {
-      margin: 5px;
-      padding: 8px 15px;
-      font-size: 16px;
-    }
-    #feedback {
-      margin-top: 15px;
-      font-weight: bold;
+
+    .cone::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100px;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle at center, rgba(0, 150, 255, 0.5), transparent 70%);
+      clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+      mix-blend-mode: screen;
+      filter: blur(6px);
     }
   </style>
 </head>
 <body>
-  <h1>Quiz : Homothétie</h1>
-  <canvas id="canvas" width="500" height="500"></canvas>
-  
-  <div id="controls">
-    <label for="ratio">Rapport k = </label>
-    <input type="number" id="ratio" step="0.1" value="2" />
-    <button onclick="valider()">Valider</button>
-    <button onclick="nouvelleQuestion()">Nouvelle question</button>
-  </div>
-
-  <div id="feedback"></div>
-
-  <script>
-    const canvas = document.getElementById("canvas");
-    const ctx = canvas.getContext("2d");
-    const size = 500;
-    const step = 25; // taille des carreaux
-    let figure, centre, k, imageCorrecte;
-
-    function drawGrid() {
-      ctx.clearRect(0, 0, size, size);
-      ctx.strokeStyle = "#ccc";
-      for (let x = 0; x <= size; x += step) {
-        ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, size);
-        ctx.stroke();
-      }
-      for (let y = 0; y <= size; y += step) {
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(size, y);
-        ctx.stroke();
-      }
-    }
-
-    function drawPoint(p, color="red", radius=4) {
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, radius, 0, 2 * Math.PI);
-      ctx.fillStyle = color;
-      ctx.fill();
-    }
-
-    function drawPolygon(points, color="blue") {
-      ctx.beginPath();
-      ctx.moveTo(points[0].x, points[0].y);
-      for (let i = 1; i < points.length; i++) {
-        ctx.lineTo(points[i].x, points[i].y);
-      }
-      ctx.closePath();
-      ctx.strokeStyle = color;
-      ctx.lineWidth = 2;
-      ctx.stroke();
-    }
-
-    function homothetie(points, centre, k) {
-      return points.map(p => ({
-        x: centre.x + k * (p.x - centre.x),
-        y: centre.y + k * (p.y - centre.y)
-      }));
-    }
-
-    function nouvelleQuestion() {
-      drawGrid();
-
-      // Figure aléatoire (triangle simple)
-      figure = [
-        {x: 150, y: 200},
-        {x: 200, y: 250},
-        {x: 100, y: 250}
-      ];
-
-      // Centre aléatoire dans le quadrillage
-      let gridX = Math.floor(Math.random() * (size / step)) * step;
-      let gridY = Math.floor(Math.random() * (size / step)) * step;
-      centre = {x: gridX, y: gridY};
-
-      // Rapport aléatoire
-      let rapports = [-2, -1, 0.5, 2, 3];
-      k = rapports[Math.floor(Math.random() * rapports.length)];
-
-      // Calcul de l'image correcte
-      imageCorrecte = homothetie(figure, centre, k);
-
-      // Dessin de la figure et du centre
-      drawPolygon(figure, "blue");
-      drawPoint(centre, "green");
-      
-      document.getElementById("feedback").textContent = "";
-      document.getElementById("ratio").value = "";
-    }
-
-    function valider() {
-      let reponse = parseFloat(document.getElementById("ratio").value);
-      let feedback = document.getElementById("feedback");
-
-      if (reponse === k) {
-        feedback.textContent = "✅ Bonne réponse !";
-        feedback.style.color = "green";
-      } else {
-        feedback.textContent = "❌ Mauvaise réponse. Le bon rapport était k = " + k;
-        feedback.style.color = "red";
-      }
-
-      // Afficher la bonne image
-      drawPolygon(imageCorrecte, "red");
-    }
-
-    // Première question au lancement
-    nouvelleQuestion();
-  </script>
+  <div class="cone"></div>
 </body>
 </html>
