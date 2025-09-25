@@ -1,14 +1,9 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cercle Transparent</title>
-
-  <!-- Polices -->
-  <link href="https://fonts.googleapis.com/css2?family=Androgy+Demo&display=swap" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Mabry+Pro&display=swap" rel="stylesheet" />
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exercice Cercle</title>
   <style>
     :root {
       --primary-color: #3a86ff;
@@ -17,9 +12,8 @@
       --accent-color-2: #fb5607;
       --accent-color-3: #ffbe0b;
       --background-color: #f0f4f8;
-      --circle-veil: rgba(58, 134, 255, 0.08);
-      --border-radius: 50%;
-      --transition: 0.3s ease;
+      --success: #4caf50;
+      --error: #e63946;
     }
 
     body {
@@ -38,36 +32,79 @@
 
     h1 {
       font-family: 'Androgy Demo', sans-serif;
-      font-size: 2.5rem;
+      font-size: 2rem;
       color: var(--primary-color);
-      margin-bottom: 2rem;
+      margin-bottom: 1rem;
     }
 
-    /* Cercle */
-    .circle {
-      width: 200px;
-      height: 200px;
-      border-radius: 50%;
-      background: var(--circle-veil);
-      border: 4px solid var(--secondary-color);
-      backdrop-filter: blur(2px);
-      box-sizing: border-box;
+    svg {
+      width: 300px;
+      height: 300px;
+      margin-bottom: 1.5rem;
+      cursor: pointer;
     }
 
-    /* Responsive */
-    @media (max-width: 600px) {
-      .circle {
-        width: 150px;
-        height: 150px;
-      }
+    .question {
+      font-size: 1.2rem;
+      margin: 1rem 0;
     }
   </style>
 </head>
 <body>
+  <h1>Cercle interactif</h1>
 
-  <h1>Cercle Transparent</h1>
+  <svg viewBox="0 0 300 300">
+    <!-- Cercle -->
+    <circle cx="150" cy="150" r="100" fill="rgba(58,134,255,0.08)" stroke="var(--primary-color)" stroke-width="2"></circle>
 
-  <div class="circle"></div>
+    <!-- Centre -->
+    <circle id="centre" cx="150" cy="150" r="6" fill="var(--accent-color-1)" />
 
+    <!-- Corde -->
+    <line id="corde" x1="100" y1="100" x2="220" y2="140" stroke="var(--accent-color-2)" stroke-width="4" />
+
+    <!-- Rayon -->
+    <line id="rayon" x1="150" y1="150" x2="150" y2="50" stroke="var(--accent-color-3)" stroke-width="4" />
+
+    <!-- Diamètre -->
+    <line id="diametre" x1="50" y1="150" x2="250" y2="150" stroke="var(--secondary-color)" stroke-width="4" />
+  </svg>
+
+  <div class="question" id="question">Clique sur une corde</div>
+
+  <script>
+    const steps = [
+      {id: "corde", text: "Clique sur une corde"},
+      {id: "centre", text: "Clique sur le centre"},
+      {id: "rayon", text: "Clique sur un rayon"},
+      {id: "diametre", text: "Clique sur un diamètre"}
+    ];
+
+    let currentStep = 0;
+    const questionEl = document.getElementById("question");
+
+    // tous les éléments interactifs
+    const elements = ["corde", "centre", "rayon", "diametre"].map(id => document.getElementById(id));
+
+    elements.forEach(el => {
+      el.addEventListener("click", () => {
+        if (el.id === steps[currentStep].id) {
+          // Bonne réponse
+          el.setAttribute("stroke", "var(--success)");
+          el.setAttribute("fill", "var(--success)");
+          currentStep++;
+          if (currentStep < steps.length) {
+            questionEl.textContent = steps[currentStep].text;
+          } else {
+            questionEl.textContent = "Bravo 🎉 exercice terminé !";
+          }
+        } else {
+          // Mauvaise réponse
+          el.setAttribute("stroke", "var(--error)");
+          el.setAttribute("fill", "var(--error)");
+        }
+      });
+    });
+  </script>
 </body>
 </html>
