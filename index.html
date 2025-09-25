@@ -1,9 +1,14 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Exercice Cercle</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Formes Géométriques</title>
+
+  <!-- Polices -->
+  <link href="https://fonts.googleapis.com/css2?family=Androgy+Demo&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Mabry+Pro&display=swap" rel="stylesheet" />
+
   <style>
     :root {
       --primary-color: #3a86ff;
@@ -12,8 +17,8 @@
       --accent-color-2: #fb5607;
       --accent-color-3: #ffbe0b;
       --background-color: #f0f4f8;
-      --success: #4caf50;
-      --error: #e63946;
+      --shape-veil: rgba(58, 134, 255, 0.08);
+      --transition: 0.3s ease;
     }
 
     body {
@@ -32,79 +37,69 @@
 
     h1 {
       font-family: 'Androgy Demo', sans-serif;
-      font-size: 2rem;
+      font-size: 2.5rem;
       color: var(--primary-color);
-      margin-bottom: 1rem;
+      margin-bottom: 2rem;
     }
 
-    svg {
-      width: 300px;
-      height: 300px;
-      margin-bottom: 1.5rem;
-      cursor: pointer;
+    .shapes {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 2rem;
+      width: 100%;
+      max-width: 600px;
     }
 
-    .question {
-      font-size: 1.2rem;
-      margin: 1rem 0;
+    /* Cercle */
+    .circle {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: var(--shape-veil);
+      border: 4px solid var(--primary-color);
+      backdrop-filter: blur(2px);
+    }
+
+    /* Carré */
+    .square {
+      width: 120px;
+      height: 120px;
+      background: var(--shape-veil);
+      border: 4px solid var(--secondary-color);
+      backdrop-filter: blur(2px);
+    }
+
+    /* Rectangle */
+    .rectangle {
+      width: 160px;
+      height: 100px;
+      background: var(--shape-veil);
+      border: 4px solid var(--accent-color-1);
+      backdrop-filter: blur(2px);
+    }
+
+    /* Triangle */
+    .triangle {
+      width: 0;
+      height: 0;
+      border-left: 60px solid transparent;
+      border-right: 60px solid transparent;
+      border-bottom: 120px solid var(--accent-color-2);
+      background: transparent;
+      filter: drop-shadow(0 0 6px rgba(58,134,255,0.2));
     }
   </style>
 </head>
 <body>
-  <h1>Cercle interactif</h1>
 
-  <svg viewBox="0 0 300 300">
-    <!-- Cercle -->
-    <circle cx="150" cy="150" r="100" fill="rgba(58,134,255,0.08)" stroke="var(--primary-color)" stroke-width="2"></circle>
+  <h1>Formes Géométriques</h1>
 
-    <!-- Centre -->
-    <circle id="centre" cx="150" cy="150" r="6" fill="var(--accent-color-1)" />
+  <div class="shapes">
+    <div class="circle"></div>
+    <div class="square"></div>
+    <div class="rectangle"></div>
+    <div class="triangle"></div>
+  </div>
 
-    <!-- Corde -->
-    <line id="corde" x1="100" y1="100" x2="220" y2="140" stroke="var(--accent-color-2)" stroke-width="4" />
-
-    <!-- Rayon -->
-    <line id="rayon" x1="150" y1="150" x2="150" y2="50" stroke="var(--accent-color-3)" stroke-width="4" />
-
-    <!-- Diamètre -->
-    <line id="diametre" x1="50" y1="150" x2="250" y2="150" stroke="var(--secondary-color)" stroke-width="4" />
-  </svg>
-
-  <div class="question" id="question">Clique sur une corde</div>
-
-  <script>
-    const steps = [
-      {id: "corde", text: "Clique sur une corde"},
-      {id: "centre", text: "Clique sur le centre"},
-      {id: "rayon", text: "Clique sur un rayon"},
-      {id: "diametre", text: "Clique sur un diamètre"}
-    ];
-
-    let currentStep = 0;
-    const questionEl = document.getElementById("question");
-
-    // tous les éléments interactifs
-    const elements = ["corde", "centre", "rayon", "diametre"].map(id => document.getElementById(id));
-
-    elements.forEach(el => {
-      el.addEventListener("click", () => {
-        if (el.id === steps[currentStep].id) {
-          // Bonne réponse
-          el.setAttribute("stroke", "var(--success)");
-          el.setAttribute("fill", "var(--success)");
-          currentStep++;
-          if (currentStep < steps.length) {
-            questionEl.textContent = steps[currentStep].text;
-          } else {
-            questionEl.textContent = "Bravo 🎉 exercice terminé !";
-          }
-        } else {
-          // Mauvaise réponse
-          el.setAttribute("stroke", "var(--error)");
-          el.setAttribute("fill", "var(--error)");
-        }
-      });
-    });
-  </script>
 </body>
 </html>
